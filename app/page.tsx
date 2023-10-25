@@ -3,6 +3,7 @@ import { UserButton, auth } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link';
 import {LogIn} from 'lucide-react';
+import FileUpload from '@/components/FileUpload';
 
 export default async function Home() {
   const {userId} = await auth();
@@ -20,7 +21,7 @@ export default async function Home() {
           </div>
           <p className='text-lg mt-1'>Join now to unlock your full potential</p>
           <div className='mt-4'>
-            {isAuth ? (<h1>fileupload</h1>) : <Link href={'/sign-in'}><Button>Login to get started <LogIn className='w-5 h-5 ml-2' /></Button></Link>}
+            {isAuth ? (<FileUpload />) : <Link href={'/sign-in'}><Button>Login to get started <LogIn className='w-5 h-5 ml-2' /></Button></Link>}
           </div>
         </div>
       </div>
