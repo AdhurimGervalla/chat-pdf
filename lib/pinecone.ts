@@ -1,7 +1,10 @@
-import {PineconeClient} from '@pinecone-database/pinecone'
+import {PineconeClient, PineconeRecord, utils as PineconeUtils} from '@pinecone-database/pinecone'
 import { downloadFromS3 } from './s3-server';
 import {PDFLoader} from 'langchain/document_loaders/fs/pdf'
 import {Document, RecursiveCharacterTextSplitter} from '@pinecone-database/doc-splitter'
+import { getEmbeddings } from './embeddings';
+import md5 from 'md5';
+import { convertStringToASCII } from './utils';
 
 let pinecone: PineconeClient | null = null
 export const getPinecone = async () => {
@@ -22,6 +25,13 @@ type PDFPage = {
     }
 }
 
+
+/**
+ * Loads a pdf from s3 into pinecone
+ * it will split the pdf into smaller chunks and embed each chunk
+ * @param fileKey file key of the pdf in s3
+ * @returns documents of the first page
+ */
 export async function loadS3IntoPinecone(fileKey: string) {
     // 1. optain the pdf from s3 -> download and read from pdf
     console.log('downloading from s3 ...');
@@ -37,7 +47,40 @@ export async function loadS3IntoPinecone(fileKey: string) {
         pages.map(prepareDocuments)
     )
     
-    // 3. verctorize the documents
+    // 3. verctorize and embed individual documents
+    const vectors = await Promise.all(
+        docs.flat().map(embedDocuments)
+    );
+
+    // 4. upload the vectors to pinecone
+    const client = await getPinecone();
+    const pineconeIndex = client.Index('chatpdf');
+
+    console.log('inserting vectors into pinecode ...');
+
+    const namespace = convertStringToASCII(fileKey);
+    PineconeUtils.chunkedUpsert(pineconeIndex, vectors, "", 10);
+
+    return docs[0];
+}
+
+async function embedDocuments(doc: Document): Promise<PineconeRecord> {
+    try {
+        const embeddings = await getEmbeddings(doc.pageContent);
+        const hash = md5(doc.pageContent);
+
+        return {
+            id: hash,
+            values: embeddings,
+            metadata: {
+                text: doc.metadata.text,
+                pageNumber: doc.metadata.pageNumber
+            }
+        } as PineconeRecord;
+    } catch (error) {
+        console.log('error embedDocuments', error);
+        throw error;
+    }
 }
 
 export const truncateStringByBytes = (str: string, numBytes: number) => {
