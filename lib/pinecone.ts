@@ -54,12 +54,12 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
     // 4. upload the vectors to pinecone
     const client = await getPinecone();
-    const pineconeIndex = client.Index('chatpdf');
+    const pineconeIndex = client.Index('chat-pdf');
 
     console.log('inserting vectors into pinecode ...');
 
     const namespace = convertStringToASCII(fileKey);
-    PineconeUtils.chunkedUpsert(pineconeIndex, vectors, "", 10);
+    PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10);
 
     return docs[0];
 }
@@ -92,7 +92,7 @@ export const truncateStringByBytes = (str: string, numBytes: number) => {
 
 async function prepareDocuments(page: PDFPage) {
     let {pageContent, metadata} = page;
-    pageContent = pageContent.replace(/\n/g, '');    
+    pageContent = pageContent.replace(/\n/g, ''); // remove newlines    
     // split the docs
     const splitter = new RecursiveCharacterTextSplitter();
     const docs = await splitter.splitDocuments([
