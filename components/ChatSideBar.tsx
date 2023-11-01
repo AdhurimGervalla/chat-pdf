@@ -3,8 +3,9 @@ import { DrizzleChat } from '@/lib/db/schema';
 import Link from 'next/link';
 import React from 'react'
 import { Button } from './ui/button';
-import { MessageCircle, PlusCircleIcon } from 'lucide-react';
+import { MessageCircle, PlusCircleIcon, StarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import axios from 'axios';
 
 type Props = {
     chats: DrizzleChat[]; // cool
@@ -12,6 +13,20 @@ type Props = {
 }
 
 const ChatSideBar = ({chats, chatId}: Props) => {
+
+  const [loading, setLoading] = React.useState(false);
+  const handleSubscription = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/stripe');
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className='w-full h-screen p-4 text-gray-200 bg-gray-900'>
         <Link href={'/'}>
@@ -41,7 +56,10 @@ const ChatSideBar = ({chats, chatId}: Props) => {
             <div className='flex items-center gap-2 text-sm text-slate-500 flex-wrap'>
                 <Link href='/'>Home</Link>
                 <Link href='/'>Source</Link>
-                {/* Stripe button */}
+                <Button className='mt-2 text-white bg-slate-700' disabled={loading} onClick={handleSubscription}>
+                  <StarIcon className='mr-2 w-4 h-4' />
+                  Upgrade to Pro!
+                </Button>
             </div>
         </div>
     </div>
