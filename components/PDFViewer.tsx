@@ -1,8 +1,6 @@
 'use client';
-import { is } from 'drizzle-orm';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react'
-import { set } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
