@@ -19,13 +19,12 @@ const MessageList = ({messages}: Props) => {
         {messages.map(message => {
             return (
                 <div key={message.id} className={cn('flex', {'justify-end pl-10': message.role === 'user'}, {'justify-start pr-10': message.role === 'assistant'})}>
-                    <div className={cn('rounded-lg px-3 text-sm py-1 shadow-md ring-1 ring-gray-900', {'bg-blue-600 text-white': message.role === 'user'})}><p><Markdown
+                    <div className={cn('rounded-lg px-3 text-sm py-1 shadow-md ring-1 ring-gray-300', {'bg-blue-600 text-white': message.role === 'user'})}><p><Markdown
     children={message.content}
     components={{
       code(props) {
         const {children, className, node, ...rest} = props
         const match = /language-(\w+)/.exec(className || '')
-        console.log(match)
         return match ? (
           <SyntaxHighlighter
             {...rest}
