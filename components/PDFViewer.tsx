@@ -1,6 +1,6 @@
 'use client';
 import { Loader2 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -16,15 +16,18 @@ type Props = {
 }
 
 const PDFViewer = ({pdf_url}: Props) => {
-  const [numPages, setNumPages] = useState<number>();
+  const [numPages, setNumPages] = useState<number>(-1);
   const [pageDimensions, setPageDimensions] = useState({ width: 0, height: 0 });
   const [loading, setLoading] = useState(true);
   const pdfContainerRef = useRef<HTMLDivElement>(null);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
-    setLoading(false);
   }
+
+  useEffect(() => {
+    if (numPages > -1) setLoading(false)
+  }, [numPages]);
 
   useEffect(() => {
     const updatePageWidth = () => {
@@ -54,7 +57,7 @@ const PDFViewer = ({pdf_url}: Props) => {
 
   return (
     <div id="pdf-viewer-container" ref={pdfContainerRef}>
-          <Document file={pdf_url} onLoad={() => setLoading(true)} onLoadSuccess={onDocumentLoadSuccess}>
+          <Document file={pdf_url} onLoadProgress={() => console.log('loooad')} onLoad={() => setLoading(true)} onLoadSuccess={onDocumentLoadSuccess}>
             {numPages && renderPages()}
           </Document>
           {loading && <Loader2 className='w-4 h-4 animate-spin inline' />}

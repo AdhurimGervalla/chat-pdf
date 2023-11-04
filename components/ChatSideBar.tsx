@@ -3,9 +3,10 @@ import { DrizzleChat } from '@/lib/db/schema';
 import Link from 'next/link';
 import React from 'react'
 import { Button } from './ui/button';
-import { MessageCircle, PlusCircleIcon, StarIcon } from 'lucide-react';
+import { CheckCircle2, MessageCircle, PlusCircleIcon, StarIcon, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 type Props = {
     chats: DrizzleChat[]; // cool
@@ -27,6 +28,50 @@ const ChatSideBar = ({chats, chatId}: Props) => {
     }
   }
 
+  const deleteChat = async (chatId: number) => {
+    try {
+      await axios.post(`/api/delete-chat`, {
+        chatId,
+        file_key: chats.find((chat) => chat.id === chatId)?.fileKey
+        });
+      // redirect to /chats route
+      window.location.href = '/chats';
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const startDelete = (chatId: number) => {
+    toast.promise(deleteChat(chatId), {
+      loading: 'Deleting chat...',
+      success: 'Chat deleted',
+      error: 'Couldn\'t delete chat'
+    });
+  }
+
+  const confirmDelete = (chatId: number) => {
+    // Show a toast with confirmation options
+    toast((t) => (
+      <div>
+        <p>Are you sure you want to delete this chat?</p>
+        <div>
+          <button className='className="rounded bg-green-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"' onClick={() => { 
+              toast.dismiss(t.id); 
+              startDelete(chatId);
+            }}
+          >
+            Yes, delete it
+          </button>
+          <button className='ml-5 className="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"' onClick={() => toast.dismiss(t.id)}>Cancel</button>
+        </div>
+      </div>
+    ), {
+      // Customize toast styles if necessary
+      style: { width: 'auto' },
+      // Set other toast options if needed
+    });
+  };
+
   return (
     <div className='w-full h-screen p-4 text-gray-200 bg-gray-100'>
         <Link href={'/'}>
@@ -47,6 +92,7 @@ const ChatSideBar = ({chats, chatId}: Props) => {
                 >
                   <MessageCircle />
                   <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">{chat.pdfName}</p>
+                  <Trash2 className='w-4 h-4' onClick={() => confirmDelete(chat.id)} />
                 </div>
               </Link>
             )
