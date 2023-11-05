@@ -12,7 +12,6 @@ export const POST = async (req: Request) => {
         let pageNumbers;
         if (msg.pageNumbers) {
             pageNumbers = JSON.parse(msg.pageNumbers);
-            console.log('pageNumbers', pageNumbers);
         }
         return {...msg, pageNumbers}
     })

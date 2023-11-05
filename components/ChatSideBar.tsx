@@ -15,19 +15,6 @@ type Props = {
 
 const ChatSideBar = ({chats, chatId}: Props) => {
 
-  const [loading, setLoading] = React.useState(false);
-  const handleSubscription = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('/api/stripe');
-      window.location.href = response.data.url;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const deleteChat = async (chatId: number) => {
     try {
       await axios.post(`/api/delete-chat`, {
@@ -102,10 +89,6 @@ const ChatSideBar = ({chats, chatId}: Props) => {
             <div className='flex items-center gap-2 text-sm text-slate-500 flex-wrap'>
                 <Link href='/'>Home</Link>
                 <Link href='/chats'>Chats</Link>
-                <Button className='mt-2 text-white bg-slate-700' disabled={loading} onClick={handleSubscription}>
-                  <StarIcon className='mr-2 w-4 h-4' />
-                  Upgrade to Pro!
-                </Button>
             </div>
         </div>
     </div>
