@@ -57,7 +57,7 @@ const PDFViewer = ({pdf_url}: Props) => {
 
   return (
     <div id="pdf-viewer-container" ref={pdfContainerRef}>
-          <Document file={pdf_url} onLoadProgress={() => console.log('loooad')} onLoad={() => setLoading(true)} onLoadSuccess={onDocumentLoadSuccess}>
+          <Document file={pdf_url} onLoad={() => setLoading(true)} onLoadSuccess={onDocumentLoadSuccess}>
             {numPages && renderPages()}
           </Document>
           {loading && <Loader2 className='w-4 h-4 animate-spin inline' />}
