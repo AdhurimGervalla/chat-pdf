@@ -8,6 +8,12 @@ export const runtime = "edge";
 export const POST = async (req: Request) => {
     const {chatId} = await req.json();
     const _messages = await db.select().from(messages).where(eq(messages.chatId, chatId));
-
-    return NextResponse.json(_messages);
+    const convertedMessages = _messages.map(msg => {
+        let pageNumbers;
+        if (msg.pageNumbers) {
+            pageNumbers = JSON.parse(msg.pageNumbers);
+        }
+        return {...msg, pageNumbers}
+    })
+    return NextResponse.json(convertedMessages);
 }

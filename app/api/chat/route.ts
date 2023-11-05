@@ -24,8 +24,11 @@ export async function POST(req: Request) {
         }
         const fileKey = _chats[0].fileKey;
         const lastMessage = messages[messages.length - 1];
-        const context = await getContext(lastMessage.content, fileKey);
-        console.log('context', context);
+        const contextMetadata = await getContext(lastMessage.content, fileKey);
+        const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, 3000);
+        const pageNumbers = contextMetadata.map(item => item.pageNumber);
+        console.log(context);
+        console.log("---------")
         const prompt = {
             role: "system",
             content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
@@ -41,7 +44,7 @@ export async function POST(req: Request) {
             If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
             AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
             AI assistant will not invent anything that is not drawn directly from the context.
-            `,
+            `
         };
         
         const response = await openai.createChatCompletion({
@@ -67,7 +70,8 @@ export async function POST(req: Request) {
                 await db.insert(_messages).values({
                     chatId,
                     content: completion,
-                    role: 'system'
+                    role: 'system',
+                    pageNumbers: JSON.stringify(pageNumbers)
                 })
             }
         });

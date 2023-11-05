@@ -1,6 +1,7 @@
 import type {Config} from 'drizzle-kit';
 import * as dotenv from 'dotenv';
-dotenv.config({path: '.env'});
+
+dotenv.config({path: '.env'}); // needed to load .env file because we are not using the drizzle-kit cli
 
 export default {
     driver: 'pg',
