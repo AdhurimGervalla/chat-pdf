@@ -38,7 +38,10 @@ export async function getContext(query: string, fileKey: string) {
     pageNumber: number;
   };
 
-  let docs = qualifyingDocs.map((match) => (match.metadata as Metadata).text);
+  let docs: Metadata[] = qualifyingDocs.map((match) => {
+    const metadata = (match.metadata as Metadata)
+    return {text: metadata.text, pageNumber: metadata.pageNumber};
+  });
   // 5 vectors
-  return docs.join("\n").substring(0, 3000);
+  return docs;
 }

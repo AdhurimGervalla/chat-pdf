@@ -49,7 +49,7 @@ const PDFViewer = ({pdf_url}: Props) => {
     const pages = [];
     for (let i = 1; i <= numPages!; i++) {
       pages.push(
-        <Page key={i} pageNumber={i} width={pageDimensions.width} />
+        <div id={`page_${i}`}><Page key={i} pageNumber={i} width={pageDimensions.width} /></div>
       );
     }
     return pages;

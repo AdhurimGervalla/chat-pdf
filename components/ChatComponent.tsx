@@ -12,11 +12,17 @@ import { Message } from 'ai'
 type Props = {
   chatId: number
 }
+
+export interface ExtendedMessage extends Message {
+  pageNumbers: number[]
+}
+
 const ChatComponent = ({chatId}: Props) => {
+
   const {data} = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
-      const res = await axios.post<Message[]>('/api/get-messages', { chatId });
+      const res = await axios.post<ExtendedMessage[]>('/api/get-messages', { chatId });
       return res.data;
     },
     refetchInterval: 1000,
@@ -45,7 +51,7 @@ const ChatComponent = ({chatId}: Props) => {
         </div>
 
         {/* chat messages */}
-        <MessageList messages={messages} />
+        <MessageList messages={messages} extendedMessages={data} />
 
         <form onSubmit={handleSubmit} className='sticky bottom-0 inset-x-0 px-2 py-4'>
           <div className="flex">

@@ -24,8 +24,11 @@ export async function POST(req: Request) {
         }
         const fileKey = _chats[0].fileKey;
         const lastMessage = messages[messages.length - 1];
-        const context = await getContext(lastMessage.content, fileKey);
+        const contextMetadata = await getContext(lastMessage.content, fileKey);
+        const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, 3000);
+        const pageNumbers = contextMetadata.map(item => item.pageNumber);
         console.log('context', context);
+        console.log('pageNumbers', pageNumbers)
         const prompt = {
             role: "system",
             content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
@@ -67,7 +70,8 @@ export async function POST(req: Request) {
                 await db.insert(_messages).values({
                     chatId,
                     content: completion,
-                    role: 'system'
+                    role: 'system',
+                    pageNumbers: JSON.stringify(pageNumbers)
                 })
             }
         });
