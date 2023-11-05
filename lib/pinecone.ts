@@ -34,7 +34,6 @@ type PDFPage = {
  */
 export async function loadS3IntoPinecone(fileKey: string) {
     // 1. optain the pdf from s3 -> download and read from pdf
-    console.log('downloading from s3 ...');
     const  file_name = await downloadFromS3(fileKey);
     if (!file_name) {
         throw new Error('Could not download file from s3');
@@ -55,8 +54,6 @@ export async function loadS3IntoPinecone(fileKey: string) {
     // 4. upload the vectors to pinecone
     const client = await getPinecone();
     const pineconeIndex = client.Index('chat-pdf');
-
-    console.log('inserting vectors into pinecode ...');
 
     const namespace = convertStringToASCII(fileKey);
     PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10);

@@ -14,9 +14,7 @@ type Props = {
 const MessageList = ({messages}: Props) => {
     
     if (!messages) return <></>;
-
-    console.log('messages', messages)
-
+    
     const scrollToPage = (pageNumber: number) => {
       const pageElement = document.getElementById(`page_${pageNumber}`);
       if (pageElement) {

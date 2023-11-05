@@ -27,8 +27,6 @@ export async function POST(req: Request) {
         const contextMetadata = await getContext(lastMessage.content, fileKey);
         const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, 3000);
         const pageNumbers = contextMetadata.map(item => item.pageNumber);
-        console.log(context);
-        console.log("---------")
         const prompt = {
             role: "system",
             content: `AI assistant is a brand new, powerful, human-like artificial intelligence.

@@ -21,14 +21,10 @@ export async function POST(req: Request, res: Response) {
         await db
         .delete(messages)
         .where(eq(messages.chatId, chatId));
-        
-        console.log('deleting chat ...', file_key);
 
         await db
             .delete(chats)
             .where(eq(chats.fileKey, file_key));
-        
-        console.log('deleting from s3 ...', file_key);
         
         await deleteFromS3(file_key);
         return NextResponse.json({status: 200});
