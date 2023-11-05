@@ -32,19 +32,17 @@ const MessageList = ({messages}: Props) => {
                     <div className={cn('rounded-lg px-3 text-sm py-1 shadow-md ring-1 ring-gray-300', {'bg-blue-600 text-white': message.role === 'user'})}>
                       <p>
                         <Markdown
-                          children={message.content}
                           components={{
                             code(props) {
-                              const {children, className, node, ...rest} = props
+                              const {children, className, node, ref, ...rest} = props
                               const match = /language-(\w+)/.exec(className || '')
                               return match ? (
                                 <SyntaxHighlighter
                                   {...rest}
-                                  children={String(children).replace(/\n$/, '')}
                                   language={match[1]}
                                   style={dracula}
                                   PreTag="div"
-                                />
+                                >{String(children).replace(/\n$/, '')}</SyntaxHighlighter>
                               ) : (
                                 <code {...rest} className={className}>
                                   {children}
@@ -52,7 +50,7 @@ const MessageList = ({messages}: Props) => {
                               )
                             }
                           }}
-                        />
+                        >{message.content}</Markdown>
                       </p>
                       {/*message.pageNumbers && message.pageNumbers.length > 0 && <p className='my-4'>References: {message.pageNumbers.map(n => <span onClick={() => scrollToPage(n)} className="p-1 mx-1 bg-gray-400 text-xs cursor-pointer hover:bg-yellow-400">{n}</span>)}</p>*/}
                     </div>

@@ -77,6 +77,6 @@ export async function POST(req: Request) {
         });
         return new StreamingTextResponse(stream);
     } catch (error) {
-        
+        return NextResponse.json({'error': 'something went wrong'}, {status: 500})
     }
 }
