@@ -1,4 +1,4 @@
-import {PineconeClient, PineconeRecord, utils as PineconeUtils} from '@pinecone-database/pinecone'
+import {Pinecone, PineconeRecord, utils as PineconeUtils} from '@pinecone-database/pinecone';
 import { downloadFromS3 } from './s3-server';
 import {PDFLoader} from 'langchain/document_loaders/fs/pdf'
 import {Document, RecursiveCharacterTextSplitter} from '@pinecone-database/doc-splitter'
@@ -6,17 +6,12 @@ import { getEmbeddings } from './embeddings';
 import md5 from 'md5';
 import { convertStringToASCII } from './utils';
 
-let pinecone: PineconeClient | null = null
-export const getPinecone = async () => {
-    if (!pinecone) {
-        pinecone = new PineconeClient();
-        await pinecone.init({
-            environment: process.env.PINECONE_ENVIRONMENT!,
-            apiKey: process.env.PINECONE_API_KEY!,
-        });
-    }
-    return pinecone
-}
+export const getPineconeClient = () => {
+    return new Pinecone({
+      environment: process.env.PINECONE_ENVIRONMENT!,
+      apiKey: process.env.PINECONE_API_KEY!,
+    });
+  };
 
 type PDFPage = {
     pageContent: string;
@@ -52,11 +47,11 @@ export async function loadS3IntoPinecone(fileKey: string) {
     );
 
     // 4. upload the vectors to pinecone
-    const client = await getPinecone();
-    const pineconeIndex = client.Index('chat-pdf');
+    const client = await getPineconeClient();
+    const pineconeIndex = await client.index('chat-pdf');
 
-    const namespace = convertStringToASCII(fileKey);
-    PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10);
+    const namespace = pineconeIndex.namespace(convertStringToASCII(fileKey))
+    await namespace.upsert(vectors);
 
     return docs[0];
 }
