@@ -3,6 +3,7 @@ import ChatSideBar from '@/components/ChatSideBar'
 import PDFViewer from '@/components/PDFViewer'
 import { db } from '@/lib/db'
 import { chats } from '@/lib/db/schema'
+import { checkSubscription } from '@/lib/subscription'
 import { auth } from '@clerk/nextjs'
 import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
@@ -16,6 +17,7 @@ type ChatePageProps = {
 
 const ChatPage = async ({params: { chatId }}: ChatePageProps) => {
     const {userId} = await auth();
+    const isPro = await checkSubscription();
 
     if (!userId) {
         redirect('/sign-in');
@@ -32,7 +34,7 @@ const ChatPage = async ({params: { chatId }}: ChatePageProps) => {
             <div className='flex w-full max-h-screen overflow-scroll'>
                 {/* chat sidebar */}
                 <div className='flex-[1] max-w-xs'>
-                    <ChatSideBar chats={_chats} chatId={parseInt(chatId)} />
+                    <ChatSideBar chats={_chats} chatId={parseInt(chatId)} isPro={isPro} />
                 </div>
                 {/* chat viewer */}
                 <div className='max-h-screen p-4 overflow-scroll flex-[5]'>

@@ -6,6 +6,7 @@ import { chats, messages as _messages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { Message } from 'ai/react';
+import { checkSubscription } from '@/lib/subscription';
 
 export const runtime = 'edge';
 
@@ -22,10 +23,11 @@ export async function POST(req: Request) {
         if (_chats.length !== 1) {
             return NextResponse.json({'error': 'chat not found'}, {status: 404})
         }
+        const isPro = await checkSubscription();
         const fileKey = _chats[0].fileKey;
         const lastMessage = messages[messages.length - 1];
         const contextMetadata = await getContext(lastMessage.content, fileKey);
-        const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, 3000);
+        const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
         const pageNumbers = contextMetadata.map(item => item.pageNumber);
         const prompt = {
             role: "system",
@@ -45,8 +47,9 @@ export async function POST(req: Request) {
             `
         };
         
+        const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
         const response = await openai.createChatCompletion({
-            model: 'gpt-3.5-turbo',
+            model,
             messages: [
                 prompt, ...messages.filter((message: Message) => message.role === 'user')
             ],
