@@ -11,3 +11,5 @@ export function convertStringToASCII(str: string) {
   const asciiString = str.replace(/[^\x00-\x7F]/g, "");
   return asciiString;
 }
+
+export const languages: readonly string[] = ["de", "en"];

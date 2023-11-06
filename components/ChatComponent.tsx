@@ -8,6 +8,8 @@ import MessageList from './MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { Message } from 'ai'
+import Select from './Select'
+import { languages } from '@/lib/utils'
 
 type Props = {
   chatId: number
@@ -18,6 +20,8 @@ export interface ExtendedMessage extends Message {
 }
 
 const ChatComponent = ({chatId}: Props) => {
+
+  const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
 
   const {data} = useQuery({
     queryKey: ['chat', chatId],
@@ -30,7 +34,7 @@ const ChatComponent = ({chatId}: Props) => {
 
   const { input, handleInputChange, handleSubmit, messages, isLoading } = useChat({
     api: '/api/chat',
-    body: { chatId },
+    body: { chatId, chatLanguage },
     initialMessages: data,
   }); // cool
 
@@ -46,8 +50,9 @@ const ChatComponent = ({chatId}: Props) => {
 
   return (
     <div className='relative max-h-screen overflow-scroll' id='message-container'>
-        <div className='sticky top-0 insex-x-0 p-2 bg-white h-fit'>
+        <div className='sticky top-0 insex-x-0 p-3 bg-white h-fit flex'>
             <h3 className='text-xl font-bold'>Chat</h3>
+            <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />
         </div>
 
         {/* chat messages */}
