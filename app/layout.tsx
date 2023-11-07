@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'PDF2chat',
-  description: 'PDF2Chat is a service that enables you to pose AI questions within the context of a PDF.',
+  description: 'Optimize your interaction with AI by leveraging the context of your own documents.',
   abstract: 'PDF2Chat is a service that enables you to pose AI questions within the context of a PDF.',
 }
 
