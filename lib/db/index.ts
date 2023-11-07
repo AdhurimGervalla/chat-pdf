@@ -1,5 +1,7 @@
 import {neon, neonConfig} from '@neondatabase/serverless';
 import {drizzle} from 'drizzle-orm/neon-http';
+import { chats } from './schema';
+import { eq } from 'drizzle-orm';
 neonConfig.fetchConnectionCache = true;
 
 if (!process.env.DATABASE_URL) {
@@ -9,3 +11,15 @@ if (!process.env.DATABASE_URL) {
 const sql = neon(process.env.DATABASE_URL);
 
 export const db = drizzle(sql);
+
+// returns the first chat of a user
+export async function getFirstChat(userId: string) {
+    let firstChat;
+    if (userId) {
+      firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
+      if (firstChat) {
+        firstChat = firstChat[0];
+      }
+      return firstChat;
+    }
+  }
