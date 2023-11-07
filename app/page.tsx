@@ -33,7 +33,7 @@ export default async function Home() {
           </div>
           <div className="flex mt-5">
             {isAuth && firstChat && <Link href={`/chats/${firstChat.id}`}><Button>Go to chats <ArrowRight className='ml-2' /></Button></Link>}
-            {isAuth && <div className='ml-3'><SubscriptionButton isPro={isPro}/></div>}
+            {isAuth && false && <div className='ml-3'><SubscriptionButton isPro={isPro}/></div>}
           </div>
           {!userId && <p className='mt-3'>Join now to unlock your full potential</p>}
           <div className='mt-4 max-w-sm w-full'>
