@@ -8,7 +8,6 @@ import { Message } from 'ai/react'
 
 type Props = {
     messages: Message[];
-    extendedMessages?: ExtendedMessage[];
 }
 
 const MessageList = ({messages}: Props) => {

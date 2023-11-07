@@ -29,7 +29,7 @@ const ChatComponent = ({chatId}: Props) => {
       const res = await axios.post<ExtendedMessage[]>('/api/get-messages', { chatId });
       return res.data;
     },
-    refetchInterval: 1000,
+    refetchInterval: false,
   });
 
   const { input, handleInputChange, handleSubmit, messages, isLoading } = useChat({
@@ -46,6 +46,7 @@ const ChatComponent = ({chatId}: Props) => {
         behavior: 'smooth',
       })
     }
+    console.log(messages);
   }, [messages]);
 
   return (
@@ -56,7 +57,7 @@ const ChatComponent = ({chatId}: Props) => {
         </div>
 
         {/* chat messages */}
-        <MessageList messages={messages} extendedMessages={data} />
+        <MessageList messages={messages} />
 
         <form onSubmit={handleSubmit} className='sticky bottom-0 inset-x-0 px-2 py-4'>
           <div className="flex">
