@@ -61,7 +61,7 @@ const ChatSideBar = ({chats, chatId, isPro}: Props) => {
   };
 
   return (
-    <div className='w-full h-screen p-4 text-gray-200 bg-gray-100 relative'>
+    <div className='w-full h-screen p-4 relative'>
         <Link href={'/'}>
             <Button className='w-full border-dashed border-white border'>
                 <PlusCircleIcon className='mr-2 w-4 h-4' />

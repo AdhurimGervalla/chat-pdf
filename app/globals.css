@@ -74,3 +74,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+.message-item ol {
+  @apply list-decimal;
+  @apply pl-7;
+}
+
+.message-item ul {
+  @apply list-disc;
+  @apply pl-7;
+}
+
+.message-item * + * {
+  @apply mt-2;
+}
