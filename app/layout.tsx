@@ -9,7 +9,9 @@ import { GeistSans, GeistMono } from 'geist/font'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'ChatPDF',
+  title: 'PDF2chat',
+  description: 'PDF2Chat is a service that enables you to pose AI questions within the context of a PDF.',
+  abstract: 'PDF2Chat is a service that enables you to pose AI questions within the context of a PDF.',
 }
 
 export default function RootLayout({
