@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      minHeight: {
+        '1/2': '50vh',
+      },
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
         mono: ['var(--font-geist-mono)'],
