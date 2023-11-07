@@ -9,6 +9,9 @@ import SubscriptionButton from '@/components/SubscriptionButton';
 import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import LoginPage from '@/components/LoginPage';
+import StartPage from '@/components/StartPage';
+import { getFirstChat } from '@/lib/db/index';
 
 export default async function Home() {
   const {userId} = await auth();
@@ -17,30 +20,12 @@ export default async function Home() {
 
   let firstChat;
   if (userId) {
-    firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
-    if (firstChat) {
-      firstChat = firstChat[0];
-    }
+    firstChat = await getFirstChat(userId);
   }
 
   return (
-    <div className='w-screen min-h-screen'>
-      <div className='left-1/2 -translate-x-1/2 -translate-y-1/2 absolute top-1/2 max-w-screen-xl pt-10'>
-        <div className="flex flex-col items-center text-center">
-          <div className="flex items-center">
-            <h1 className='mr-3 text-5xl font-semibold'>We have teacher at home...</h1>
-            <UserButton afterSignOutUrl='/' />
-          </div>
-          <div className="flex mt-5">
-            {isAuth && firstChat && <Link href={`/chats/${firstChat.id}`}><Button>Go to chats <ArrowRight className='ml-2' /></Button></Link>}
-            {isAuth && false && <div className='ml-3'><SubscriptionButton isPro={isPro}/></div>}
-          </div>
-          {!userId && <p className='mt-3'>Join now to unlock your full potential</p>}
-          <div className='mt-4 max-w-sm w-full'>
-            {isAuth ? (<FileUpload />) : <Link href={'/sign-in'}><Button>Login<LogIn className='w-5 h-5 ml-2' /></Button></Link>}
-          </div>
-        </div>
-      </div>
+    <div>
+      {!isAuth ? <LoginPage /> : <StartPage firstChat={firstChat} isPro={isPro} />}
     </div>
   )
 }
