@@ -3,10 +3,13 @@ import { DrizzleChat } from '@/lib/db/schema';
 import Link from 'next/link';
 import React from 'react'
 import { Button } from './ui/button';
-import { MessageCircle, PlusCircleIcon, Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { MenuIcon, MenuSquareIcon, MessageCircle, PlusCircleIcon, Trash2 } from 'lucide-react';
+import { Fragment } from 'react'
+import { Popover, Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid' 
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { cn } from '@/lib/utils';
 
 type Props = {
     chats: DrizzleChat[]; // cool
@@ -16,18 +19,18 @@ type Props = {
 
 const ChatSideBar = ({chats, chatId, isPro}: Props) => {
 
-  const deleteChat = async (chatId: number) => {
-    try {
-      await axios.post(`/api/delete-chat`, {
-        chatId,
-        file_key: chats.find((chat) => chat.id === chatId)?.fileKey
-        });
-      // redirect to /chats route
-      window.location.href = '/chats';
-    } catch (error) {
-      console.log(error);
-    }
+const deleteChat = async (chatId: number) => {
+  try {
+    await axios.post(`/api/delete-chat`, {
+      chatId,
+      file_key: chats.find((chat) => chat.id === chatId)?.fileKey
+      });
+    // redirect to /chats route
+    window.location.href = '/chats';
+  } catch (error) {
+    console.log(error);
   }
+}
 
   const startDelete = (chatId: number) => {
     toast.promise(deleteChat(chatId), {
@@ -68,24 +71,48 @@ const ChatSideBar = ({chats, chatId, isPro}: Props) => {
                 New chat
             </Button>
         </Link>
-        <div className="flex flex-col gap-2 mt-4">
+
+        <ul role="list" className="divide-y divide-gray-100 mt-3">
           {chats.map((chat) => {
             return (
               <Link href={`/chats/${chat.id}`} key={chat.id}>
-                <div 
-                  className={cn('rounded-lg p-3 text-slate-900 flex gap-1 items-center', { 
-                    'bg-blue-600 text-white': chat.id === chatId,
-                    'hover:text-white hover:bg-blue-600': chat.id !== chatId
-                  })}
-                >
-                  <MessageCircle />
-                  <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">{chat.pdfName}</p>
-                  <Trash2 className='w-4 h-4' onClick={() => confirmDelete(chat.id)} />
-                </div>
+                <li className="flex py-2">
+                  <div className="min-w-0 flex justify-between items-center w-full">
+                    <p className={cn('text-sm font-semibold leading-6 text-gray-900 max-w-[200px] mr-3 whitespace-nowrap overflow-hidden text-ellipsis ', { 
+                    'text-lime-600': chat.id === chatId,
+                    'hover:text-lime-600': chat.id !== chatId
+                  })}>{chat.pdfName}</p>
+                    {/**/}
+                    <Popover className="relative">
+                      <Popover.Button className="flex font-semibold leading-6 text-gray-900">
+                        <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                      </Popover.Button>
+
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute left-1/2 z-10 mt-2 flex w-screen max-w-min -translate-x-1/2 px-4">
+                          <div className="w-40 shrink rounded-xl bg-white px-3 py-1 text-sm font-semibold leading-6 text-gray-900 shadow-lg ring-1 ring-gray-900/5">
+                        
+                            <div className='block p-2 flex items-center justify-between hover:text-red-600' onClick={() => confirmDelete(chat.id)}>
+                              Delete chat<Trash2 className='w-4 h-4' />
+                            </div>
+                          </div>
+                        </Popover.Panel>
+                      </Transition>
+                    </Popover>
+                  </div>
+                </li>
               </Link>
             )
           })}
-        </div>
+        </ul>
         <div className='absolute bottom-4 left-0 right-0 px-4'>
             <div className='flex items-center gap-2 text-sm text-slate-500 flex-wrap'>
                 <Link href='/'>Home</Link>
