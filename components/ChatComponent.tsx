@@ -62,7 +62,7 @@ const ChatComponent = ({chatId}: Props) => {
         <form onSubmit={handleSubmit} className='sticky bottom-0 inset-x-0 px-2 py-4'>
           <div className="flex">
           <Input value={input} onChange={handleInputChange} placeholder='Ask me...' className='w-full' />
-            <Button className='bg-black ml-2'>
+            <Button className='bg-blue-800 ml-2'>
               {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Send className='h-4 w-4' />}
             </Button>
           </div>
