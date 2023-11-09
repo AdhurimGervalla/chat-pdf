@@ -8,9 +8,11 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-type Props = {}
+type Props = {
+    setOpenNewChatCb: (open: boolean) => void;
+}
 
-const FileUpload = () => {
+const FileUpload = ({setOpenNewChatCb}: Props) => {
     const router = useRouter();
     const [uploading, setUploading] = React.useState(false);
     const {mutate, isPending} = useMutation({
@@ -56,12 +58,13 @@ const FileUpload = () => {
                 console.log(error);
             } finally {
                 setUploading(false);
+                setOpenNewChatCb(false);
             }
             
         }
     });
     return (
-        <div className='p-2 bg-white rounded-xl'>
+        <div className='rounded-xl'>
             <div {...getRootProps({
                 className: 'border-dashed border-2 cursor-pointer bg-gray-100 py-8 flex justify-center items-center flex-col'
             })}>

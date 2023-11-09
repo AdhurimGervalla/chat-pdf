@@ -10,6 +10,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
+import FileUpload from './FileUpload';
 
 type Props = {
     chats: DrizzleChat[]; // cool
@@ -18,19 +19,20 @@ type Props = {
 }
 
 const ChatSideBar = ({chats, chatId, isPro}: Props) => {
+  const [openNewChat, setOpenNewChat] = React.useState(false);
 
-const deleteChat = async (chatId: number) => {
-  try {
-    await axios.post(`/api/delete-chat`, {
-      chatId,
-      file_key: chats.find((chat) => chat.id === chatId)?.fileKey
-      });
-    // redirect to /chats route
-    window.location.href = '/chats';
-  } catch (error) {
-    console.log(error);
+  const deleteChat = async (chatId: number) => {
+    try {
+      await axios.post(`/api/delete-chat`, {
+        chatId,
+        file_key: chats.find((chat) => chat.id === chatId)?.fileKey
+        });
+      // redirect to /chats route
+      window.location.href = '/chats';
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
 
   const startDelete = (chatId: number) => {
     toast.promise(deleteChat(chatId), {
@@ -65,13 +67,11 @@ const deleteChat = async (chatId: number) => {
 
   return (
     <div className='w-full h-screen p-4 relative'>
-        <Link href={'/'}>
-            <Button className='w-full border-dashed border-white border'>
-                <PlusCircleIcon className='mr-2 w-4 h-4' />
-                New chat
-            </Button>
-        </Link>
-
+        <Button className='w-full border-dashed border-white border' onClick={() => setOpenNewChat(!openNewChat)}>
+            <PlusCircleIcon className='mr-2 w-4 h-4' />
+            New chat
+        </Button>
+        <NewChat openNewChat={openNewChat} setOpenNewChat={setOpenNewChat} />
         <ul role="list" className="divide-y divide-gray-100 mt-3">
           {chats.map((chat) => {
             return (
@@ -121,6 +121,19 @@ const deleteChat = async (chatId: number) => {
             </div>
         </div>
     </div>
+  )
+}
+
+const NewChat = ({openNewChat, setOpenNewChat}: {openNewChat: boolean, setOpenNewChat: (open: boolean) => void}) => {
+  return (
+    <div className={cn(`mt-3 ${openNewChat ? 'hidden' : 'block'}`)}>
+    <div className='grid grid-cols-1 gap-3'>
+      <div>
+        <FileUpload setOpenNewChatCb={setOpenNewChat} />
+      </div>
+      <button disabled className=' bg-gray-100 opacity-40 text-center px-3 py-1 border-2 border-dashed text-sm'>Chat with GPT</button>
+    </div>
+  </div>
   )
 }
 
