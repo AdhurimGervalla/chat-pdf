@@ -9,33 +9,43 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { Message } from 'ai'
 import Select from './Select'
-import { languages } from '@/lib/utils'
-
+import { cn, languages } from '@/lib/utils'
+import {useRouter} from 'next/navigation'
+import ChatInputComponent from './ChatInputComponent'
 type Props = {
-  chatId: number
+  chatId: string;
+  isPro: boolean;
+  isNewChat: boolean;
 }
 
 export interface ExtendedMessage extends Message {
   pageNumbers: number[]
 }
 
-const ChatComponent = ({chatId}: Props) => {
-
+const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
+  const router = useRouter();
 
   const {data} = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
-      const res = await axios.post<ExtendedMessage[]>('/api/get-messages', { chatId });
+      const res = await axios.post('/api/get-messages', { chatId });
       return res.data;
     },
-    refetchInterval: false,
+    refetchInterval: 0,
   });
 
-  const { input, handleInputChange, handleSubmit, messages, isLoading } = useChat({
+  const { input, handleInputChange, handleSubmit, messages, isLoading} = useChat({
+    id: chatId,
     api: '/api/chat',
     body: { chatId, chatLanguage },
     initialMessages: data,
+    onFinish: (res) => {
+        if (isNewChat) {
+          router.refresh();
+          router.replace(`/chats/${chatId}`);
+        }
+    }
   }); // cool
 
   React.useEffect(() => {
@@ -46,25 +56,21 @@ const ChatComponent = ({chatId}: Props) => {
         behavior: 'smooth',
       })
     }
-    console.log(messages);
   }, [messages]);
 
   return (
-    <div className='relative max-h-screen overflow-scroll' id='message-container'>
-        <div className='sticky top-0 insex-x-0 p-3 bg-white h-fit flex'>
-            <h3 className='text-xl font-bold'>Chat</h3>
-            <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />
+    <div className='overflow-y-scroll  w-full bottom-10 flex flex-col' id='message-container'>
+        <div className='sticky top-0 insex-x-0 p-3 h-fit flex'>
+            {false && <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />}
         </div>
 
         {/* chat messages */}
-        <MessageList messages={messages} />
-
-        <form onSubmit={handleSubmit} className='sticky bottom-0 inset-x-0 px-2 py-4'>
+        <div className='max-w-4xl w-full mx-auto'><MessageList messages={messages} /></div>
+      
+        <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
           <div className="flex">
-          <Input value={input} onChange={handleInputChange} placeholder='Ask me...' className='w-full' />
-            <Button className='bg-black ml-2'>
-              {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Send className='h-4 w-4' />}
-            </Button>
+            { /*<Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full border-white' />*/}
+            <ChatInputComponent isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} />
           </div>
         </form>
     </div>

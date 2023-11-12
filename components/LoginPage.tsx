@@ -22,7 +22,7 @@ const LoginPage = (props: Props) => {
                   <h2 className='text-white text-3xl text-center mb-8'>Get started</h2>
                   <div className='mx-auto max-w-max'>
                     <Link href={'/sign-in'}><Button className='bg-blue-500 hover:bg-white hover:text-black text-xl w-[136px]' size={'lg'}>Login</Button></Link>
-                    {false && <Link className='ml-4' href={'/sign-up'}><Button className=' bg-lime-600 hover:bg-white hover:text-black text-xl w-[136px]' size={'lg'}>Sign up</Button></Link>}
+                    {/*<Link className='ml-4' href={'/sign-up'}><Button className=' bg-lime-600 hover:bg-white hover:text-black text-xl w-[136px]' size={'lg'}>Sign up</Button></Link>*/}
                   </div>
               </div>
 

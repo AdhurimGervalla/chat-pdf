@@ -1,13 +1,11 @@
 import './globals.css'
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import Providers from '@/components/Providers'
 import {Toaster} from 'react-hot-toast';
 import { GeistSans, GeistMono } from 'geist/font'
 
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'PDF2chat',
@@ -23,8 +21,8 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <Providers>
-        <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-          <body className={inter.className}>
+        <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} dark`}>
+          <body className='dark:bg-black dark:text-white'>
             {children}
             <Toaster position='top-center' reverseOrder={false} />
             <Analytics />
