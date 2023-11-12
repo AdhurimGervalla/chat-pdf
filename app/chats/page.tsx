@@ -1,6 +1,6 @@
 import React from 'react'
 import { db } from '@/lib/db'
-import { chats } from '@/lib/db/schema'
+import { DrizzleChat, chats } from '@/lib/db/schema'
 import { auth } from '@clerk/nextjs'
 import { eq } from 'drizzle-orm'
 import { cn } from '@/lib/utils'
@@ -10,18 +10,19 @@ import Link from 'next/link'
 type Props = {}
 
 const ChatsPage = async (props: Props) => {
-    const {userId} = await auth();
-    
-    if (!userId) {
-        redirect('/sign-in');
-    }
+  const {userId} = await auth();
 
-    const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
+  let _chats: DrizzleChat[] = [];
+  if (userId) {
+    const _chats = await db.select().from(chats).where(eq(chats.userId, userId)); 
+  }
+
+    
   return (
     <div className='container mt-10'>
       <h2 className="text-sm font-medium text-gray-500">All Chats</h2>
       <ul role="list" className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {_chats.map((chat) => (
+        {_chats && _chats.map((chat: DrizzleChat) => (
           <li key={chat.id} className="col-span-1 flex rounded-md shadow-sm">
             <div
               className={cn(

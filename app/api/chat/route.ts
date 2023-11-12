@@ -1,13 +1,14 @@
 import {OpenAIApi, Configuration} from 'openai-edge';
 import {OpenAIStream, StreamingTextResponse} from 'ai';
 import { getContext } from '@/lib/context';
-import { db } from '@/lib/db';
+import { db } from "@/lib/db";
 import { chats, messages as _messages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Message } from 'ai/react';
 import { checkSubscription } from '@/lib/subscription';
 import { languages } from '@/lib/utils';
+import { auth } from '@clerk/nextjs';
 
 export const runtime = 'edge';
 
@@ -18,31 +19,58 @@ const config = new Configuration({
 const openai = new OpenAIApi(config);
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
-        const {messages, chatId, chatLanguage} = await req.json();
-        const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
-        if (_chats.length !== 1) {
-            return NextResponse.json({'error': 'chat not found'}, {status: 404})
+        let {messages, chatId, chatLanguage} = await req.json();
+        if (!chatId) {
+            return NextResponse.json({'error': 'messages or chatId not provided'}, {status: 400})
         }
+        const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
+        if (_chats.length === 0) {
+            // chat doesn't exist
+            const {userId} = await auth();
+            if (userId === null) {
+                // Fügen Sie hier Ihren Code ein, um mit dem Fall umzugehen, dass userId null ist
+                return NextResponse.json({error: "unauthorized"}, {status: 401});
+            }
+
+            await db
+            .insert(chats)
+            .values({
+                id: chatId,
+                userId,
+            });
+        }
+        
         const isPro = await checkSubscription();
-        const fileKey = _chats[0].fileKey;
+        const fileKey = _chats[0]?.fileKey;
         const lastMessage = messages[messages.length - 1];
-        const contextMetadata = await getContext(lastMessage.content, fileKey);
-        const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
-        const pageNumbers = contextMetadata.map(item => item.pageNumber);
-        // check if chatLanguage is type of LanguageCodes
-        const prompt = {
+
+        let pageNumbers: number[] = [];
+        let prompt = {
             role: "system",
-            content: getContextBlock(context, chatLanguage as LanguageCodes)
+            content: getContextBlock("NO CONTEXT", chatLanguage as LanguageCodes)
         };
+        // if file is uploaded
+        if (fileKey) {
+            const contextMetadata = await getContext(lastMessage.content, fileKey);
+            const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
+            pageNumbers = contextMetadata.map(item => item.pageNumber);
+            // check if chatLanguage is type of LanguageCodes
+            prompt = {
+                role: "system",
+                content: getContextBlock(context, chatLanguage as LanguageCodes)
+            };
+        }
+        
+    
         const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
         const response = await openai.createChatCompletion({
             model,
             messages: [
                 prompt, ...messages.filter((message: Message) => message.role === 'user')
             ],
-            stream: true
+            stream: true,
         });
 
         const stream = OpenAIStream(response, {
@@ -65,8 +93,10 @@ export async function POST(req: Request) {
                 })
             }
         });
+
         return new StreamingTextResponse(stream);
     } catch (error) {
+        console.log(error);
         return NextResponse.json({'error': 'something went wrong'}, {status: 500})
     }
 }
