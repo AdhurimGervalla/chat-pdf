@@ -24,7 +24,7 @@ export default function ChatInputComponent({onChange, placeholder, isLoading, va
   return (
     <div className="flex items-start space-x-4 w-full ">
         <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all">
-          <UserButton />
+          <UserButton afterSignOutUrl='/' />
         </div>
       <div className="min-w-0 flex-1">
         <div className="relative">
