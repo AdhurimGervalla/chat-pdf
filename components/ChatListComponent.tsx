@@ -29,7 +29,7 @@ const ChatListComponent = ({chats, chatId}: Props) => {
         <>
             <ToggleBookmarkedComponent bookmarked={bookmarked} setBookmarked={setBookmarked} />
             <ul role="list" className="divide-y divide-gray-100 mt-3">
-                {clientChat.length === 0 && <li className='text-center text-slate-500'>No chats yet</li>}
+                {clientChat.length === 0 && <li className='text-center text-slate-500 dark:text-white'>No chats yet</li>}
                 {clientChat.map((chat: DrizzleChat) => {
                     return <ChatSettings chat={chat} key={chat.id} currentChatId={chatId} />
                 })}

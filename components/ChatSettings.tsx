@@ -67,14 +67,14 @@ const ChatSettings = ({chat, currentChatId}: Props) => {
     <Link href={`/chats/${chat.id}`} key={chat.id}>
         <li className="flex py-2">
         <div className="min-w-0 flex justify-between items-center w-full">
-            <p className={cn('text-sm font-semibold leading-6 text-gray-900 max-w-[200px] mr-3 whitespace-nowrap overflow-hidden text-ellipsis ', { 
-            'text-lime-600': chat.id === currentChatId,
-            'hover:text-lime-600': chat.id !== currentChatId
+            <p className={cn('text-sm font-semibold leading-6 transition-colors text-gray-900 dark:text-white max-w-[200px] mr-3 whitespace-nowrap overflow-hidden text-ellipsis ', { 
+            'text-lime-600 dark:text-green-500': chat.id === currentChatId,
+            'hover:text-lime-600 dark:hover:text-green-500': chat.id !== currentChatId
         })}>{chat.id}</p>
             {/**/}
             <Popover className="relative">
             <Popover.Button className="flex font-semibold leading-6 text-gray-900">
-                <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                <ChevronDownIcon className="h-5 w-5 dark:text-white" aria-hidden="true" />
             </Popover.Button>
 
             <Transition

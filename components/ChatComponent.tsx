@@ -58,8 +58,8 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
   }, [messages]);
 
   return (
-    <div className='overflow-y-scroll w-full h-full bottom-10 flex flex-col' id='message-container'>
-        <div className='sticky top-0 insex-x-0 p-3 bg-white h-fit flex'>
+    <div className='overflow-y-scroll mx-auto w-full max-w-4xl h-full bottom-10 flex flex-col' id='message-container'>
+        <div className='sticky top-0 insex-x-0 p-3 h-fit flex'>
             {false && <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />}
         </div>
 

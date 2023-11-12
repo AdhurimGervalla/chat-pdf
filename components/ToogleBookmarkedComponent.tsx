@@ -11,7 +11,7 @@ type Props = {
 const ToggleBookmarkedComponent = ({bookmarked, setBookmarked}: Props) => {
   
   return (
-    <Button className={`hover:bg-green-500 ${bookmarked ? 'bg-green-500 hover:bg-black': ''}`} onClick={() => setBookmarked(!bookmarked)}><Bookmark /></Button>
+    <Button className={`transition-all hover:bg-green-500 ${bookmarked ? 'bg-green-500 hover:bg-black': ''}`} onClick={() => setBookmarked(!bookmarked)}><Bookmark /></Button>
   )
 }
 

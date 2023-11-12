@@ -22,11 +22,11 @@ const MessageList = ({messages}: Props) => {
     };
 
     return (
-    <div className='flex flex-col gap-5 px-4'>
+    <div className='flex flex-col gap-3'>
         {messages.map(message => {
             return (
-                <div key={message.id} className={cn('message-item flex', {'justify-end pl-10': message.role === 'user'}, {'justify-start pr-10': message.role === 'assistant'})}>
-                    <div className={cn('flex flex-col px-4 py-3 bg-card rounded-lg shadow', {'bg-lime-300': message.role === 'user'})}>
+                <div key={message.id} className={cn('message-item flex text-lg leading-7', {'text-xl font-bold [&:not(:first-child)]:mt-10': message.role === 'user'})}>
+                    <div className={cn('flex flex-col')}>
                       <p>
                         <Markdown
                           components={{

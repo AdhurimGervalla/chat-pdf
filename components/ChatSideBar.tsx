@@ -32,7 +32,7 @@ const ChatSideBar = async ({ userId, isPro, chatId}: Props) => {
         </div>
         <div className='mt-3'><ChatListComponent chats={_chats} chatId={chatId} /></div>
         <div className='absolute bottom-4 left-0 right-0 px-4'>
-            <div className='flex items-center gap-2 text-sm text-slate-500 flex-wrap'>
+            <div className='flex items-center gap-2 text-sm text-slate-500 dark:text-white flex-wrap'>
                 <UserButton />
                 <p className='ml-auto'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
             </div>

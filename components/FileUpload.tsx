@@ -72,12 +72,12 @@ const FileUpload = ({setOpenNewChatCb}: Props) => {
                 {(uploading || isPending) ? 
                     <>
                         <Loader2 className='h-10 w-10 text-blue-500 animate-spin' />
-                        <p className='mt-2 text-sm text-slate-400'>Spilling Tea to GPT</p>
+                        <p className='mt-2 text-sm text-slate-400 dark:text-white'>Spilling Tea to GPT</p>
                     </>
                     :
                     <>
                         <Inbox className='w-10 h-10 text-blue-500' />
-                        <p className='mt-2 text-sm text-slate-400 '>Drop pdf here</p>
+                        <p className='mt-2 text-sm text-slate-400 dark:text-white'>Drop pdf here</p>
                     </>
                 }
             </div>
