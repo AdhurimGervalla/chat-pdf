@@ -65,13 +65,13 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
       };
     
   return (
-    <Link href={`/chats/${chat.id}`} key={chat.id}>
+    
         <li className="flex py-2">
         <div className="min-w-0 flex justify-between items-center w-full">
             <p className={cn('text-sm font-semibold leading-6 transition-colors text-gray-900 dark:text-white max-w-[200px] mr-3 whitespace-nowrap overflow-hidden text-ellipsis ', { 
             'text-lime-600 dark:text-green-500': chat.id === currentChatId,
             'hover:text-lime-600 dark:hover:text-green-500': chat.id !== currentChatId
-        })}>{chat.id}</p>
+        })}><Link href={`/chats/${chat.id}`} key={chat.id}>{chat.title}</Link></p>
             {/**/}
             <Popover className="relative">
             <Popover.Button className="flex font-semibold leading-6 text-gray-900">
@@ -93,7 +93,7 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
                     <div className={cn('block p-2 flex items-center justify-between text-gray-300 cursor-not-allowed', {'text-black hover:text-red-600': isPro})} onClick={() => confirmDelete(chat.id)}>
                         Add to workspace<PlusCircle className='w-4 h-4' />
                     </div>
-                    <div className='block p-2 flex items-center justify-between hover:text-red-600' onClick={() => confirmDelete(chat.id)}>
+                    <div className='cursor-pointer block p-2 flex items-center justify-between hover:text-red-600' onClick={() => confirmDelete(chat.id)}>
                         Delete chat<Trash2 className='w-4 h-4' />
                     </div>
                 </div>
@@ -102,7 +102,7 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
             </Popover>
         </div>
         </li>
-  </Link>
+
   )
 }
 

@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
             .values({
                 id: chatId,
                 userId,
+                title: messages[0].content
             });
         }
         
@@ -62,8 +63,6 @@ export async function POST(req: NextRequest) {
                 content: getContextBlock(context, chatLanguage as LanguageCodes)
             };
         }
-        
-        console.log(messages);
     
         const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
         const response = await openai.createChatCompletion({

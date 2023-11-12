@@ -22,7 +22,7 @@ const BookmarkComponent = ({chat}: Props) => {
     }    
 
     return (
-    <div className={`block p-2 flex items-center transition-colors justify-between ${chat.bookmarked ? 'text-green-600':''} hover:text-green-900`} onClick={() => toggleBookmark(chat)}>
+    <div className={`cursor-pointer block p-2 flex items-center transition-colors justify-between ${chat.bookmarked ? 'text-green-600':''} hover:text-green-900`} onClick={() => toggleBookmark(chat)}>
         {chat.bookmarked ? 'Remove bookmarks' : 'Bookmark'} <Bookmark className='w-4 h-4' />
     </div>
     )

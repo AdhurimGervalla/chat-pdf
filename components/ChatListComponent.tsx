@@ -3,6 +3,9 @@ import { DrizzleChat } from '@/lib/db/schema';
 import React from 'react'
 import ChatSettings from './ChatSettings';
 import ToggleBookmarkedComponent from './ToogleBookmarkedComponent';
+import Link from 'next/link';
+import { PlusCircleIcon } from 'lucide-react';
+import { Button } from './ui/button';
 
 type Props = {
     chats: DrizzleChat[];
@@ -28,7 +31,17 @@ const ChatListComponent = ({chats, chatId, isPro}: Props) => {
 
     return (
         <>
-            <ToggleBookmarkedComponent bookmarked={bookmarked} setBookmarked={setBookmarked} />
+            <div className='grid grid-cols-2 gap-5'>
+                <div>
+                    <Link href='/'>
+                        <Button title='create new chat' className='w-full hover:bg-green-500'>
+                                <PlusCircleIcon className='mr-2 w-4 h-4' />
+                                New chat
+                        </Button>
+                    </Link>
+                </div>
+                <ToggleBookmarkedComponent bookmarked={bookmarked} setBookmarked={setBookmarked} />
+            </div>
             <ul role="list" className="divide-y divide-gray-100 mt-3">
                 {clientChat.length === 0 && <li className='text-center text-slate-500 dark:text-white'>No chats yet</li>}
                 {clientChat.map((chat: DrizzleChat) => {

@@ -11,6 +11,7 @@ import { Message } from 'ai'
 import Select from './Select'
 import { cn, languages } from '@/lib/utils'
 import {useRouter} from 'next/navigation'
+import ChatInputComponent from './ChatInputComponent'
 type Props = {
   chatId: string;
   isPro: boolean;
@@ -66,12 +67,10 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
         {/* chat messages */}
         <div className='max-w-4xl w-full mx-auto'><MessageList messages={messages} /></div>
       
-        <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-[20%] mx-auto mt-auto`)}>
+        <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
           <div className="flex">
-            <Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full border-white' />
-            <Button className='bg-black dark:bg-white ml-2'>
-              {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Send className='h-4 w-4' />}
-            </Button>
+            { /*<Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full border-white' />*/}
+            <ChatInputComponent isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} />
           </div>
         </form>
     </div>
