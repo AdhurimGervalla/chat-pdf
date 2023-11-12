@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         let pageNumbers: number[] = [];
         let prompt = {
             role: "system",
-            content: getContextBlock("NO CONTEXT", chatLanguage as LanguageCodes)
+            content: getContextBlock("", chatLanguage as LanguageCodes)
         };
         // if file is uploaded
         if (fileKey) {
@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
             };
         }
         
+        console.log(messages);
     
         const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
         const response = await openai.createChatCompletion({
