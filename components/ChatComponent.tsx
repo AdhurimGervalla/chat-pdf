@@ -58,18 +58,18 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
   }, [messages]);
 
   return (
-    <div className='overflow-y-scroll mx-auto w-full max-w-4xl h-full bottom-10 flex flex-col' id='message-container'>
+    <div className='overflow-y-scroll  w-full bottom-10 flex flex-col' id='message-container'>
         <div className='sticky top-0 insex-x-0 p-3 h-fit flex'>
             {false && <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />}
         </div>
 
         {/* chat messages */}
-        <MessageList messages={messages} />
+        <div className='max-w-4xl w-full mx-auto'><MessageList messages={messages} /></div>
       
-        <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-4 w-[30%] mx-auto mt-auto`)}>
+        <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-[20%] mx-auto mt-auto`)}>
           <div className="flex">
-            <Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full' />
-            <Button className='bg-black ml-2'>
+            <Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full border-white' />
+            <Button className='bg-black dark:bg-white ml-2'>
               {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Send className='h-4 w-4' />}
             </Button>
           </div>

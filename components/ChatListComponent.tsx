@@ -7,9 +7,10 @@ import ToggleBookmarkedComponent from './ToogleBookmarkedComponent';
 type Props = {
     chats: DrizzleChat[];
     chatId: string;
+    isPro: boolean;
 }
 
-const ChatListComponent = ({chats, chatId}: Props) => {
+const ChatListComponent = ({chats, chatId, isPro}: Props) => {
     const [bookmarked, setBookmarked] = React.useState(false);
     const [clientChat, setClientChat] = React.useState<DrizzleChat[]>(chats);
 
@@ -31,7 +32,7 @@ const ChatListComponent = ({chats, chatId}: Props) => {
             <ul role="list" className="divide-y divide-gray-100 mt-3">
                 {clientChat.length === 0 && <li className='text-center text-slate-500 dark:text-white'>No chats yet</li>}
                 {clientChat.map((chat: DrizzleChat) => {
-                    return <ChatSettings chat={chat} key={chat.id} currentChatId={chatId} />
+                    return <ChatSettings chat={chat} key={chat.id} currentChatId={chatId} isPro={isPro} />
                 })}
             </ul>
         </>

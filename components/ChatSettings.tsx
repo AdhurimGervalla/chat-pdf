@@ -6,7 +6,7 @@ import React from 'react'
 import { Fragment } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid' 
-import { Bookmark, Trash2 } from 'lucide-react';
+import { Bookmark, PlusCircle, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -15,9 +15,10 @@ import BookmarkComponent from './BookmarkComponent';
 type Props = {
     chat: DrizzleChat;
     currentChatId?: string;
+    isPro: boolean;
 }
 
-const ChatSettings = ({chat, currentChatId}: Props) => {
+const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
     const router = useRouter();
     const deleteChat = async (chatId: string) => {
         try {
@@ -89,6 +90,9 @@ const ChatSettings = ({chat, currentChatId}: Props) => {
                 <Popover.Panel className="absolute left-1/2 z-10 mt-2 flex w-screen max-w-min -translate-x-1/2 px-4">
                 <div className="w-40 shrink rounded-xl bg-white px-3 py-1 text-sm font-semibold leading-6 text-gray-900 shadow-lg ring-1 ring-gray-900/5">
                     <BookmarkComponent chat={chat} />
+                    <div className={cn('block p-2 flex items-center justify-between text-gray-300 cursor-not-allowed', {'text-black hover:text-red-600': isPro})} onClick={() => confirmDelete(chat.id)}>
+                        Add to workspace<PlusCircle className='w-4 h-4' />
+                    </div>
                     <div className='block p-2 flex items-center justify-between hover:text-red-600' onClick={() => confirmDelete(chat.id)}>
                         Delete chat<Trash2 className='w-4 h-4' />
                     </div>
