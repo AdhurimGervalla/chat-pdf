@@ -2,13 +2,11 @@ import { UserButton, auth } from '@clerk/nextjs'
 import { checkSubscription } from '@/lib/subscription';
 import { getFirstChat } from '@/lib/db/index';
 import { v4 } from "uuid";
-import { redirect } from 'next/navigation'
 import ChatePageComponent from '@/components/ChatePageComponent';
 import LoginPage from '@/components/LoginPage';
 
 export default async function Home() {
   const {userId} = await auth();
-
 
   let chatId;
   if (userId) {
