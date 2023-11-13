@@ -88,3 +88,7 @@
 .message-item * + * {
   @apply mt-2;
 }
+
+pre {
+  @apply overflow-x-auto;
+}

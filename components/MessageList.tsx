@@ -25,8 +25,8 @@ const MessageList = ({messages}: Props) => {
     <div className='flex flex-col gap-3'>
         {messages.map(message => {
             return (
-                <div key={message.id} className={cn('message-item flex text-lg leading-7', {'text-xl font-bold [&:not(:first-child)]:mt-10': message.role === 'user'})}>
-                    <div className={cn('flex flex-col')}>
+                <div key={message.id} className={cn('message-item flex text-lg leading-7', {'text-xl font-bold dark:text-green-500 [&:not(:first-child)]:mt-10': message.role === 'user'})}>
+                    <div className={cn('flex flex-col w-full')}>
                       <p>
                         <Markdown
                           components={{
