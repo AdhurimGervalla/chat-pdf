@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
             };
         }
     
-        const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
+        //const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
+        const model = 'gpt-4';
         const response = await openai.createChatCompletion({
             model,
             messages: [
