@@ -40,8 +40,12 @@ export const usersSubscriptions = pgTable('users_subscriptions', {
 export const workspaces = pgTable('workspaces', {
     id: serial('id').primaryKey(),
     name: varchar('name', {length: 256}).notNull(),
-    createdAt: timestamp('createdAt').notNull().defaultNow()
+    createdAt: timestamp('createdAt').notNull().defaultNow(),
+    identifier: varchar('identifier', {length: 256}).notNull().unique(),
+    isPublic: boolean('is_public').notNull().default(false),
 });
+
+export type DrizzleWorkspace = typeof workspaces.$inferSelect;
 
 export const users = pgTable('users', {
     userId: varchar('user_id', {length: 255}).notNull().unique(),

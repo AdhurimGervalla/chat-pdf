@@ -2,9 +2,10 @@ import React from 'react'
 import ChatSideBar from './ChatSideBar';
 import ChatComponent from './ChatComponent';
 import { checkSubscription } from '@/lib/subscription';
-import { DrizzleChat, chats } from '@/lib/db/schema';
+import { DrizzleWorkspace, workspaces as workspacesSchema } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
+import Workspaces from './Workspaces';
 
 type Props = {
     userId: string;
@@ -15,6 +16,7 @@ type Props = {
 const ChatePageComponent = async ({userId, chatId, isNewChat = false}: Props) => {
     const isPro = await checkSubscription();
 
+    const workspaces: DrizzleWorkspace[] = await db.select().from(workspacesSchema)
     return (
     <>
         <div className='flex max-h-screen overflow-scroll'>
@@ -28,7 +30,11 @@ const ChatePageComponent = async ({userId, chatId, isNewChat = false}: Props) =>
                     <PDFViewer pdf_url={currentChat?.pdfUrl || ""} />
                 </div>*/}
                 {/* chat component */}
-                <ChatComponent chatId={chatId} isPro={isPro} isNewChat={isNewChat} />
+                <div className='w-full flex flex-col relative'>
+                    {isNewChat && <Workspaces workspaces={workspaces} />}
+                    <ChatComponent chatId={chatId} isPro={isPro} isNewChat={isNewChat} />
+                </div>
+
             </div>
         </div>
     </>

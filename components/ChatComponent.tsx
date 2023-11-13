@@ -41,10 +41,10 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
     body: { chatId, chatLanguage },
     initialMessages: data,
     onFinish: (res) => {
-        if (isNewChat) {
-          router.refresh();
-          router.replace(`/chats/${chatId}`);
-        }
+      if (isNewChat) {
+        router.refresh();
+        router.replace(`/chats/${chatId}`);
+      }
     }
   }); // cool
 
@@ -59,7 +59,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
   }, [messages]);
 
   return (
-    <div className='overflow-y-scroll  w-full bottom-10 flex flex-col' id='message-container'>
+    <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
         <div className='sticky top-0 insex-x-0 p-3 h-fit flex'>
             {false && <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />}
         </div>
@@ -74,6 +74,8 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
           </div>
         </form>
     </div>
+
+
   )
 }
 
