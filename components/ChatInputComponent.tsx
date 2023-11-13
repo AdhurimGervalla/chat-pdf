@@ -1,25 +1,11 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import { UserButton } from '@clerk/nextjs'
 import {
   PaperClipIcon,
 } from '@heroicons/react/20/solid'
-import { Loader2 } from 'lucide-react'
+import { Loader2, SendIcon } from 'lucide-react'
 
 
-export default function ChatInputComponent({onChange, placeholder, isLoading, value, isPro}:{onChange: any, placeholder: string, isLoading: boolean, value: string, isPro: boolean}) {
+export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, isPro}:{stopCb: any, onChange: any, placeholder: string, isLoading: boolean, value: string, isPro: boolean}) {
 
   return (
     <div className="flex items-start space-x-4 w-full ">
@@ -64,9 +50,14 @@ export default function ChatInputComponent({onChange, placeholder, isLoading, va
             </div>
             <div className="flex-shrink-0">
               <button
+                onClick={() => {
+                  if (isLoading) {
+                    stopCb();
+                  }
+                }} 
                 className="inline-flex items-center rounded-md bg-green-500  hover:bg-green-600 dark:hover:bg-green-600 transition-all px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
               >
-                {isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : 'Send'}
+                {isLoading ? <><Loader2 className='w-4 h-4 animate-spin mr-1' /> <span>Stop</span></> : <><SendIcon className='w-4 h-4 mr-1' /><span>Send</span></>}
               </button>
             </div>
           </div>

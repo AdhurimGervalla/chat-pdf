@@ -35,7 +35,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
     refetchInterval: 0,
   });
 
-  const { input, handleInputChange, handleSubmit, messages, isLoading} = useChat({
+  const { input, handleInputChange, handleSubmit, messages, isLoading, stop} = useChat({
     id: chatId,
     api: '/api/chat',
     body: { chatId, chatLanguage },
@@ -70,7 +70,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
         <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
           <div className="flex">
             { /*<Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full border-white' />*/}
-            <ChatInputComponent isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} />
+            <ChatInputComponent stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} />
           </div>
         </form>
     </div>

@@ -157,7 +157,16 @@ const translations: TranslationsType = {
  */
 const getContextBlock = (context: string, lang: LanguageCodes = 'en') => {
     const t = translations[lang] || translations.en; // Fallback to English if the language is not found
-  
+    
+    if (context === "") return `${t.intro}
+        ${t.traits}
+        ${t.behavior}
+        ${t.demeanor}
+        ${t.knowledge}
+        ${t.nonApology}
+        ${t.invention}
+        `;
+    
     return `${t.intro}
       ${t.traits}
       ${t.behavior}
