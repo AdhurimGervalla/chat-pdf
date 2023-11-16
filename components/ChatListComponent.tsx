@@ -26,7 +26,7 @@ const ChatListComponent = ({chats, chatId, isPro}: Props) => {
         } else {
             setClientChat(chats);
         }
- 
+        
     }, [bookmarked, chats]);
 
     return (

@@ -5,6 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import Providers from '@/components/Providers'
 import {Toaster} from 'react-hot-toast';
 import { GeistSans, GeistMono } from 'geist/font'
+import WorkspaceContextProvider from '@/context/WorkspaceContextProvider';
 
 
 export const metadata: Metadata = {
@@ -20,15 +21,17 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <Providers>
-        <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} dark`}>
-          <body className='dark:bg-black dark:text-white'>
-            {children}
-            <Toaster position='top-center' reverseOrder={false} />
-            <Analytics />
-          </body>
-        </html>
-      </Providers>
+      <WorkspaceContextProvider>
+        <Providers>
+          <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} dark`}>
+            <body className='dark:bg-black dark:text-white'>
+              {children}
+              <Toaster position='top-center' reverseOrder={false} />
+              <Analytics />
+            </body>
+          </html>
+        </Providers>
+      </WorkspaceContextProvider>
     </ClerkProvider>
   )
 }

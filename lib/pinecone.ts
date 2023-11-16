@@ -49,7 +49,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
     // 4. upload the vectors to pinecone
     const client = await getPineconeClient();
-    const pineconeIndex = await client.index('chat-pdf');
+    const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
 
     const namespace = pineconeIndex.namespace(convertStringToASCII(fileKey))
     await namespace.upsert(vectors);
@@ -65,7 +65,7 @@ export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace
     const vectors = await embedMessages(messages);
     console.log('vectors', vectors);
     const client = await getPineconeClient();
-    const pineconeIndex = await client.index('chat-pdf');
+    const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
     console.log('namespace', namespace);
     const ns = pineconeIndex.namespace(namespace)
     try {

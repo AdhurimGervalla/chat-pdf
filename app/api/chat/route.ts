@@ -65,14 +65,12 @@ export async function POST(req: NextRequest) {
             role: "system",
             content: getContextBlock("", chatLanguage as LanguageCodes)
         };
-        console.log(currentWorkspace);
+
         // if file is uploaded
         if (currentWorkspace) {
             const {userId} = await auth();
             if (userId) {
-                console.log('getNamespaceForWorkspace(currentWorkspace.id, userId)', getNamespaceForWorkspace(currentWorkspace.identifier, userId));
                 const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
-                console.log(contextMetadata);
                 const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
                 pageNumbers = contextMetadata.map(item => item.pageNumber);
                 // check if chatLanguage is type of LanguageCodes
