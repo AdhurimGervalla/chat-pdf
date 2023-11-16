@@ -58,15 +58,9 @@ export async function loadS3IntoPinecone(fileKey: string) {
 }
 
 export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string) {
-
-    // prepare messages for embedding
-
-
     const vectors = await embedMessages(messages);
-    console.log('vectors', vectors);
     const client = await getPineconeClient();
     const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
-    console.log('namespace', namespace);
     const ns = pineconeIndex.namespace(namespace)
     try {
         await ns.upsert(vectors);
@@ -133,7 +127,7 @@ async function prepareDocuments(page: PDFPage) {
             pageContent,
             metadata: {
                 pageNumber: metadata.loc.pageNumber,
-                text: truncateStringByBytes(pageContent, 36000)
+                text: truncateStringByBytes(pageContent, 36000) // 36k bytes are 12k characters
             }
         })
     ]);

@@ -26,9 +26,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({'error': 'messages or chatId not provided'}, {status: 400})
         }
         const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
+        const {userId} = await auth();
         if (_chats.length === 0) {
             // chat doesn't exist
-            const {userId} = await auth();
+            
             if (userId === null) {
                 // Fügen Sie hier Ihren Code ein, um mit dem Fall umzugehen, dass userId null ist
                 return NextResponse.json({error: "unauthorized"}, {status: 401});
@@ -68,7 +69,6 @@ export async function POST(req: NextRequest) {
 
         // if file is uploaded
         if (currentWorkspace) {
-            const {userId} = await auth();
             if (userId) {
                 const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
                 const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
@@ -81,7 +81,8 @@ export async function POST(req: NextRequest) {
             }
         }
     
-        const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';
+        const model = isPro || userId === 'user_2Y05V0SAZMX7yxWRHFCiwMxCGog' ? 'gpt-4' : 'gpt-3.5-turbo';
+        console.log(model);
         const response = await openai.createChatCompletion({
             model,
             messages: [

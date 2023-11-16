@@ -81,18 +81,20 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
 
         {/* chat messages */}
         <div className='max-w-4xl w-full mx-auto relative'>
-          {!isNewChat && <div className='absolute -left-10 top-[6px] -translate-x-[100%]'>
-            <div className='flex flex-col gap-3 mb-3'>
-              <Button onClick={() => toggleWorkspaceModeHandler(!toggleWorkspaceMode)} title='Add to workspace'><PlusCircle className='w-4 h-4' /></Button>
-            </div>
-            <div className='flex flex-col gap-3'>
-              <Button onClick={() => setChoosingWorkspace(!choosingWorkspace)} title='Filter Workspace'><FilterIcon className='w-4 h-4' /></Button>
+          {!isNewChat && <div className='sticky w-min top-5 -ml-[20px]'>
+            <div className='absolute -translate-x-[100%] top-[7px]'>
+              <div className='flex flex-col gap-3 mb-3'>
+                <Button className='bg-yellow-500' onClick={() => toggleWorkspaceModeHandler(!toggleWorkspaceMode)} title='Add to workspace'><PlusCircle className='w-4 h-4' /></Button>
+              </div>
+              <div className='flex flex-col gap-3'>
+                <Button onClick={() => setChoosingWorkspace(!choosingWorkspace)} title='Filter Workspace'><FilterIcon className='w-4 h-4' /></Button>
+              </div>
             </div>
           </div>}
 
           {/* chat header */}
           {chat && <h1 className='text-4xl mb-7'>{chat.title}</h1>}
-          {!toggleWorkspaceMode && <MessageList messages={messages} />}
+          {!toggleWorkspaceMode && !choosingWorkspace && <MessageList messages={messages} />}
         </div>
         {(toggleWorkspaceMode || isNewChat || choosingWorkspace) && <Workspaces workspaces={workspaces} setToggleWorkspaceMode={setToggleWorkspaceMode} creatingWorkspace={!isNewChat && !choosingWorkspace} chatId={chatId} chat={chat} />}
         <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
