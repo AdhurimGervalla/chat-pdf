@@ -63,7 +63,6 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
           // Set other toast options if needed
         });
       };
-    
   return (
     
         <li className="flex py-2">
@@ -90,9 +89,6 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
                 <Popover.Panel className="absolute left-1/2 z-10 mt-2 flex w-screen max-w-min -translate-x-1/2 px-4">
                 <div className="w-40 shrink rounded-xl bg-white px-3 py-1 text-sm font-semibold leading-6 text-gray-900 shadow-lg ring-1 ring-gray-900/5">
                     <BookmarkComponent chat={chat} />
-                    <div className={cn('block p-2 flex items-center justify-between text-gray-300 cursor-not-allowed', {'text-black hover:text-red-600': isPro})} onClick={() => confirmDelete(chat.id)}>
-                        Add to workspace<PlusCircle className='w-4 h-4' />
-                    </div>
                     <div className='cursor-pointer block p-2 flex items-center justify-between hover:text-red-600' onClick={() => confirmDelete(chat.id)}>
                         Delete chat<Trash2 className='w-4 h-4' />
                     </div>

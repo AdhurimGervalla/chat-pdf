@@ -34,7 +34,7 @@ const ChatListComponent = ({chats, chatId, isPro}: Props) => {
             <div className='grid grid-cols-2 gap-5'>
                 <div>
                     <Link href='/'>
-                        <Button title='create new chat' className='w-full hover:bg-green-500'>
+                        <Button title='create new chat' className='w-full'>
                                 <PlusCircleIcon className='mr-2 w-4 h-4' />
                                 New chat
                         </Button>

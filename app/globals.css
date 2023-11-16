@@ -92,3 +92,7 @@
 pre {
   @apply overflow-x-auto;
 }
+
+.bg-primary {
+  @apply bg-green-500;
+}

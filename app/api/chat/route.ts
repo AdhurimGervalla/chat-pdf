@@ -7,8 +7,8 @@ import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { Message } from 'ai/react';
 import { checkSubscription } from '@/lib/subscription';
-import { languages } from '@/lib/utils';
-import { auth } from '@clerk/nextjs';
+import { getNamespaceForWorkspace, languages } from '@/lib/utils';
+import { auth } from '@clerk/nextjs/server';
 
 export const runtime = 'edge';
 
@@ -21,7 +21,7 @@ const openai = new OpenAIApi(config);
 
 export async function POST(req: NextRequest) {
     try {
-        let {messages, chatId, chatLanguage} = await req.json();
+        let {messages, chatId, chatLanguage, currentWorkspace} = await req.json();
         if (!chatId) {
             return NextResponse.json({'error': 'messages or chatId not provided'}, {status: 400})
         }
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
             const {choices} = await completion.json();
             // remove "" from title
             const title = choices[0].message.content.replace(/"/g, "");
-        
+            console.log(title);
             await db
             .insert(chats)
             .values({
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
                 title: title,
             });
         }
-        
+
         const isPro = await checkSubscription();
         const fileKey = _chats[0]?.fileKey;
         const lastMessage = messages[messages.length - 1];
@@ -65,16 +65,22 @@ export async function POST(req: NextRequest) {
             role: "system",
             content: getContextBlock("", chatLanguage as LanguageCodes)
         };
+        console.log(currentWorkspace);
         // if file is uploaded
-        if (fileKey) {
-            const contextMetadata = await getContext(lastMessage.content, fileKey);
-            const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
-            pageNumbers = contextMetadata.map(item => item.pageNumber);
-            // check if chatLanguage is type of LanguageCodes
-            prompt = {
-                role: "system",
-                content: getContextBlock(context, chatLanguage as LanguageCodes)
-            };
+        if (currentWorkspace) {
+            const {userId} = await auth();
+            if (userId) {
+                console.log('getNamespaceForWorkspace(currentWorkspace.id, userId)', getNamespaceForWorkspace(currentWorkspace.identifier, userId));
+                const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
+                console.log(contextMetadata);
+                const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
+                pageNumbers = contextMetadata.map(item => item.pageNumber);
+                // check if chatLanguage is type of LanguageCodes
+                prompt = {
+                    role: "system",
+                    content: getContextBlock(context, chatLanguage as LanguageCodes)
+                };
+            }
         }
     
         const model = isPro ? 'gpt-4' : 'gpt-3.5-turbo';

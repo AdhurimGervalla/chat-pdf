@@ -8,7 +8,8 @@ export default {
     schema: './lib/db/schema.ts',
     dbCredentials: {
         connectionString: process.env.DATABASE_URL!,
-    }
+    },
+    out: "./drizzle",
 } satisfies Config;
 
 // npx drizzle-kit push:pg

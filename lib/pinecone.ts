@@ -5,6 +5,7 @@ import {Document, RecursiveCharacterTextSplitter} from '@pinecone-database/doc-s
 import { getEmbeddings } from './embeddings';
 import md5 from 'md5';
 import { convertStringToASCII } from './utils';
+import { DrizzleMessage } from './db/schema';
 
 export const getPineconeClient = () => {
     return new Pinecone({
@@ -56,6 +57,24 @@ export async function loadS3IntoPinecone(fileKey: string) {
     return docs[0];
 }
 
+export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string) {
+
+    // prepare messages for embedding
+
+
+    const vectors = await embedMessages(messages);
+    console.log('vectors', vectors);
+    const client = await getPineconeClient();
+    const pineconeIndex = await client.index('chat-pdf');
+    console.log('namespace', namespace);
+    const ns = pineconeIndex.namespace(namespace)
+    try {
+        await ns.upsert(vectors);
+    } catch (error) {
+        console.log('error upserting message', error);
+    }
+}
+
 async function embedDocuments(doc: Document): Promise<PineconeRecord> {
     try {
         const embeddings = await getEmbeddings(doc.pageContent);
@@ -71,6 +90,28 @@ async function embedDocuments(doc: Document): Promise<PineconeRecord> {
         } as PineconeRecord;
     } catch (error) {
         console.log('error embedDocuments', error);
+        throw error;
+    }
+}
+
+async function embedMessages(messages: DrizzleMessage[]): Promise<PineconeRecord[]> {
+    try {
+        const embeddings = await Promise.all(
+            messages.map(message => getEmbeddings(message.content))
+        );
+        const hashes = messages.map(message => md5(message.content));
+
+        return hashes.map((hash, index) => {
+            return {
+                id: hash,
+                values: embeddings[index],
+                metadata: {
+                    text: messages[index].content
+                }
+            } as PineconeRecord;
+        });
+    } catch (error) {
+        console.log('error embedMessages', error);
         throw error;
     }
 }

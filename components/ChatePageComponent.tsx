@@ -2,7 +2,7 @@ import React from 'react'
 import ChatSideBar from './ChatSideBar';
 import ChatComponent from './ChatComponent';
 import { checkSubscription } from '@/lib/subscription';
-import { DrizzleWorkspace, workspaces as workspacesSchema } from '@/lib/db/schema';
+import { DrizzleChat, DrizzleWorkspace, chats, workspaces, workspaces as workspacesSchema } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import Workspaces from './Workspaces';
@@ -16,14 +16,22 @@ type Props = {
 const ChatePageComponent = async ({userId, chatId, isNewChat = false}: Props) => {
     const isPro = await checkSubscription();
 
-    const workspaces: DrizzleWorkspace[] = await db.select().from(workspacesSchema)
+    const workspaces: DrizzleWorkspace[] = await db.select().from(workspacesSchema).where(eq(workspacesSchema.owner, userId));
+    
+    const _chats: DrizzleChat[] = await db.select().from(chats).orderBy((desc(chats.createdAt))).where(eq(chats.userId, userId));
+
+    let currentChat;
+    if (!isNewChat) {
+        currentChat = _chats.find((chat) => chat.id === chatId);
+    }
+
     return (
     <>
         <div className='flex max-h-screen overflow-scroll'>
             <div className='flex w-full max-h-screen overflow-scroll'>
                 {/* chat sidebar */}
                 <div className='w-full max-w-xs'>
-                    <ChatSideBar chatId={chatId} userId={userId} isPro={isPro} />
+                    <ChatSideBar chatId={chatId} chats={_chats} userId={userId} isPro={isPro} />
                 </div>
                 {/* chat viewer 
                 <div className='max-h-screen p-4 overflow-scroll flex-[5]'>
@@ -31,8 +39,7 @@ const ChatePageComponent = async ({userId, chatId, isNewChat = false}: Props) =>
                 </div>*/}
                 {/* chat component */}
                 <div className='w-full flex flex-col relative'>
-                    {isNewChat && <Workspaces workspaces={workspaces} />}
-                    <ChatComponent chatId={chatId} isPro={isPro} isNewChat={isNewChat} />
+                    <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} isNewChat={isNewChat} workspaces={workspaces} />
                 </div>
 
             </div>
