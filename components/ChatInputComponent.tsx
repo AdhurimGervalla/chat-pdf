@@ -1,10 +1,9 @@
+import React from 'react'
 import { UserButton } from '@clerk/nextjs'
-import {
-  PaperClipIcon,
-} from '@heroicons/react/20/solid'
-import axios from 'axios';
-import { Loader2, PlusCircle, SendIcon } from 'lucide-react'
+import { Loader2, SendIcon } from 'lucide-react'
 import { Button } from './ui/button'
+import Select from './Select';
+import { DrizzleWorkspace } from '@/lib/db/schema';
 type Props = {
   stopCb: any;
   onChange: any;
@@ -12,19 +11,10 @@ type Props = {
   isLoading: boolean;
   value: string;
   isPro: boolean;
+  workspaces: DrizzleWorkspace[];
 }
 
-export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, isPro}: Props) {
-
-  const addToWorkspace = async (chatId: string) => {
-    try {
-      await axios.post(`/api/add-to-workspace`, {
-        chatId
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, isPro, workspaces}: Props) {
 
   return (
     <div className="flex items-start space-x-4 w-full ">
@@ -57,6 +47,9 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
               <div className="flex items-center">
                 <p className='flex text-xs text-center'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
               </div>
+            </div>
+            <div>
+              <Select workspaces={workspaces} />
             </div>
             <div className="flex-shrink-0">
               <Button onClick={() => {

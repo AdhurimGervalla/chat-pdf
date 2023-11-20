@@ -1,31 +1,55 @@
 import React from 'react'
+import { WorkspaceContext } from '@/context/WorkspaceContext'
+import { DrizzleWorkspace } from '@/lib/db/schema'
 
 type Props = {
-    options: string[];
-    label?: string;
-    className?: string;
-    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    workspaces: DrizzleWorkspace[];
+    theme?: 'light' | 'dark';
 }
 
-const Select = ({options, label, className, onChange}: Props) => {
+const Select = ({workspaces, theme = 'dark'}: Props) => {
+  const {workspace, setWorkspace} = React.useContext(WorkspaceContext);
+  const [selected, setSelected] = React.useState(workspace?.id.toString() || "");
+
+  const onWorkspaceChangeHandler = (id: any) => {
+    const ws = workspaces.find(el => el.id === parseInt(id));
+    if (ws) {
+      setWorkspace(ws);
+    } else {
+      setWorkspace(null);
+    }
+    
+  }
+
+  const handleChange = (event:any) => {
+    onWorkspaceChangeHandler(event.target.value);
+  };
+
+  const themeClasses = {
+    light: 'bg-white dark:bg-black text-gray-900 dark:text-gray-100',
+    dark: 'bg-transparent text-white'
+  }
+
+  React.useEffect(() => {
+    setSelected(workspace?.id.toString() || "");
+  }, [workspace]);
+
   return (
-    <div className={`${className}`}>
-        {label && (
-            <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900 mb-2">
-                {label}
-            </label>
-        )}
-      <select
+    <div>
+      {<select
+        value={selected}
         id="location"
         name="location"
-        className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        defaultValue="Canada"
-        onChange={onChange}
+        className={"block w-full rounded-md border-0 py-1.5 pl-3 pr-10 sm:text-sm sm:leading-6" + " " +themeClasses[theme]}
+        onChange={handleChange}
       >
-        {options.map((option, index) => (
-            <option key={index}>{option}</option>
+        <option value="0">no workspace selected</option>
+        {workspaces.map((ws) => (
+          <option key={ws.id} value={ws.id}>
+            {ws.name}
+          </option>
         ))}
-      </select>
+      </select>}
     </div>
   )
 }

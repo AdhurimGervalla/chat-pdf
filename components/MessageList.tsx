@@ -6,7 +6,6 @@ import {dracula} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Message } from 'ai/react'
 import { DeleteIcon } from 'lucide-react'
 import axios from 'axios'
-import { DrizzleMessage } from '@/lib/db/schema'
 
 type Props = {
     messages: Message[];
@@ -28,7 +27,6 @@ const MessageList = ({messages, setTriggerRefetch, isLoading = false}: Props) =>
 
     const deleteMessage = async (message: Message) => {
       try {
-        console.log('deleting', message);
         await axios.post('/api/delete-message', { message: message });
         setTriggerRefetch(true);
       } catch (e) {
@@ -40,7 +38,7 @@ const MessageList = ({messages, setTriggerRefetch, isLoading = false}: Props) =>
     <div className='flex flex-col gap-3'>
         {messages.map((message, index) => {
             return (
-                <div key={message.id} className={cn('message-item flex text-lg leading-7 content-center', {'text-xl font-bold dark:text-green-500 mt-10 first:mt-0': message.role === 'user'})}>
+                <div key={message.id} className={cn('message-item flex text-lg leading-7 content-center', {'text-xl font-bold dark:text-green-500 mt-10 first:mt-0': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
                     <div className={cn('flex flex-col w-full')}>
                       <p>
                         <Markdown

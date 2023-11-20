@@ -85,7 +85,7 @@
   @apply pl-7;
 }
 
-.message-item * + * {
+.message-item.assistant * + * {
   @apply mt-2;
 }
 
