@@ -2,7 +2,7 @@ import React from 'react'
 import ChatSideBar from './ChatSideBar';
 import ChatComponent from './ChatComponent';
 import { checkSubscription } from '@/lib/subscription';
-import { DrizzleChat, DrizzleWorkspace, chats, workspaces, workspaces as workspacesSchema } from '@/lib/db/schema';
+import { DrizzleChat, DrizzleWorkspace, chats, messages as _messages, workspaces, workspaces as workspacesSchema, DrizzleMessage } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import Workspaces from './Workspaces';

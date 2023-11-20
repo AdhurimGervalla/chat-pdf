@@ -19,12 +19,13 @@ export const chats = pgTable('chats', {
 export type DrizzleChat = typeof chats.$inferSelect;
 
 export const messages = pgTable('messages', {
-    id: serial('id').primaryKey(),
+    id: varchar('id', {length: 256}).primaryKey(),
     chatId: varchar('chat_id', {length: 256}).references(() => chats.id), // foreign key
     content: text('content').notNull(),
     createdAt: timestamp('createdAt').notNull().defaultNow(),
     role: userSystemEnum('role').notNull(),
-    pageNumbers: text('pagenumbers') // json string of page numbers
+    originId: varchar('origin_id', {length: 256}),
+    pageNumbers: text('pagenumbers'), // json string of page numbers
 })
 
 export type DrizzleMessage = typeof messages.$inferSelect;

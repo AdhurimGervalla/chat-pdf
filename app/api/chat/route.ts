@@ -9,6 +9,7 @@ import { Message } from 'ai/react';
 import { checkSubscription } from '@/lib/subscription';
 import { getNamespaceForWorkspace, languages } from '@/lib/utils';
 import { auth } from '@clerk/nextjs/server';
+import { v4 } from "uuid";
 
 export const runtime = 'edge';
 
@@ -22,6 +23,7 @@ const openai = new OpenAIApi(config);
 export async function POST(req: NextRequest) {
     try {
         let {messages, chatId, chatLanguage, currentWorkspace} = await req.json();
+
         if (!chatId) {
             return NextResponse.json({'error': 'messages or chatId not provided'}, {status: 400})
         }
@@ -47,7 +49,6 @@ export async function POST(req: NextRequest) {
             const {choices} = await completion.json();
             // remove "" from title
             const title = choices[0].message.content.replace(/"/g, "");
-            console.log(title);
             await db
             .insert(chats)
             .values({
@@ -81,20 +82,23 @@ export async function POST(req: NextRequest) {
             }
         }
     
-        const model = isPro || userId === 'user_2Y05V0SAZMX7yxWRHFCiwMxCGog' ? 'gpt-4' : 'gpt-3.5-turbo';
-        console.log(model);
+        const model = isPro || userId === 'user_2Y05V0SAZMX7yxWRHFCiwMxCGog' ? 'gpt-3.5-turbo' : 'gpt-3.5-turbo';
         const response = await openai.createChatCompletion({
             model,
             messages: [
-                prompt, ...messages.filter((message: Message) => message.role === 'user')
+                //prompt, ...messages.filter((message: Message) => message.role === 'user')
+                prompt, ...messages // all previous messages should be added to the prompt for better results
             ],
             stream: true,
         });
+
+        const originId = v4();
 
         const stream = OpenAIStream(response, {
             onStart: async () => {
                 // save usermessage to db
                 await db.insert(_messages).values({
+                    id: originId,
                     chatId,
                     content: lastMessage.content,
                     role: 'user'
@@ -102,19 +106,21 @@ export async function POST(req: NextRequest) {
 
             },
             onCompletion: async (completion) => {
+                const id = v4();
                 // save ai message to db
                 await db.insert(_messages).values({
+                    id,
                     chatId,
                     content: completion,
-                    role: 'system',
-                    pageNumbers: JSON.stringify(pageNumbers)
-                })
+                    role: 'system', // todo: check if this is correct. should be system or assistant?
+                    pageNumbers: JSON.stringify(pageNumbers),
+                    originId: originId
+                });
             }
         });
 
         return new StreamingTextResponse(stream);
     } catch (error) {
-        console.log(error);
         return NextResponse.json({'error': 'something went wrong'}, {status: 500})
     }
 }

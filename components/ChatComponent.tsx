@@ -11,9 +11,11 @@ import Select from './Select'
 import { cn, languages } from '@/lib/utils'
 import {useRouter} from 'next/navigation'
 import ChatInputComponent from './ChatInputComponent'
-import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
+import { DrizzleChat, DrizzleMessage, DrizzleWorkspace } from '@/lib/db/schema'
 import Workspaces from './Workspaces'
 import { WorkspaceContext } from '@/context/WorkspaceContext'
+import { revalidatePath } from 'next/cache'
+import { set } from 'react-hook-form'
 
 type Props = {
   chatId: string;
@@ -23,40 +25,37 @@ type Props = {
   chat?: DrizzleChat;
 }
 
-export interface ExtendedMessage extends Message {
-  pageNumbers: number[]
-}
-
 const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
   const [toggleWorkspaceMode, setToggleWorkspaceMode] = React.useState<boolean>(false);
   const [choosingWorkspace, setChoosingWorkspace] = React.useState<boolean>(false);
+  const [triggerRefetch, setTriggerRefetch] = React.useState<boolean>(false);
   const {workspace} = React.useContext(WorkspaceContext);
   const router = useRouter();
 
-  const {data} = useQuery({
+  const {data, refetch} = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
       const res = await axios.post('/api/get-messages', { chatId });
       return res.data;
     },
-    refetchInterval: 0,
+    //refetchInterval: 0,
   });
 
-  const { input, handleInputChange, handleSubmit, messages, isLoading, stop} = useChat({
+  const { input, handleInputChange, handleSubmit, messages, isLoading, stop, setMessages} = useChat({
     id: chatId,
     api: '/api/chat',
-    body: { chatId, chatLanguage, currentWorkspace: workspace },
+    body: { chatId, chatLanguage, currentWorkspace: workspace},
     initialMessages: data,
     onResponse: (res) => {
       if (isNewChat) {
         router.replace(`/chats/${chatId}`);
       }
     },
-    onFinish: () => {
-      router.refresh();
+    onFinish: async (message) => {
+      await refetch();
     }
-  }); // cool
+  });
 
   const toggleWorkspaceModeHandler = async (mode: boolean) => {
     setToggleWorkspaceMode(mode);
@@ -71,6 +70,18 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
       })
     }
   }, [messages]);
+
+  React.useEffect(() => {
+    console.log('data', data);
+    setMessages(data);
+  }, [data]);
+
+  React.useEffect(() => {
+    if (triggerRefetch) {
+      refetch();
+      setTriggerRefetch(false);
+    }
+  }, [triggerRefetch]);
 
   return (
     <>
@@ -94,7 +105,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
 
           {/* chat header */}
           {chat && <h1 className='text-4xl mb-7'>{chat.title}</h1>}
-          {!toggleWorkspaceMode && !choosingWorkspace && <MessageList messages={messages} />}
+          {!toggleWorkspaceMode && !choosingWorkspace && <MessageList messages={messages} setTriggerRefetch={setTriggerRefetch} isLoading={isLoading} />}
         </div>
         {(toggleWorkspaceMode || isNewChat || choosingWorkspace) && <Workspaces workspaces={workspaces} setToggleWorkspaceMode={setToggleWorkspaceMode} creatingWorkspace={!isNewChat && !choosingWorkspace} chatId={chatId} chat={chat} />}
         <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>

@@ -96,3 +96,7 @@ pre {
 .bg-primary {
   @apply bg-green-500;
 }
+
+.message-item:last-child .delete-icon {
+  display: none;
+} 
