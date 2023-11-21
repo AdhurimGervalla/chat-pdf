@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
             .values({
                 id: chatId,
                 userId,
-                title: title,
+                // title should not be longer then 40 characters
+                title: title.substring(0, 255),
             });
         }
 

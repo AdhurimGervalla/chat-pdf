@@ -7,7 +7,7 @@ import MessageList from './MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { cn, languages } from '@/lib/utils'
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import ChatInputComponent from './ChatInputComponent'
 import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
 import { WorkspaceContext } from '@/context/WorkspaceContext'
@@ -75,6 +75,12 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
     }
   }, [triggerRefetch]);
 
+  const getTitle = () => {
+    if (chat) return chat.title;
+    if (isLoading) return 'generating ...';
+    return '';
+  }
+
   return (
     <>
         <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
@@ -89,7 +95,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
             </div>}
 
             {/* chat header */}
-            {chat && <h1 className='text-4xl my-7'>{chat.title}</h1>}
+
             {!toggleWorkspaceMode && <MessageList messages={messages} setTriggerRefetch={setTriggerRefetch} isLoading={isLoading} />}
           </div>
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
