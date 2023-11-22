@@ -11,16 +11,16 @@ import { useRouter } from 'next/navigation'
 import ChatInputComponent from './ChatInputComponent'
 import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
 import { WorkspaceContext } from '@/context/WorkspaceContext'
+import { revalidatePath } from 'next/cache'
 
 type Props = {
   chatId: string;
   isPro: boolean;
-  isNewChat: boolean;
   workspaces: DrizzleWorkspace[];
   chat?: DrizzleChat;
 }
 
-const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) => {
+const ChatComponent = ({ isPro, chatId, chat, workspaces }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
   const [toggleWorkspaceMode, setToggleWorkspaceMode] = React.useState<boolean>(false);
   const [triggerRefetch, setTriggerRefetch] = React.useState<boolean>(false);
@@ -40,13 +40,14 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
     api: '/api/chat',
     body: { chatId, chatLanguage, currentWorkspace: workspace},
     initialMessages: data,
-    onResponse: () => {
-      if (isNewChat) {
-        router.replace(`/chats/${chatId}`);
-      }
+    onResponse: async (message) => {
+      router.refresh();
     },
     onFinish: async (message) => {
       await refetch();
+    },
+    onError: (e) => {
+      console.log(e);
     }
   });
 
@@ -86,7 +87,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
         <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
           {/* chat messages */}
           <div className='max-w-4xl w-full mx-auto relative'>
-            {!isNewChat && false && <div className='sticky w-min top-5 -ml-[20px]'>
+            {false && <div className='sticky w-min top-5 -ml-[20px]'>
               <div className='absolute -translate-x-[100%] top-[7px]'>
                 <div className='flex flex-col gap-3 mb-3'>
                   <Button className='bg-yellow-500' onClick={() => toggleWorkspaceModeHandler(!toggleWorkspaceMode)} title='Add to workspace'><PlusCircle className='w-4 h-4' /></Button>
@@ -100,7 +101,7 @@ const ChatComponent = ({ isPro, chatId, isNewChat, chat, workspaces }: Props) =>
           </div>
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
             <div className="flex">
-              <ChatInputComponent workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} />
+              <ChatInputComponent workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
             </div>
           </form>
         </div>

@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import BookmarkComponent from './BookmarkComponent';
+import { v4 } from "uuid";
 
 type Props = {
     chat: DrizzleChat;
@@ -26,8 +27,8 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
               chatId,
               file_key: chat?.fileKey
               });
-            router.refresh();
-            router.push('/');
+            const newChatId = v4();
+            router.push(`/chats/${newChatId}`);
           } catch (error) {
             console.log(error);
           }

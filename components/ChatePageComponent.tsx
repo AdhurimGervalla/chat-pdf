@@ -5,24 +5,24 @@ import { checkSubscription } from '@/lib/subscription';
 import { DrizzleChat, DrizzleWorkspace, chats, messages as _messages, workspaces as workspacesSchema } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
+import { auth } from '@clerk/nextjs/server';
 
 type Props = {
-    userId: string;
     chatId: string;
     isNewChat?: boolean;
 }
 
-const ChatePageComponent = async ({userId, chatId, isNewChat = false}: Props) => {
+const ChatePageComponent = async ({chatId, isNewChat = false}: Props) => {
+    const {userId} = await auth();
     const isPro = await checkSubscription();
+
+    if (!userId) return null;
 
     const workspaces: DrizzleWorkspace[] = await db.select().from(workspacesSchema).where(eq(workspacesSchema.owner, userId));
     
     const _chats: DrizzleChat[] = await db.select().from(chats).orderBy((desc(chats.createdAt))).where(eq(chats.userId, userId));
 
-    let currentChat;
-    if (!isNewChat) {
-        currentChat = _chats.find((chat) => chat.id === chatId);
-    }
+    const currentChat = _chats.find((chat) => chat.id === chatId);
 
     return (
     <>
@@ -38,7 +38,7 @@ const ChatePageComponent = async ({userId, chatId, isNewChat = false}: Props) =>
                 </div>*/}
                 {/* chat component */}
                 <div className='w-full flex flex-col relative'>
-                    <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} isNewChat={isNewChat} workspaces={workspaces} />
+                    <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} workspaces={workspaces} />
                 </div>
 
             </div>

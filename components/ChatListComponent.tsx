@@ -6,6 +6,8 @@ import ToggleBookmarkedComponent from './ToogleBookmarkedComponent';
 import Link from 'next/link';
 import { PlusCircleIcon } from 'lucide-react';
 import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
+import CreateNewChatButton from './CreateNewChatButton';
 
 type Props = {
     chats: DrizzleChat[];
@@ -14,6 +16,7 @@ type Props = {
 }
 
 const ChatListComponent = ({chats, chatId, isPro}: Props) => {
+    const router = useRouter();
     const [bookmarked, setBookmarked] = React.useState(false);
     const [clientChat, setClientChat] = React.useState<DrizzleChat[]>(chats);
 
@@ -33,12 +36,7 @@ const ChatListComponent = ({chats, chatId, isPro}: Props) => {
         <>
             <div className='grid grid-cols-2 gap-5'>
                 <div>
-                    <Link href='/'>
-                        <Button title='create new chat' className='w-full'>
-                                <PlusCircleIcon className='mr-2 w-4 h-4' />
-                                New chat
-                        </Button>
-                    </Link>
+                    <CreateNewChatButton />
                 </div>
                 <ToggleBookmarkedComponent bookmarked={bookmarked} setBookmarked={setBookmarked} />
             </div>
