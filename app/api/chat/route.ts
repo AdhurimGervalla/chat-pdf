@@ -69,12 +69,20 @@ export async function POST(req: NextRequest) {
             content: getContextBlock("", chatLanguage as LanguageCodes)
         };
 
+        let relatedChatIds: (string | undefined)[] = [];
+
         // if file is uploaded
         if (currentWorkspace) {
             if (userId) {
                 const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
                 const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
-                pageNumbers = contextMetadata.map(item => item.pageNumber);
+                relatedChatIds = contextMetadata.map(doc => {
+                    if (doc.chatId) return doc.chatId;
+                });
+                // remove duplicates from originChatIds
+                relatedChatIds = relatedChatIds.filter((item, index) => relatedChatIds.indexOf(item) === index);
+                console.log("relatedChatIds", relatedChatIds);
+                // pageNumbers = contextMetadata.map(item => item.pageNumber);
                 // check if chatLanguage is type of LanguageCodes
                 prompt = {
                     role: "system",
@@ -93,13 +101,13 @@ export async function POST(req: NextRequest) {
             stream: true,
         });
 
-        const originId = v4();
+        const userQuestionMessageId = v4();
 
         const stream = OpenAIStream(response, {
             onStart: async () => {
                 // save usermessage to db
                 await db.insert(_messages).values({
-                    id: originId,
+                    id: userQuestionMessageId,
                     chatId,
                     content: lastMessage.content,
                     role: 'user'
@@ -115,7 +123,8 @@ export async function POST(req: NextRequest) {
                     content: completion,
                     role: 'system', // todo: check if this is correct. should be system or assistant?
                     pageNumbers: JSON.stringify(pageNumbers),
-                    originId: originId
+                    originId: userQuestionMessageId,
+                    relatedChatIds: JSON.stringify(relatedChatIds)
                 });
             }
         });

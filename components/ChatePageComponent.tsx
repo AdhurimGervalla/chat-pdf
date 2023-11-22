@@ -38,7 +38,7 @@ const ChatePageComponent = async ({chatId, isNewChat = false}: Props) => {
                 </div>*/}
                 {/* chat component */}
                 <div className='w-full flex flex-col relative'>
-                    <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} workspaces={workspaces} />
+                    <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} allChats={_chats} workspaces={workspaces} />
                 </div>
 
             </div>

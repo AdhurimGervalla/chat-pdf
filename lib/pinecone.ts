@@ -57,8 +57,8 @@ export async function loadS3IntoPinecone(fileKey: string) {
     return docs[0];
 }
 
-export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string) {
-    const vectors = await embedMessages(messages);
+export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string, chatId: string) {
+    const vectors = await embedMessages(messages, chatId);
     const client = await getPineconeClient();
     const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
     const ns = pineconeIndex.namespace(namespace)
@@ -88,7 +88,7 @@ async function embedDocuments(doc: Document): Promise<PineconeRecord> {
     }
 }
 
-async function embedMessages(messages: DrizzleMessage[]): Promise<PineconeRecord[]> {
+async function embedMessages(messages: DrizzleMessage[], chatId: string): Promise<PineconeRecord[]> {
     try {
         const embeddings = await Promise.all(
             messages.map(message => getEmbeddings(message.content))
@@ -100,7 +100,8 @@ async function embedMessages(messages: DrizzleMessage[]): Promise<PineconeRecord
                 id: hash,
                 values: embeddings[index],
                 metadata: {
-                    text: messages[index].content
+                    text: messages[index].content,
+                    chatId
                 }
             } as PineconeRecord;
         });

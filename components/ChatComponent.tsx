@@ -19,9 +19,10 @@ type Props = {
   isPro: boolean;
   workspaces: DrizzleWorkspace[];
   chat?: DrizzleChat;
+  allChats?: DrizzleChat[];
 }
 
-const ChatComponent = ({ isPro, chatId, chat, workspaces }: Props) => {
+const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
   const [toggleWorkspaceMode, setToggleWorkspaceMode] = React.useState<boolean>(false);
   const {workspace} = React.useContext(WorkspaceContext);
@@ -83,7 +84,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces }: Props) => {
               </div>
             </div>}
 
-            {!toggleWorkspaceMode ? <MessageList messages={messages} refetch={refetch} isLoading={isLoading} /> : <></>}
+            {!toggleWorkspaceMode ? <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} /> : <></>}
           </div>
           {toggleWorkspaceMode && <Workspaces workspaces={workspaces} setToggleWorkspaceMode={setToggleWorkspaceMode} saveInWorkspaceMode={true} chatId={chatId} chat={chat} />}
           {/* chat input */}

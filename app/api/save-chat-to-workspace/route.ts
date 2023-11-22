@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const workspaceNamespace = setNameSpaceForWorkspace(workspace.identifier, userId);
     // load chat into pinecone
-    await loadChatIntoPinecone(_messages,workspaceNamespace);
+    await loadChatIntoPinecone(_messages,workspaceNamespace, chatId);
 
     return NextResponse.json({ success: true });
 }

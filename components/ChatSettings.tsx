@@ -28,6 +28,7 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
               file_key: chat?.fileKey
               });
             const newChatId = v4();
+            router.refresh();
             router.push(`/chats/${newChatId}`);
           } catch (error) {
             console.log(error);

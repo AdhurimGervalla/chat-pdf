@@ -26,6 +26,7 @@ export const messages = pgTable('messages', {
     role: userSystemEnum('role').notNull(),
     originId: varchar('origin_id', {length: 256}),
     pageNumbers: text('pagenumbers'), // json string of page numbers
+    relatedChatIds: text('related_chat_ids'), // json string of related chat ids
 })
 
 export type DrizzleMessage = typeof messages.$inferSelect;

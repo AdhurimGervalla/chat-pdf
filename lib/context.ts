@@ -37,12 +37,13 @@ export async function getContext(query: string, identifier: string) {
 
   type Metadata = {
     text: string;
-    pageNumber: number;
+    pageNumber?: number;
+    chatId?: string;
   };
 
   let docs: Metadata[] = qualifyingDocs.map((match) => {
     const metadata = (match.metadata as Metadata)
-    return {text: metadata.text, pageNumber: metadata.pageNumber};
+    return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId};
   });
   // 5 vectors
   return docs;
