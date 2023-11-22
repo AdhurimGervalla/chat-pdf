@@ -76,7 +76,7 @@ const Workspaces = ({workspaces, saveInWorkspaceMode = false, chatId, setToggleW
 
   return (
     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-      <h3 className='text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{saveInWorkspaceMode ? 'Save in ...' : 'Specify Context with ...'}</h3>
+      <h3 className='text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{saveInWorkspaceMode ? 'Save in ...' : 'Specify context ...'}</h3>
       <div className='grid grid-cols-3 gap-5'>
         {workspaces.map((ws) => {
             return (
