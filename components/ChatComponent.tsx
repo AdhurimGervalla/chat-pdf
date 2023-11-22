@@ -2,7 +2,7 @@
 import React, { use } from 'react'
 import { useChat } from 'ai/react' 
 import {Button} from './ui/button'
-import { PlusCircle } from 'lucide-react'
+import { ArrowLeft, PlusCircle } from 'lucide-react'
 import MessageList from './MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -12,6 +12,7 @@ import ChatInputComponent from './ChatInputComponent'
 import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
 import { WorkspaceContext } from '@/context/WorkspaceContext'
 import { revalidatePath } from 'next/cache'
+import Workspaces from './Workspaces'
 
 type Props = {
   chatId: string;
@@ -23,7 +24,6 @@ type Props = {
 const ChatComponent = ({ isPro, chatId, chat, workspaces }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
   const [toggleWorkspaceMode, setToggleWorkspaceMode] = React.useState<boolean>(false);
-  const [triggerRefetch, setTriggerRefetch] = React.useState<boolean>(false);
   const {workspace} = React.useContext(WorkspaceContext);
   const router = useRouter();
 
@@ -69,39 +69,28 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces }: Props) => {
     setMessages(data);
   }, [data]);
 
-  React.useEffect(() => {
-    if (triggerRefetch) {
-      refetch();
-      setTriggerRefetch(false);
-    }
-  }, [triggerRefetch]);
-
-  const getTitle = () => {
-    if (chat) return chat.title;
-    if (isLoading) return 'generating ...';
-    return '';
-  }
-
   return (
     <>
+        {messages.length === 0 && <Workspaces workspaces={workspaces} chatId={chatId} />}
         <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
           {/* chat messages */}
           <div className='max-w-4xl w-full mx-auto relative'>
-            {false && <div className='sticky w-min top-5 -ml-[20px]'>
+            { messages.length > 0 && <div className={cn('sticky w-min -ml-[20px]', {'top-10': !toggleWorkspaceMode}, {'mt-10': toggleWorkspaceMode})}>
               <div className='absolute -translate-x-[100%] top-[7px]'>
                 <div className='flex flex-col gap-3 mb-3'>
-                  <Button className='bg-yellow-500' onClick={() => toggleWorkspaceModeHandler(!toggleWorkspaceMode)} title='Add to workspace'><PlusCircle className='w-4 h-4' /></Button>
+                  <Button className='bg-green-500' onClick={() => toggleWorkspaceModeHandler(!toggleWorkspaceMode)} title='Add to workspace'>{!toggleWorkspaceMode ? <PlusCircle className='w-4 h-4' /> : <ArrowLeft className='w-4 h-4' />}</Button>
                 </div>
               </div>
             </div>}
 
-            {/* chat header */}
-
-            {!toggleWorkspaceMode && <MessageList messages={messages} setTriggerRefetch={setTriggerRefetch} isLoading={isLoading} />}
+            {!toggleWorkspaceMode ? <MessageList messages={messages} refetch={refetch} isLoading={isLoading} /> : <></>}
           </div>
+          {toggleWorkspaceMode && <Workspaces workspaces={workspaces} setToggleWorkspaceMode={setToggleWorkspaceMode} saveInWorkspaceMode={true} chatId={chatId} chat={chat} />}
+          {/* chat input */}
+
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
             <div className="flex">
-              <ChatInputComponent workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
+              <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
             </div>
           </form>
         </div>

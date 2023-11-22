@@ -9,11 +9,11 @@ import axios from 'axios'
 
 type Props = {
     messages: Message[];
-    setTriggerRefetch: any;
+    refetch: any;
     isLoading: boolean;
 }
 
-const MessageList = ({messages, setTriggerRefetch, isLoading = false}: Props) => {
+const MessageList = ({messages, refetch, isLoading = false}: Props) => {
 
     if (!messages) return <></>;
 
@@ -28,7 +28,7 @@ const MessageList = ({messages, setTriggerRefetch, isLoading = false}: Props) =>
     const deleteMessage = async (message: Message) => {
       try {
         await axios.post('/api/delete-message', { message: message });
-        setTriggerRefetch(true);
+        refetch();
       } catch (e) {
         console.log(e);
       }

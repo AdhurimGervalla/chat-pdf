@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 
 type Props = {
     workspaces: DrizzleWorkspace[];
-    creatingWorkspace?: boolean;
+    saveInWorkspaceMode?: boolean;
     chatId: string;
     chat?: DrizzleChat;
     setToggleWorkspaceMode?: any;
@@ -18,7 +18,7 @@ type Props = {
 
 
 
-const Workspaces = ({workspaces, creatingWorkspace = false, chatId, setToggleWorkspaceMode, chat}: Props) => {
+const Workspaces = ({workspaces, saveInWorkspaceMode = false, chatId, setToggleWorkspaceMode, chat}: Props) => {
   const router = useRouter();
   const [enteringWorkspaceName, setEnteringWorkspaceName] = React.useState<boolean>(false);
   const [workspaceName, setWorkspaceName] = React.useState<string>('');
@@ -76,7 +76,7 @@ const Workspaces = ({workspaces, creatingWorkspace = false, chatId, setToggleWor
 
   return (
     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-      <h3 className='text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{creatingWorkspace ? 'Save in ...' : 'Specify Context with ...'}</h3>
+      <h3 className='text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{saveInWorkspaceMode ? 'Save in ...' : 'Specify Context with ...'}</h3>
       <div className='grid grid-cols-3 gap-5'>
         {workspaces.map((ws) => {
             return (
@@ -99,7 +99,7 @@ const Workspaces = ({workspaces, creatingWorkspace = false, chatId, setToggleWor
             </div>
           )  
         }
-        {!creatingWorkspace ? <WorkSpaceControls  onClick={handleEnteringWorkspaceName}><h3 className='font-semibold tracking-wide flex justify-center items-center'><span>{enteringWorkspaceName ? (workspaceName.length > 0 ? <SaveIcon /> : <ArrowLeft />) : 'New'}</span>{!enteringWorkspaceName && <PlusCircleIcon className='w-4 h-4 ml-3' />}</h3></WorkSpaceControls> 
+        {!saveInWorkspaceMode ? <WorkSpaceControls  onClick={handleEnteringWorkspaceName}><h3 className='font-semibold tracking-wide flex justify-center items-center'><span>{enteringWorkspaceName ? (workspaceName.length > 0 ? <SaveIcon /> : <ArrowLeft />) : 'New'}</span>{!enteringWorkspaceName && <PlusCircleIcon className='w-4 h-4 ml-3' />}</h3></WorkSpaceControls> 
           : workspace && <WorkSpaceControls onClick={handleSaveToWorkspace}><h3 className='font-semibold tracking-wide flex justify-center items-center'><span><SaveIcon /></span></h3></WorkSpaceControls>}
       </div>
 
