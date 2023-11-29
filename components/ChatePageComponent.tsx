@@ -30,20 +30,9 @@ const ChatePageComponent = async ({chatId, isNewChat = false}: Props) => {
         <Cmkd chats={_chats} workspaces={_workspaces} />
         <div className='flex max-h-screen overflow-scroll'>
             <div className='flex w-full max-h-screen overflow-scroll'>
-                {/* chat sidebar */}
-                <div>
-                    <div className='h-[100vh]'></div>
-                    {/*<ChatSideBar chatId={chatId} chats={_chats} userId={userId} isPro={isPro} />*/}
-                </div>
-                {/* chat viewer 
-                <div className='max-h-screen p-4 overflow-scroll flex-[5]'>
-                    <PDFViewer pdf_url={currentChat?.pdfUrl || ""} />
-                </div>*/}
-                {/* chat component */}
-                <div className='w-full flex flex-col relative'>
+                <div className='w-full flex flex-col relative h-[100vh]'>
                     <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} allChats={_chats} workspaces={_workspaces} />
                 </div>
-
             </div>
         </div>
     </>

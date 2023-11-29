@@ -119,7 +119,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
 
     return (
         <>
-        {open && <div className='blur-xl fixed left-0 right-0 top-0 bottom-0 bg-black opacity-70 z-10'>
+        {false && open && <div className='blur-xl fixed left-0 right-0 top-0 bottom-0 bg-black opacity-70 z-10'>
 
         </div>}
         <Command.Dialog onKeyDown={(e) => {

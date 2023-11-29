@@ -99,8 +99,6 @@ const Workspaces = ({workspaces, saveInWorkspaceMode = false, chatId, setToggleW
             </div>
           )  
         }
-        {!saveInWorkspaceMode ? <WorkSpaceControls  onClick={handleEnteringWorkspaceName}><h3 className='font-semibold tracking-wide flex justify-center items-center'><span>{enteringWorkspaceName ? (workspaceName.length > 0 ? <SaveIcon /> : <ArrowLeft />) : 'New'}</span>{!enteringWorkspaceName && <PlusCircleIcon className='w-4 h-4 ml-3' />}</h3></WorkSpaceControls> 
-          : workspace && <WorkSpaceControls onClick={handleSaveToWorkspace}><h3 className='font-semibold tracking-wide flex justify-center items-center'><span><SaveIcon /></span></h3></WorkSpaceControls>}
       </div>
 
     </div>
@@ -112,14 +110,6 @@ const WorkspaceItem = ({workspace, onClick, selectedWorkspace, chatWorkspace}: {
   return (
     <div onClick={onClick} className={cn('bg-slate-500 text-center dark:bg-slate-900 p-6 rounded-xl dark:hover:bg-green-500 transition-colors cursor-pointer relative before:content-[""] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl', {'dark:bg-slate-950  text-slate-600 dark:hover:text-white': selectedWorkspace !== null && workspace.id !== selectedWorkspace?.id}, { 'dark:bg-yellow-500' : chatWorkspace?.id === workspace.id}, {'dark:bg-green-500 dark:text-white': workspace.id === selectedWorkspace?.id})}>
       <h3 className='font-semibold tracking-wide flex justify-center items-center'>{workspace.name}</h3>
-    </div>
-  )
-}
-
-const WorkSpaceControls = ({onClick, children}: {onClick: any, children: any}) => {
-  return (
-    <div onClick={onClick} className={cn('bg-slate-500 min-w-[115px] text-center dark:bg-slate-900 p-6 rounded-xl dark:hover:bg-green-500 transition-colors cursor-pointer relative before:content-[""] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl')}>
-      {children}
     </div>
   )
 }

@@ -24,7 +24,6 @@ type Props = {
 
 const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
-  const [toggleWorkspaceMode, setToggleWorkspaceMode] = React.useState<boolean>(false);
   const {workspace} = React.useContext(WorkspaceContext);
   const router = useRouter();
 
@@ -52,9 +51,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
     }
   });
 
-  const toggleWorkspaceModeHandler = async (mode: boolean) => {
-    setToggleWorkspaceMode(mode);
-  }
+
 
   React.useEffect(() => {
     const messageContainer = document.getElementById('message-container');
@@ -72,30 +69,21 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
 
   return (
     <>
-        {messages.length === 0 && <Workspaces workspaces={workspaces} chatId={chatId} />}
         <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
-          {/* chat messages */}
+          {messages.length === 0 ? <Workspaces workspaces={workspaces} chatId={chatId} />
+          :
           <div className='max-w-4xl w-full mx-auto relative'>
-            { messages.length > 0 && <div className={cn('sticky w-min -ml-[20px]', {'top-10': !toggleWorkspaceMode}, {'mt-10': toggleWorkspaceMode})}>
-              <div className='absolute -translate-x-[100%] top-[7px]'>
-                <div className='flex flex-col gap-3 mb-3'>
-                  <Button className='bg-green-500' onClick={() => toggleWorkspaceModeHandler(!toggleWorkspaceMode)} title='Add to workspace'>{!toggleWorkspaceMode ? <PlusCircle className='w-4 h-4' /> : <ArrowLeft className='w-4 h-4' />}</Button>
-                </div>
-              </div>
-            </div>}
+            {chat && chat.title && <h1 className='text-3xl mt-10 font-bold'>{chat.title}</h1>}
+            <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
+          </div>}
 
-            {!toggleWorkspaceMode ? <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} /> : <></>}
-          </div>
-          {toggleWorkspaceMode && <Workspaces workspaces={workspaces} setToggleWorkspaceMode={setToggleWorkspaceMode} saveInWorkspaceMode={true} chatId={chatId} chat={chat} />}
           {/* chat input */}
-
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
             <div className="flex">
               <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
             </div>
           </form>
         </div>
-
     </>
   )
 }

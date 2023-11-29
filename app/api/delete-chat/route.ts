@@ -15,7 +15,6 @@ export async function POST(req: Request, res: Response) {
     try {
         const body = await req.json();
         const {chatId} = body;
-        console.log(chatId);
         if (!chatId) return NextResponse.json({error: "chatId is required"}, {status: 400});
 
         // Delete messages first to avoid foreign key constraint error
