@@ -161,9 +161,8 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 success: 'Chat saved to workspace',
                 error: 'Couldn\'t save chat to workspace'
             }).then(() => {
-                console.log('refreshing');
                 router.refresh();
-                setSaveToWorkspaceMode(false);
+                reset();
             });
           } catch (error: any) {
               // check if error status is 409
