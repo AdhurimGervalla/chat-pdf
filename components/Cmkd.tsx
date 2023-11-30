@@ -211,7 +211,6 @@ const Cmkd = ({chats, workspaces}: Props) => {
             // Escape goes to previous page
             // Backspace goes to previous page when search is empty
             if (e.key === 'Escape' || (e.key === 'Backspace' && !search && !disableDialogInput)) {
-                console.log('pressed');
               e.preventDefault();
               reset();
             }
@@ -227,7 +226,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
                                     if (chat && chat.title) {
                                         handleDetailView(chat);
                                     }
-                                }}><ArrowRight className='w-4 h-4' />Jump to chat</Command.Item>}
+                                }}><ArrowRight className='w-4 h-4' />Jump to active chat</Command.Item>}
                                 <Command.Item className={CommandItemClasses} onSelect={() => handeOnSelect('chats')}><Search className='w-4 h-4' />Search chats</Command.Item>
                                 <Command.Item className={CommandItemClasses} onSelect={() => handleNewChat()}><PlusCircle className='w-4 h-4' />New chat</Command.Item>
                         </Command.Group>
