@@ -1,5 +1,4 @@
 import React from 'react'
-import ChatSideBar from './ChatSideBar';
 import ChatComponent from './ChatComponent';
 import { checkSubscription } from '@/lib/subscription';
 import { DrizzleChat, DrizzleWorkspace, chats, messages as _messages, workspaces as workspacesSchema } from '@/lib/db/schema';
@@ -15,14 +14,10 @@ type Props = {
 
 const ChatePageComponent = async ({chatId, isNewChat = false}: Props) => {
     const {userId} = await auth();
-    const isPro = await checkSubscription();
-
     if (!userId) return null;
-
+    const isPro = await checkSubscription();
     const _workspaces: DrizzleWorkspace[] = await db.select().from(workspacesSchema).where(eq(workspacesSchema.owner, userId));
-    
     const _chats: DrizzleChat[] = await db.select().from(chats).orderBy(desc(chats.bookmarked),desc(chats.createdAt)).where(eq(chats.userId, userId));
-
     const currentChat = _chats.find((chat) => chat.id === chatId);
 
     return (

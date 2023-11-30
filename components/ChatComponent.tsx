@@ -2,7 +2,7 @@
 import React, { use } from 'react'
 import { useChat } from 'ai/react' 
 import {Button} from './ui/button'
-import { ArrowLeft, PlusCircle } from 'lucide-react'
+import { ArrowLeft, Loader, Loader2, PlusCircle } from 'lucide-react'
 import MessageList from './MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -24,6 +24,7 @@ type Props = {
 
 const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
+  const [loadingMessages, setLoadingMessages] = React.useState<boolean>(true);
   const {workspace} = React.useContext(WorkspaceContext);
   const router = useRouter();
 
@@ -31,6 +32,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
     queryKey: ['chat', chatId],
     queryFn: async () => {
       const res = await axios.post('/api/get-messages', { chatId });
+      setLoadingMessages(false);
       return res.data;
     }
   });
@@ -70,12 +72,12 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
   return (
     <>
         <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
-          {messages.length === 0 ? <Workspaces workspaces={workspaces} chatId={chatId} />
+          {loadingMessages ? <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'><Loader2 className='w-[50px] h-[50px] animate-spin' /></div> : (messages.length === 0 ? <Workspaces workspaces={workspaces} chatId={chatId} />
           :
           <div className='max-w-4xl w-full mx-auto relative'>
             {chat && chat.title && <h1 className='text-3xl mt-10 font-bold'>{chat.title}</h1>}
             <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
-          </div>}
+          </div>) }
 
           {/* chat input */}
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
