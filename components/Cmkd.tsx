@@ -43,7 +43,6 @@ const Cmkd = ({chats, workspaces}: Props) => {
     const CommandItemClasses = 'mt-3 first:mt-0 cursor-pointer flex flex-row items-center gap-2 bg-slate-700 py-1 px-3 rounded-lg hover:bg-slate-800 transition-colors';
 
     const handleValueChange = (value: string) => {
-        console.log(value);
         setSearch(value);
     }
 
