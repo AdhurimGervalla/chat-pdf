@@ -4,15 +4,15 @@ import { getEmbeddings } from "./embeddings";
 
 export async function getMatchesFromEmbeddings(
   embeddings: number[],
-  fileKey: string
+  identifier: string
 ) {
   try {
     const client = new Pinecone({
       environment: process.env.PINECONE_ENVIRONMENT!,
       apiKey: process.env.PINECONE_API_KEY!,
     });
-    const pineconeIndex = await client.index("chat-pdf");
-    const namespace = pineconeIndex.namespace(convertStringToASCII(fileKey));
+    const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
+    const namespace = pineconeIndex.namespace(identifier);
     const queryResult = await namespace.query({
       topK: 5,
       vector: embeddings,
@@ -25,22 +25,25 @@ export async function getMatchesFromEmbeddings(
   }
 }
 
-export async function getContext(query: string, fileKey: string) {
+export async function getContext(query: string, identifier: string) {
   const queryEmbeddings = await getEmbeddings(query);
-  const matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey);
+  const matches = await getMatchesFromEmbeddings(queryEmbeddings, identifier);
 
   const qualifyingDocs = matches.filter(
     (match) => match.score && match.score > 0.7
   );
 
+  console.log("qualifyingDocs", qualifyingDocs);
+
   type Metadata = {
     text: string;
-    pageNumber: number;
+    pageNumber?: number;
+    chatId?: string;
   };
 
   let docs: Metadata[] = qualifyingDocs.map((match) => {
     const metadata = (match.metadata as Metadata)
-    return {text: metadata.text, pageNumber: metadata.pageNumber};
+    return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId};
   });
   // 5 vectors
   return docs;

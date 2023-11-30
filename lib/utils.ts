@@ -13,3 +13,11 @@ export function convertStringToASCII(str: string) {
 }
 
 export const languages: readonly string[] = ["de", "en"];
+
+export function getNamespaceForWorkspace(workspaceId: string, userId: string) {
+  return workspaceId + "-" + userId;
+}
+
+export function setNameSpaceForWorkspace(workspaceId: string, userId: string) {
+  return workspaceId + "-" + userId;
+}

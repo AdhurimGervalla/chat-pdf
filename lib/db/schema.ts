@@ -1,11 +1,12 @@
 import { relations } from 'drizzle-orm';
-import {boolean, decimal, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar} from 'drizzle-orm/pg-core';
+import {boolean, decimal, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar} from 'drizzle-orm/pg-core';
 
 export const userSystemEnum = pgEnum('user_system_enum', ['system', 'user', 'assistant', 'function']);
 export const workspaceRoleEnum = pgEnum('workspace_role_enum', ['owner', 'admin', 'member']);
 
 export const chats = pgTable('chats', {
     id: varchar('chat_id', {length: 256}).primaryKey(),
+    workspaceId: integer('workspace_id').default(0), // foreign key
     pdfName: text('pdf_name'),
     pdfUrl: text('pdf_url'),
     createdAt: timestamp('createdAt').notNull().defaultNow(),
@@ -18,12 +19,14 @@ export const chats = pgTable('chats', {
 export type DrizzleChat = typeof chats.$inferSelect;
 
 export const messages = pgTable('messages', {
-    id: serial('id').primaryKey(),
+    id: varchar('id', {length: 256}).primaryKey(),
     chatId: varchar('chat_id', {length: 256}).references(() => chats.id), // foreign key
     content: text('content').notNull(),
     createdAt: timestamp('createdAt').notNull().defaultNow(),
     role: userSystemEnum('role').notNull(),
-    pageNumbers: text('pagenumbers') // json string of page numbers
+    originId: varchar('origin_id', {length: 256}),
+    pageNumbers: text('pagenumbers'), // json string of page numbers
+    relatedChatIds: text('related_chat_ids'), // json string of related chat ids
 })
 
 export type DrizzleMessage = typeof messages.$inferSelect;
@@ -40,13 +43,18 @@ export const usersSubscriptions = pgTable('users_subscriptions', {
 export const workspaces = pgTable('workspaces', {
     id: serial('id').primaryKey(),
     name: varchar('name', {length: 256}).notNull(),
-    createdAt: timestamp('createdAt').notNull().defaultNow()
+    createdAt: timestamp('createdAt').notNull().defaultNow(),
+    identifier: varchar('identifier', {length: 256}).notNull().unique(),
+    isPublic: boolean('is_public').notNull().default(false),
+    owner: varchar('owner', {length: 256}).notNull(),
 });
+
+export type DrizzleWorkspace = typeof workspaces.$inferSelect;
 
 export const users = pgTable('users', {
     userId: varchar('user_id', {length: 255}).notNull().unique(),
 });
-
+/*
 export const workspacesOnUsers = pgTable('workspaces_users', {
     id: serial('id').primaryKey(),
     workspaceId: serial('workspace_id').references(() => workspaces.id), // foreign key
@@ -76,4 +84,4 @@ export const workspacesOnUsersRelations = relations(workspacesOnUsers, ({one}) =
         ],
         references: [users.userId]
     })
-}));
+}));*/

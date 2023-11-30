@@ -1,11 +1,37 @@
+import React, { useEffect, useRef } from 'react'
 import { UserButton } from '@clerk/nextjs'
-import {
-  PaperClipIcon,
-} from '@heroicons/react/20/solid'
 import { Loader2, SendIcon } from 'lucide-react'
+import { Button } from './ui/button'
+import Select from './Select';
+import { DrizzleWorkspace } from '@/lib/db/schema';
+type Props = {
+  stopCb: any;
+  onChange: any;
+  placeholder: string;
+  isLoading: boolean;
+  value: string;
+  isPro: boolean;
+  workspaces: DrizzleWorkspace[];
+  handleSubmit: any;
+}
 
+export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, isPro, workspaces, handleSubmit}: Props) {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, isPro}:{stopCb: any, onChange: any, placeholder: string, isLoading: boolean, value: string, isPro: boolean}) {
+  const resizeTextArea = () => {
+    if (!textAreaRef.current) return;
+    textAreaRef.current.style.height = "auto";
+    textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
+  };
+
+  const handleKeyPress = (event: any) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Verhindert den Zeilenumbruch
+      // submit the form from here
+      handleSubmit(event);
+    }
+  };
+  useEffect(resizeTextArea, [value]);
 
   return (
     <div className="flex items-start space-x-4 w-full ">
@@ -16,16 +42,17 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
         <div className="relative">
           <div className="bg-white dark:bg-black overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-green-300">
             <textarea
+            aria-multiline="true"
             onChange={onChange}
             value={value}
+            ref={textAreaRef}
+            onKeyPress={handleKeyPress}
               rows={2}
-              name="comment"
-              id="comment"
+              name="chat-textarea"
+              id="chat-textarea"
               className="block w-full resize-none border-0 bg-transparent py-1.5 focus:ring-0 sm:text-lg sm:leading-6"
               placeholder={placeholder}
-              defaultValue={''}
             />
-
             {/* Spacer element to match the height of the toolbar */}
             <div className="py-2" aria-hidden="true">
               {/* Matches height of button in toolbar (1px border + 36px content height) */}
@@ -38,27 +65,18 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
           <div className="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
             <div className="flex items-center space-x-5">
               <div className="flex items-center">
-                <button
-                  type="button"
-                  className="-m-2.5 flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500"
-                >
-                  <PaperClipIcon className="h-5 w-5" aria-hidden="true" />
-                  <span className="sr-only">Attach a file</span>
-                </button>
-                <p className='flex ml-3 text-xs text-center'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
+                <p className='flex text-xs text-center'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
               </div>
             </div>
+            <div>
+              <Select workspaces={workspaces} />
+            </div>
             <div className="flex-shrink-0">
-              <button
-                onClick={() => {
+              <Button type='submit' onClick={() => {
                   if (isLoading) {
-                    stopCb();
+                    stopCb(); // TODO: stopCb not triggering
                   }
-                }} 
-                className="inline-flex items-center rounded-md bg-green-500  hover:bg-green-600 dark:hover:bg-green-600 transition-all px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-              >
-                {isLoading ? <><Loader2 className='w-4 h-4 animate-spin mr-1' /> <span>Stop</span></> : <><SendIcon className='w-4 h-4 mr-1' /><span>Send</span></>}
-              </button>
+                }}>{isLoading ? <><Loader2 className='w-4 h-4 animate-spin mr-1' /> <span>Stop</span></> : <><SendIcon className='w-4 h-4 mr-1' /><span>Send</span></>}</Button>
             </div>
           </div>
         </div>

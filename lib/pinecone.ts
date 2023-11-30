@@ -5,6 +5,7 @@ import {Document, RecursiveCharacterTextSplitter} from '@pinecone-database/doc-s
 import { getEmbeddings } from './embeddings';
 import md5 from 'md5';
 import { convertStringToASCII } from './utils';
+import { DrizzleMessage } from './db/schema';
 
 export const getPineconeClient = () => {
     return new Pinecone({
@@ -48,12 +49,24 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
     // 4. upload the vectors to pinecone
     const client = await getPineconeClient();
-    const pineconeIndex = await client.index('chat-pdf');
+    const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
 
     const namespace = pineconeIndex.namespace(convertStringToASCII(fileKey))
     await namespace.upsert(vectors);
 
     return docs[0];
+}
+
+export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string, chatId: string) {
+    const vectors = await embedMessages(messages, chatId);
+    const client = await getPineconeClient();
+    const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
+    const ns = pineconeIndex.namespace(namespace)
+    try {
+        await ns.upsert(vectors);
+    } catch (error) {
+        console.log('error upserting message', error);
+    }
 }
 
 async function embedDocuments(doc: Document): Promise<PineconeRecord> {
@@ -75,6 +88,29 @@ async function embedDocuments(doc: Document): Promise<PineconeRecord> {
     }
 }
 
+async function embedMessages(messages: DrizzleMessage[], chatId: string): Promise<PineconeRecord[]> {
+    try {
+        const embeddings = await Promise.all(
+            messages.map(message => getEmbeddings(message.content))
+        );
+        const hashes = messages.map(message => md5(message.content));
+
+        return hashes.map((hash, index) => {
+            return {
+                id: hash,
+                values: embeddings[index],
+                metadata: {
+                    text: messages[index].content,
+                    chatId
+                }
+            } as PineconeRecord;
+        });
+    } catch (error) {
+        console.log('error embedMessages', error);
+        throw error;
+    }
+}
+
 export const truncateStringByBytes = (str: string, numBytes: number) => {
     const encoder = new TextEncoder();
     return new TextDecoder('utf-8').decode(
@@ -92,7 +128,7 @@ async function prepareDocuments(page: PDFPage) {
             pageContent,
             metadata: {
                 pageNumber: metadata.loc.pageNumber,
-                text: truncateStringByBytes(pageContent, 36000)
+                text: truncateStringByBytes(pageContent, 36000) // 36k bytes are 12k characters
             }
         })
     ]);

@@ -14,7 +14,7 @@ export async function POST(req: Request, res: Response) {
     }
     try {
         const body = await req.json();
-        const {file_key, chatId} = body;
+        const {chatId} = body;
         if (!chatId) return NextResponse.json({error: "chatId is required"}, {status: 400});
 
         // Delete messages first to avoid foreign key constraint error
@@ -26,9 +26,9 @@ export async function POST(req: Request, res: Response) {
             .delete(chats)
             .where(eq(chats.id, chatId));
         
-            if (file_key) {
+            /*if (file_key) {
                 await deleteFromS3(file_key);
-            }
+            }*/
         return NextResponse.json({status: 200});
     } catch (error) {
         console.log(error);

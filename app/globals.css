@@ -85,10 +85,18 @@
   @apply pl-7;
 }
 
-.message-item * + * {
+.message-item.assistant * + * {
   @apply mt-2;
 }
 
 pre {
   @apply overflow-x-auto;
 }
+
+.bg-primary {
+  @apply bg-green-500;
+}
+
+.message-item:last-child .delete-icon {
+  display: none;
+} 

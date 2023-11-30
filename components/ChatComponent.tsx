@@ -1,52 +1,59 @@
 'use client'
-import React from 'react'
-import { Input } from './ui/input'
+import React, { use } from 'react'
 import { useChat } from 'ai/react' 
-import { Button } from './ui/button'
-import { Loader2, Send } from 'lucide-react'
+import {Button} from './ui/button'
+import { ArrowLeft, Loader, Loader2, PlusCircle } from 'lucide-react'
 import MessageList from './MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { Message } from 'ai'
-import Select from './Select'
 import { cn, languages } from '@/lib/utils'
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import ChatInputComponent from './ChatInputComponent'
+import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
+import { WorkspaceContext } from '@/context/WorkspaceContext'
+import { revalidatePath } from 'next/cache'
+import Workspaces from './Workspaces'
+
 type Props = {
   chatId: string;
   isPro: boolean;
-  isNewChat: boolean;
+  workspaces: DrizzleWorkspace[];
+  chat?: DrizzleChat;
+  allChats?: DrizzleChat[];
 }
 
-export interface ExtendedMessage extends Message {
-  pageNumbers: number[]
-}
-
-const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
+const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
+  const [loadingMessages, setLoadingMessages] = React.useState<boolean>(true);
+  const {workspace} = React.useContext(WorkspaceContext);
   const router = useRouter();
 
-  const {data} = useQuery({
+  const {data, refetch} = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
       const res = await axios.post('/api/get-messages', { chatId });
+      setLoadingMessages(false);
       return res.data;
-    },
-    refetchInterval: 0,
+    }
   });
 
-  const { input, handleInputChange, handleSubmit, messages, isLoading, stop} = useChat({
+  const { input, handleInputChange, handleSubmit, messages, isLoading, stop, setMessages} = useChat({
     id: chatId,
     api: '/api/chat',
-    body: { chatId, chatLanguage },
+    body: { chatId, chatLanguage, currentWorkspace: workspace},
     initialMessages: data,
-    onFinish: (res) => {
-        if (isNewChat) {
-          router.refresh();
-          router.replace(`/chats/${chatId}`);
-        }
+    onResponse: async (message) => {
+      router.refresh();
+    },
+    onFinish: async (message) => {
+      await refetch();
+    },
+    onError: (e) => {
+      console.log(e);
     }
-  }); // cool
+  });
+
+
 
   React.useEffect(() => {
     const messageContainer = document.getElementById('message-container');
@@ -58,22 +65,28 @@ const ChatComponent = ({ isPro, chatId, isNewChat }: Props) => {
     }
   }, [messages]);
 
-  return (
-    <div className='overflow-y-scroll  w-full bottom-10 flex flex-col' id='message-container'>
-        <div className='sticky top-0 insex-x-0 p-3 h-fit flex'>
-            {false && <Select className='w-15 h-10 ml-auto' options={[...languages]} onChange={(e) => setChatLanguage(e.target.value)} />}
-        </div>
+  React.useEffect(() => {
+    setMessages(data);
+  }, [data]);
 
-        {/* chat messages */}
-        <div className='max-w-4xl w-full mx-auto'><MessageList messages={messages} /></div>
-      
-        <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
-          <div className="flex">
-            { /*<Input value={input} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} className='w-full border-white' />*/}
-            <ChatInputComponent stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={isNewChat ? 'How can i help you?' : 'Message me'} />
-          </div>
-        </form>
-    </div>
+  return (
+    <>
+        <div className='flex flex-col overflow-y-scroll w-full h-full' id='message-container'>
+          {loadingMessages ? <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'><Loader2 className='w-[50px] h-[50px] animate-spin' /></div> : (messages.length === 0 ? <Workspaces workspaces={workspaces} chatId={chatId} />
+          :
+          <div className='max-w-4xl w-full mx-auto relative'>
+            {chat && chat.title && <h1 className='text-3xl mt-10 font-bold'>{chat.title}</h1>}
+            <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
+          </div>) }
+
+          {/* chat input */}
+          <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
+            <div className="flex">
+              <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
+            </div>
+          </form>
+        </div>
+    </>
   )
 }
 
