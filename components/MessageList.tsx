@@ -72,7 +72,7 @@ const MessageList = ({messages, refetch, isLoading = false, allChats}: Props) =>
                           }}
                         >{message.content}</Markdown>
                       </p>
-                      {relatedChatIds && relatedChatIds.length > 0 && <p className='my-4 bg-slate-800 px-3 py-1'>Related Chats: {relatedChatIds.map((id, index) => {
+                      {relatedChatIds && relatedChatIds.length > 0 && <p className='my-4 bg-green-100 dark:bg-slate-800 px-3 py-1'>Related Chats: {relatedChatIds.map((id, index) => {
                         if (id) {
                           let chatTitle = 'Chat ' + (index+1);
                           if (allChats) {

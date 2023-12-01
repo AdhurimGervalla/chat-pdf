@@ -56,7 +56,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
         setDisableDialogInput(false);
     }
 
-    const CommandItemClasses = 'mt-3 first:mt-0 cursor-pointer flex flex-row items-center gap-2 bg-slate-700 py-1 px-3 rounded-lg hover:bg-slate-800 transition-colors';
+    const CommandItemClasses = 'mt-3 first:mt-0 cursor-pointer flex flex-row items-center gap-2 bg-green-200 hover:bg-green-400 dark:bg-slate-700 py-1 px-3 rounded-lg dark:hover:bg-slate-800 transition-colors';
 
     const handleValueChange = (value: string) => {
         setSearch(value);
@@ -203,7 +203,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
     
     return (
         <>
-        {open && <div className='blur-xl fixed left-0 right-0 top-0 bottom-0 bg-black opacity-70 z-10'>
+        {open && <div className='fixed left-0 right-0 top-0 bottom-0 bg-black opacity-30 dark:opacity-70 z-10'>
 
         </div>}
         <Command.Dialog onKeyDown={(e) => {
@@ -213,8 +213,8 @@ const Cmkd = ({chats, workspaces}: Props) => {
               e.preventDefault();
               reset();
             }
-          }} className='shadow-3xl fixed z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] max-h-[500px] h-full overflow-y-scroll bg-slate-900 rounded-lg opacity-[0.98]' open={open} onOpenChange={setOpen} label="Global Command Menu">
-            <Command.Input disabled={disableDialogInput} placeholder={!disableDialogInput ? 'search for chats and workspaces' : ''} ref={inputRef} value={search} onValueChange={handleValueChange} className='px-5 py-3 sticky top-0 w-full text-slate-900 bg-slate-900 opacity-100 border-0 focus:ring-0 focus:ring-offset-0 dark:text-white' />
+          }} className='shadow-3xl fixed z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] max-h-[500px] h-full overflow-y-scroll bg-white dark:bg-slate-900 rounded-lg opacity-[0.98]' open={open} onOpenChange={setOpen} label="Global Command Menu">
+            <Command.Input disabled={disableDialogInput} placeholder={!disableDialogInput ? 'search for chats and workspaces' : ''} ref={inputRef} value={search} onValueChange={handleValueChange} className='px-5 py-3 sticky top-0 w-full text-slate-900 dark:bg-slate-900 opacity-100 border-0 focus:ring-0 focus:ring-offset-0 dark:text-white shadow-inner' />
             <Command.List className='p-5'>
                 {!page && (
                     <>
@@ -240,7 +240,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 {page === 'chats' && (
                     <>
                         {chats.map((chat) => (
-                            <Command.Item onSelect={() => handleDetailView(chat)} className={cn(CommandItemClasses, {'bg-green-700': isCurrentChat(chat.id)})}
+                            <Command.Item onSelect={() => handleDetailView(chat)} className={cn(CommandItemClasses, {'bg-green-700 text-white': isCurrentChat(chat.id)})}
                                 key={chat.id}>
                                     {chat.bookmarked && <Bookmark className='w-4 h-4' color={isCurrentChat(chat.id) ? 'white': 'green'} />} {chat.title && trimChatTitle(chat.title)}
                             </Command.Item>
@@ -251,15 +251,15 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 {page && selectedChat && (
                     <>
                         <h3 className='text-lg mb-5'>{selectedChat.title && trimChatTitle(selectedChat.title)}</h3>
-                        {!saveToWorkspaceMode && <><Command.Item className={cn(CommandItemClasses, {'opacity-50 cursor-default hover:bg-slate-700': isCurrentChat(selectedChat?.id)})} onSelect={() => {
+                        {!saveToWorkspaceMode && <><Command.Item className={cn(CommandItemClasses, {'opacity-50 cursor-default hover:bg-green-700 dark:hover:bg-slate-700': isCurrentChat(selectedChat?.id)})} onSelect={() => {
                             if (!isCurrentChat(selectedChat.id)) {
                                 router.push(`/chats/${selectedChat.id}`);
                             }
                         }}>
                         <ChatBubbleLeftIcon className='w-4 h-4' /> Open chat
                         </Command.Item>
-                        <Command.Item className={cn(CommandItemClasses, {'bg-slate-800': selectedChat.bookmarked})} onSelect={() => toggleBookmark(selectedChat)}>
-                            <Bookmark className='w-4 h-4' color={selectedChat.bookmarked ? 'green' : 'white'} /> Bookmark Chat
+                        <Command.Item className={cn(CommandItemClasses, {'bg-green-500 dark:bg-slate-800': selectedChat.bookmarked})} onSelect={() => toggleBookmark(selectedChat)}>
+                            <Bookmark className='w-4 h-4' color={selectedChat.bookmarked ? 'green' : 'white'} /> {selectedChat.bookmarked ? 'Remove Bookmark' : 'Bookmark chat'}
                         </Command.Item>
                         <Command.Item className={cn(CommandItemClasses, 'hover:bg-red-500')} onSelect={() => startDelete(selectedChat.id)}>
                             <Trash className='w-4 h-4' /> Delete Chat

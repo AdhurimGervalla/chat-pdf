@@ -80,7 +80,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
           </div>) }
 
           {/* chat input */}
-          <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 px-2 py-5 w-full max-w-[600px] mx-auto mt-auto`)}>
+          <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 pb-5 pt-10 w-full max-w-4xl mx-auto mt-auto`)}>
             <div className="flex">
               <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
             </div>

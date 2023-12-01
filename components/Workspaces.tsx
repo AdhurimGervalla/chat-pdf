@@ -76,7 +76,7 @@ const Workspaces = ({workspaces, saveInWorkspaceMode = false, chatId, setToggleW
 
   return (
     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-      <h3 className='text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{saveInWorkspaceMode ? 'Save in ...' : 'Specify context ...'}</h3>
+      <h3 className='dark:text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{saveInWorkspaceMode ? 'Save in ...' : 'Specify context ...'}</h3>
       <div className='grid grid-cols-3 gap-5'>
         {workspaces.map((ws) => {
             return (
@@ -108,7 +108,7 @@ const Workspaces = ({workspaces, saveInWorkspaceMode = false, chatId, setToggleW
 
 const WorkspaceItem = ({workspace, onClick, selectedWorkspace, chatWorkspace}: {workspace: DrizzleWorkspace, onClick: any, selectedWorkspace: DrizzleWorkspace | null, chatWorkspace?: DrizzleWorkspace}) => {
   return (
-    <div onClick={onClick} className={cn('bg-slate-500 text-center dark:bg-slate-900 p-6 rounded-xl dark:hover:bg-green-500 transition-colors cursor-pointer relative before:content-[""] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl', {'dark:bg-slate-950  text-slate-600 dark:hover:text-white': selectedWorkspace !== null && workspace.id !== selectedWorkspace?.id}, { 'dark:bg-yellow-500' : chatWorkspace?.id === workspace.id}, {'dark:bg-green-500 dark:text-white': workspace.id === selectedWorkspace?.id})}>
+    <div onClick={onClick} className={cn('bg-green-100 hover:bg-green-300 text-center dark:bg-slate-900 p-6 rounded-xl dark:hover:bg-green-500 transition-colors cursor-pointer relative before:content-[""] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl', {'dark:bg-slate-950  dark:text-slate-600 dark:hover:text-white': selectedWorkspace !== null && workspace.id !== selectedWorkspace?.id}, { 'dark:bg-yellow-500' : chatWorkspace?.id === workspace.id}, {'bg-green-500 text-white': workspace.id === selectedWorkspace?.id})}>
       <h3 className='font-semibold tracking-wide flex justify-center items-center'>{workspace.name}</h3>
     </div>
   )

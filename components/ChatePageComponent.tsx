@@ -6,6 +6,7 @@ import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import Cmkd from './Cmkd';
+import { UserButton } from '@clerk/nextjs';
 
 type Props = {
     chatId: string;
@@ -22,6 +23,9 @@ const ChatePageComponent = async ({chatId, isNewChat = false}: Props) => {
 
     return (
     <>
+        <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all absolute right-7 top-5 z-10">
+          <UserButton afterSignOutUrl='/' />
+        </div>
         <Cmkd chats={_chats} workspaces={_workspaces} />
         <div className='flex max-h-screen overflow-scroll'>
             <div className='flex w-full max-h-screen overflow-scroll'>
