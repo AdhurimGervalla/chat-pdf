@@ -135,3 +135,9 @@ async function prepareDocuments(page: PDFPage) {
 
     return docs;
 }
+
+export async function deletePineconeIndex(namespace: string, chatId: string): Promise<void> {
+    const client = await getPineconeClient();
+    await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteMany({ chatId: chatId });
+
+}

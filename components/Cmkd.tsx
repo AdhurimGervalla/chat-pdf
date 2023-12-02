@@ -111,7 +111,8 @@ const Cmkd = ({chats, workspaces}: Props) => {
     const deleteChat = async (idOfChat: string) => {
         try {
             await axios.post(`/api/delete-chat`, {
-                chatId: idOfChat
+                chatId: idOfChat,
+                workspaceId: chats.filter(chat => chat.id === idOfChat)[0].workspaceId
               });
             router.refresh();
             if (isCurrentChat(idOfChat)) {
