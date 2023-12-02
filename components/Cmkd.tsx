@@ -56,7 +56,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
         setDisableDialogInput(false);
     }
 
-    const CommandItemClasses = 'mt-3 first:mt-0 cursor-pointer flex flex-row items-center gap-2 bg-green-200 hover:bg-green-400 dark:bg-slate-700 py-1 px-3 rounded-lg dark:hover:bg-slate-800 transition-colors';
+    const CommandItemClasses = 'mt-3 first:mt-0 cursor-pointer flex flex-row items-center gap-2 bg-green-200 hover:bg-green-600 hover:text-white dark:bg-slate-700 py-1 px-3 rounded-lg dark:hover:bg-slate-800 transition-colors';
 
     const handleValueChange = (value: string) => {
         setSearch(value);
@@ -301,17 +301,20 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 )}
                 {page === 'newWorkspace' && (
                     <Command.Group className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max'>
-                        <input
-                        ref={workspaceNameInputRef}
-                        onChange={(e) => setWorkspaceName(e.target.value)}
-                        value={workspaceName}
-                        type="text"
-                        name="workspaceName"
-                        id="workspaceName"
-                        className="rounded-md border-0 py-1.5 text-white bg-transparent shadow-sm ring-1 ring-inset ring-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-transparent sm:text-sm sm:leading-6"
-                        placeholder="enter a name"
-                        />
-                        <Button className='h-[30px]' onClick={() => createWorkspace()}><Save className='w-4 h-4 mr-2' /> Save</Button>
+                        <div className='flex items-center justify-center'>
+                            <input
+                            ref={workspaceNameInputRef}
+                            onChange={(e) => setWorkspaceName(e.target.value)}
+                            value={workspaceName}
+                            type="text"
+                            name="workspaceName"
+                            id="workspaceName"
+                            className="mr-3 rounded-md border-0 py-1.5 dark:text-white bg-transparent shadow-sm ring-1 ring-inset ring-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-transparent sm:text-sm sm:leading-6"
+                            placeholder="enter a name"
+                            />
+                            <Button className='h-[30px]' onClick={() => createWorkspace()}><Save className='w-4 h-4 mr-2' /> Save</Button>
+                            </div>
+
                     </Command.Group>
                 )}                     
             </Command.List>

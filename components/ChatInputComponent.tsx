@@ -37,7 +37,7 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
     <div className="flex items-start space-x-4 w-full ">
       <div className="min-w-0 flex-1">
         <div className="relative">
-          <div className="bg-white dark:bg-black overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-green-300">
+          <div className="bg-white dark:bg-black overflow-hidden rounded-lg rounded-b-none shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-green-300">
             <textarea
             aria-multiline="true"
             onChange={onChange}
