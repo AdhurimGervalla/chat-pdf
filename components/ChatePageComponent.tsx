@@ -7,6 +7,7 @@ import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import Cmkd from './Cmdk/Cmkd';
 import { UserButton } from '@clerk/nextjs';
+import DarkModeSwitch from './DarkModeSwitch';
 
 type Props = {
     chatId: string;
@@ -23,15 +24,18 @@ const ChatePageComponent = async ({chatId, isNewChat = false}: Props) => {
 
     return (
     <>
-        <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all absolute right-7 top-5 z-10">
+    <div className='fixed right-7 top-5 z-10 flex gap-3 items-center justify-center'>
+        <div className=''>
+            <DarkModeSwitch />
+        </div>
+        <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all">
           <UserButton afterSignOutUrl='/' />
         </div>
-        <Cmkd chats={_chats} workspaces={_workspaces} />
-        <div className='flex max-h-screen overflow-scroll'>
-            <div className='flex w-full max-h-screen overflow-scroll'>
-                <div className='w-full flex flex-col relative h-[100vh]'>
-                    <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} allChats={_chats} workspaces={_workspaces} />
-                </div>
+    </div>
+    <Cmkd chats={_chats} workspaces={_workspaces} />
+    <div className='flex w-full max-h-screen overflow-hidden border-x-[15px] border-x-transparent'>
+            <div className='w-full flex flex-col relative h-[100vh] overflow-scroll'>
+                <ChatComponent chatId={chatId} isPro={isPro} chat={currentChat} allChats={_chats} workspaces={_workspaces} />
             </div>
         </div>
     </>
