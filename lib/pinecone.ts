@@ -141,3 +141,8 @@ export async function deletePineconeIndex(namespace: string, chatId: string): Pr
     await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteMany({ chatId: chatId });
 
 }
+
+export async function deletePineconeNamespace(namespace: string): Promise<void> {
+    const client = await getPineconeClient();
+    await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteAll();
+}

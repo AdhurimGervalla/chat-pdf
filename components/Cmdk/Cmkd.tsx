@@ -1,22 +1,26 @@
 'use client';
 import React from 'react'
-import { Command } from 'cmdk';
+import { Command, CommandItem } from 'cmdk';
 import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema';
-import Link from 'next/link';
 import { v4 } from "uuid";
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowRight, Bookmark, LinkIcon, PlusCircle, Save, Search, Trash } from 'lucide-react';
+import { ArrowRight, Bookmark, LinkIcon, List, PlusCircle, Save, Search, Trash } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { cn } from '@/lib/utils';
 import { ChatBubbleLeftIcon } from '@heroicons/react/20/solid';
-import { set } from 'react-hook-form';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
+import WorkspaceChatsPage from './WorkspaceChatsPage';
+import ListItem from './ListItem';
+import { type } from 'os';
+import PageTitle from './PageTitle';
 
 type Props = {
     chats: DrizzleChat[];
     workspaces: DrizzleWorkspace[];
 }
+
+export type Page = [string, number|string];
 
 const Cmkd = ({chats, workspaces}: Props) => {
     const router = useRouter();
@@ -25,7 +29,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
     const workspaceNameInputRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState('')        
-    const [pages, setPages] = React.useState<string[]>([])
+    const [pages, setPages] = React.useState<Page[]>([])
     const [selectedChat, setSelectedChat] = React.useState<DrizzleChat | null>(null)
     const [saveToWorkspaceMode, setSaveToWorkspaceMode] = React.useState(false)
     const [workspaceName, setWorkspaceName] = React.useState<string>('');
@@ -48,7 +52,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
     }, []);
 
     const reset = () => {
-        setPages([]);
+        setPages((pages) => pages.slice(0, -1));
         setSearch('');
         setWorkspaceName('');
         setSelectedChat(null);
@@ -69,14 +73,14 @@ const Cmkd = ({chats, workspaces}: Props) => {
           }
     }
 
-    const handeOnSelect = (page: string) => {
+    const handeOnSelect = (page: Page) => {
         setPages([...pages, page]);
         if (inputRef.current) {
             inputRef.current.focus();
           }
     }
 
-    const handleCreateWorkspace = (page: string) => {
+    const handleCreateWorkspace = (page: Page) => {
         setDisableDialogInput(!disableDialogInput);
         setPages([...pages, page]);
         setTimeout(() => {
@@ -87,7 +91,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
     }
 
     const handleDetailView = (chat: DrizzleChat) => {
-        setPages([...pages, chat.id]);
+        setPages([...pages, ['chatsDetailPage', chat.id]]);
         setSelectedChat(chat);
         if (inputRef.current) {
             inputRef.current.focus();
@@ -123,7 +127,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
           } catch (error) {
             console.log(error);
           }
-      }
+    }
     
     const startDelete = (chatId: string) => {
         toast.promise(deleteChat(chatId), {
@@ -200,7 +204,14 @@ const Cmkd = ({chats, workspaces}: Props) => {
           }
         }
     }
+
+    React.useEffect(() => {
+        console.log(pages);
+    }, [pages]);
     
+    const getWorkspaceById = (id: number): DrizzleWorkspace => {
+        return workspaces.filter(workspace => workspace.id === id)[0];
+    }
     
     return (
         <>
@@ -227,52 +238,53 @@ const Cmkd = ({chats, workspaces}: Props) => {
                                         handleDetailView(chat);
                                     }
                                 }}><ArrowRight className='w-4 h-4' />Jump to active chat</Command.Item>}
-                                <Command.Item className={CommandItemClasses} onSelect={() => handeOnSelect('chats')}><Search className='w-4 h-4' />Search chats</Command.Item>
-                                <Command.Item className={CommandItemClasses} onSelect={() => handleNewChat()}><PlusCircle className='w-4 h-4' />New chat</Command.Item>
+                                <ListItem onSelect={() => handeOnSelect(['chats', 0])} cnObjects={[{'bg-green-700 text-white': page === 'chats'}]}><Search className='w-4 h-4' />Search chats</ListItem>
+                                <ListItem onSelect={() => handleNewChat()}><PlusCircle className='w-4 h-4' />New chat</ListItem>
                         </Command.Group>
                         <Command.Group>
                                 <small>Workspaces</small>
-                                <Command.Item className={CommandItemClasses} onSelect={() => handeOnSelect('workspaces')}><Search className='w-4 h-4' />Search workspaces</Command.Item>
-                                <Command.Item className={CommandItemClasses} onSelect={() => handleCreateWorkspace('newWorkspace')}><PlusCircle className='w-4 h-4' />New Workspace</Command.Item>
+                                <ListItem onSelect={() => handeOnSelect(['workspaces', 0])}><Search className='w-4 h-4' />Search workspaces</ListItem>
+                                <ListItem onSelect={() => handleCreateWorkspace(['newWorkspace', 0])}><PlusCircle className='w-4 h-4' />New Workspace</ListItem>
                         </Command.Group>
                     </>
                 )}
 
-                {page === 'chats' && (
+                {page && page[0] === 'chats' && (
                     <>
                         {chats.map((chat) => (
-                            <Command.Item onSelect={() => handleDetailView(chat)} className={cn(CommandItemClasses, {'bg-green-700 text-white': isCurrentChat(chat.id)})}
-                                key={chat.id}>
-                                    {chat.bookmarked && <Bookmark className='w-4 h-4' color={isCurrentChat(chat.id) ? 'white': 'green'} />} {chat.title && trimChatTitle(chat.title)}
-                            </Command.Item>
+                            <ListItem onSelect={() => handleDetailView(chat)} cnObjects={[{'bg-green-700 text-white': isCurrentChat(chat.id)}]} key={chat.id}>
+                                {chat.bookmarked && <Bookmark className='w-4 h-4' color={isCurrentChat(chat.id) ? 'white': 'green'} />} {chat.title && trimChatTitle(chat.title)}
+                            </ListItem>
                         ))}
                     </>
                 )}
 
-                {page && selectedChat && (
+                {page && page[0] === 'chatsDetailPage' && selectedChat && (
                     <>
-                        <h3 className='text-lg mb-5'>{selectedChat.title && trimChatTitle(selectedChat.title)}</h3>
-                        {!saveToWorkspaceMode && <><Command.Item className={cn(CommandItemClasses, {'opacity-50 cursor-default hover:bg-green-700 dark:hover:bg-slate-700': isCurrentChat(selectedChat?.id)})} onSelect={() => {
-                            if (!isCurrentChat(selectedChat.id)) {
-                                router.push(`/chats/${selectedChat.id}`);
-                            }
-                        }}>
-                        <ChatBubbleLeftIcon className='w-4 h-4' /> Open chat
-                        </Command.Item>
-                        <Command.Item className={cn(CommandItemClasses, {'bg-green-500 dark:bg-slate-800': selectedChat.bookmarked})} onSelect={() => toggleBookmark(selectedChat)}>
-                            <Bookmark className='w-4 h-4' color={selectedChat.bookmarked ? 'green' : 'white'} /> {selectedChat.bookmarked ? 'Remove Bookmark' : 'Bookmark chat'}
-                        </Command.Item>
-                        <Command.Item className={cn(CommandItemClasses, 'hover:bg-red-500')} onSelect={() => startDelete(selectedChat.id)}>
-                            <Trash className='w-4 h-4' /> Delete Chat
-                        </Command.Item>
-                        <Command.Item className={CommandItemClasses}>
-                            <LinkIcon className='w-4 h-4' /> Show related chats
-                        </Command.Item></>}
+                        <PageTitle>{selectedChat.title && trimChatTitle(selectedChat.title)}</PageTitle>
+                        {!saveToWorkspaceMode && <>
+                            <ListItem cnObjects={[{'opacity-50 cursor-default hover:bg-green-700 dark:hover:bg-slate-700': isCurrentChat(selectedChat?.id)}]} onSelect={() => {
+                                if (!isCurrentChat(selectedChat.id)) {
+                                    router.push(`/chats/${selectedChat.id}`);
+                                }
+                            }}>
+                                <ChatBubbleLeftIcon className='w-4 h-4' /> Open chat
+                            </ListItem>
+                            <ListItem cnObjects={[{'bg-green-500 dark:bg-slate-800': selectedChat.bookmarked}]} onSelect={() => toggleBookmark(selectedChat)}>
+                                <Bookmark className='w-4 h-4' color={selectedChat.bookmarked ? 'green' : 'white'} /> {selectedChat.bookmarked ? 'Remove Bookmark' : 'Bookmark chat'}
+                            </ListItem>
+                            <ListItem onSelect={() => startDelete(selectedChat.id)}>
+                                <Trash className='w-4 h-4' /> Delete Chat
+                            </ListItem>
+                            <ListItem onSelect={() => handeOnSelect(['relatedChats', 0])}>
+                                <LinkIcon className='w-4 h-4' /> Show related chats
+                            </ListItem>
+                        </>}
                         {selectedChat.workspaceId === 0 && <Command.Item onSelect={handleWorkspaceSelect} className={CommandItemClasses}>
                             <PlusCircle className='w-4 h-4' /> Add to workspace
                         </Command.Item>}
                         <Command.Group className='mt-5'>
-                            <span>Workspace:</span>
+                            <CommandItem className='inline'>Workspace:</CommandItem>
                             {saveToWorkspaceMode && (
                                 <>
                                     {workspaces.map((workspace) => (
@@ -284,23 +296,27 @@ const Cmkd = ({chats, workspaces}: Props) => {
                                 </>
                             )}   
                             {workspaces.map((workspace) => (
-                                <span key={workspace.id} className={cn('hidden underline ml-3', {'inline': workspace.id === selectedChat.workspaceId})}>{workspace.name}</span>
+                                <CommandItem key={workspace.id} className={cn('hidden underline ml-3', {'inline cursor-pointer': workspace.id === selectedChat.workspaceId})} onSelect={() => handeOnSelect(['workspaceDetail', workspace.id])} >{workspace.name}</CommandItem>
                             ))}
                         </Command.Group>
                     </>
                 )}
 
-                {page === 'workspaces' && (
+                {page && page[0] === 'workspaces' && (
                     <>
                         {workspaces.map((workspace) => (
-                            <Command.Item className={CommandItemClasses}
-                                key={workspace.id}>
-                                    {workspace.name}
-                            </Command.Item>
+                            <ListItem onSelect={() => handeOnSelect(['workspaceDetail', workspace.id])} key={workspace.id}>
+                                <List className='w-4 h-4' /> {workspace.name}
+                            </ListItem>
                         ))}
                     </>
                 )}
-                {page === 'newWorkspace' && (
+                {page && page[0] === 'workspaceDetail' && (
+                    <>
+                        <WorkspaceChatsPage workspace={getWorkspaceById(page[1] as number)} />
+                    </>
+                )}
+                {page && page[0] === 'newWorkspace' && (
                     <Command.Group className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max'>
                         <div className='flex items-center justify-center'>
                             <input
@@ -317,7 +333,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
                             </div>
 
                     </Command.Group>
-                )}                     
+                )}                
             </Command.List>
       </Command.Dialog>
         </>

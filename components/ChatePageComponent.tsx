@@ -5,7 +5,7 @@ import { DrizzleChat, DrizzleWorkspace, chats, messages as _messages, workspaces
 import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
-import Cmkd from './Cmkd';
+import Cmkd from './Cmdk/Cmkd';
 import { UserButton } from '@clerk/nextjs';
 
 type Props = {
