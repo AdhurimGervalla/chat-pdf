@@ -91,18 +91,22 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
 
   return (
     <>
-        <div className='flex flex-col w-full h-full' id='message-container'>
-          {loadingMessages ? <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'><Loader2 className='w-[50px] h-[50px] animate-spin' /></div> : (messages.length === 0 ? <Workspaces workspaces={workspaces} chatId={chatId} />
+        <div className='flex flex-col w-full h-full overflow-y-scroll' id='message-container'>
+          {loadingMessages ? <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+            <Loader2 className='w-[50px] h-[50px] animate-spin' /></div> 
+            : (messages.length === 0 
+              ? <Workspaces workspaces={workspaces} chatId={chatId} />
           :
           <div className='max-w-4xl  w-full mx-auto relative'>
-            <h1 className='text-3xl mt-10 font-bold'>{chatTitle !== '' ? chatTitle : <Loader2 className='w-4 h-4 animate-spin inline' />}</h1>
+            <h1 className='text-2xl mt-20 sm:mt-10 sm:text-3xl font-bold'>{chatTitle !== '' ? chatTitle : <Loader2 className='w-4 h-4 animate-spin inline' />}</h1>
             <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
           </div>) }
 
           {/* chat input */}
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 pt-10 pb-5 w-full max-w-4xl mx-auto mt-auto`)}>
             <div className="flex">
-              <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
+              <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} 
+                isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
             </div>
           </form>
         </div>

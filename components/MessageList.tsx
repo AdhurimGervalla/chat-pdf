@@ -48,7 +48,7 @@ const MessageList = ({messages, refetch, isLoading = false, allChats}: Props) =>
           }
           
             return (
-                <div key={message.id} className={cn('message-item flex text-lg leading-7 content-center', {'text-xl font-bold dark:text-green-500 mt-10': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
+                <div key={message.id} className={cn('message-item flex sm:text-lg leading-7 content-center', {'sm:text-xl font-bold dark:text-green-500 mt-10': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
                     <div className={cn('flex flex-col w-full')}>
                       <p>
                         <Markdown

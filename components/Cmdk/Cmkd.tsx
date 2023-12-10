@@ -225,7 +225,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
               e.preventDefault();
               reset();
             }
-          }} className='shadow-3xl fixed z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] max-h-[500px] h-full overflow-y-scroll bg-white dark:bg-slate-900 rounded-lg opacity-[0.98]' open={open} onOpenChange={setOpen} label="Global Command Menu">
+          }} className='shadow-3xl fixed z-20 top-1/2 -translate-y-1/2 left-5 right-5 max-h-[500px] h-full overflow-y-scroll bg-white dark:bg-slate-900 rounded-lg opacity-[0.98] sm:w-[500px] sm:left-1/2 sm:-translate-x-1/2' open={open} onOpenChange={setOpen} label="Global Command Menu">
             <Command.Input disabled={disableDialogInput} placeholder={!disableDialogInput ? 'search for chats and workspaces' : ''} ref={inputRef} value={search} onValueChange={handleValueChange} className='px-5 py-3 sticky top-0 w-full text-slate-900 dark:bg-slate-900 opacity-100 border-0 focus:ring-0 focus:ring-offset-0 dark:text-white shadow-inner' />
             <Command.List className='p-5'>
                 {!page && (

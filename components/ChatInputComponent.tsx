@@ -62,7 +62,7 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
           <div className="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
             <div className="flex items-center space-x-5">
               <div className="flex items-center">
-                <p className='flex text-xs text-center'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
+                <p className='text-xs text-center hidden sm:flex'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
               </div>
             </div>
             <div>
