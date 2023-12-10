@@ -54,6 +54,19 @@ export type DrizzleWorkspace = typeof workspaces.$inferSelect;
 export const users = pgTable('users', {
     userId: varchar('user_id', {length: 255}).notNull().unique(),
 });
+
+export const files = pgTable('files', {
+    id: serial('id').primaryKey(),
+    workspaceId: integer('workspace_id').default(0), // foreign key
+    name: varchar('name', {length: 256}).notNull(),
+    key: varchar('key', {length: 256}).notNull(),
+    url: varchar('url', {length: 256}).notNull(),
+    createdAt: timestamp('createdAt').notNull().defaultNow(),
+    userId: varchar('user_id', {length: 255}).notNull(),
+});
+
+export type DrizzleFile = typeof files.$inferSelect;
+
 /*
 export const workspacesOnUsers = pgTable('workspaces_users', {
     id: serial('id').primaryKey(),

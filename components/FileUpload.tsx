@@ -7,20 +7,21 @@ import {useDropzone} from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { DrizzleWorkspace } from '@/lib/db/schema';
 
 type Props = {
-    setOpenNewChatCb: (open: boolean) => void;
+    refetchCb?: any;
+    workspace: DrizzleWorkspace;
 }
 
-const FileUpload = ({setOpenNewChatCb}: Props) => {
-    const router = useRouter();
+const FileUpload = ({workspace, refetchCb}: Props) => {
     const [uploading, setUploading] = React.useState(false);
     const {mutate, isPending} = useMutation({
         mutationFn: async ({file_key, file_name}: {file_key: string, file_name: string}) => {
-            const response = await axios.post('/api/create-chat', {
-                file_key, file_name
+            const response = await axios.post('/api/upload-file-to-workspace', {
+                file_key, file_name, workspaceIdentifier: workspace.identifier, workspaceId: workspace.id
             });
-
+            refetchCb();
             return response.data;
         }
     });
@@ -45,11 +46,11 @@ const FileUpload = ({setOpenNewChatCb}: Props) => {
                 }
                 mutate(data, {
                     onSuccess: ({chat_id}) => {
-                        toast.success('Chat created');
-                        router.push(`/chats/${chat_id}`);
+                        toast.success('PDF added to Context');
+                        // router.push(`/chats/${chat_id}`);
                     },
                     onError: (error) => {
-                        toast.error('Couldn\'t create chat');
+                        toast.error('Couldn\'t add PDF to Context');
                         console.log(error);
                     }
                 });
@@ -58,15 +59,15 @@ const FileUpload = ({setOpenNewChatCb}: Props) => {
                 console.log(error);
             } finally {
                 setUploading(false);
-                setOpenNewChatCb(false);
+                // setOpenNewChatCb(false);
             }
             
         }
     });
     return (
-        <div className='rounded-xl'>
+        <div className={`rounded-xl w-full`}>
             <div {...getRootProps({
-                className: 'border-dashed border-2 cursor-pointer bg-gray-100 py-8 flex justify-center items-center flex-col'
+                className: 'border-dashed border-2 cursor-pointer bg-gray-100 flex justify-center items-center flex-col w-full py-3'
             })}>
                 <input {...getInputProps()} />
                 {(uploading || isPending) ? 
@@ -77,7 +78,7 @@ const FileUpload = ({setOpenNewChatCb}: Props) => {
                     :
                     <>
                         <Inbox className='w-10 h-10 text-blue-500' />
-                        <p className='mt-2 text-sm text-slate-400 dark:text-white'>Drop pdf here</p>
+                        <p className='mt-2 text-sm text-slate-400'>Drop pdf here</p>
                     </>
                 }
             </div>
