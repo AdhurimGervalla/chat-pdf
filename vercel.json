@@ -2,6 +2,9 @@
 	"functions": {
 		"app/api/create-chat/*.ts": {
 			"maxDuration": 30
+		},
+		"app/api/upload-file-to-workspace/*.ts": {
+			"maxDuration": 30
 		}
 	}
 }
