@@ -18,11 +18,13 @@ import PageTitle from './PageTitle';
 type Props = {
     chats: DrizzleChat[];
     workspaces: DrizzleWorkspace[];
+    refetchChats: any;
+    refetchWorkspaces: any;
 }
 
 export type Page = [string, number|string];
 
-const Cmkd = ({chats, workspaces}: Props) => {
+const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
     const router = useRouter();
     const { chatId } = useParams();
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -118,7 +120,8 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 chatId: idOfChat,
                 workspaceId: chats.filter(chat => chat.id === idOfChat)[0].workspaceId
               });
-            router.refresh();
+            refetchChats();
+            console.log('chatId', idOfChat);
             if (isCurrentChat(idOfChat)) {
                 router.push(`/chats/${v4()}`);
             } else {
@@ -142,7 +145,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
             const res = await axios.post(`/api/bookmark`, {
                 chat            
             });
-            router.refresh();
+            refetchChats();
             setPages([]);
         } catch (error) {
             console.log(error);
@@ -166,7 +169,8 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 success: 'Chat saved to workspace',
                 error: 'Couldn\'t save chat to workspace'
             }).then(() => {
-                router.refresh();
+                refetchChats();
+                refetchWorkspaces();
                 reset();
             });
           } catch (error: any) {
@@ -191,7 +195,7 @@ const Cmkd = ({chats, workspaces}: Props) => {
                 error: 'Couldn\'t save workspace'
             }).then(() => {
                 console.log('refreshing');
-                router.refresh();
+                refetchWorkspaces();
                 reset();
             });
           } catch (error: any) {

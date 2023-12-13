@@ -10,12 +10,11 @@ type Props = {
   placeholder: string;
   isLoading: boolean;
   value: string;
-  isPro: boolean;
   workspaces: DrizzleWorkspace[];
   handleSubmit: any;
 }
 
-export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, isPro, workspaces, handleSubmit}: Props) {
+export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, workspaces, handleSubmit}: Props) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const resizeTextArea = () => {
@@ -60,11 +59,6 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
           </div>
 
           <div className="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
-            <div className="flex items-center space-x-5">
-              <div className="flex items-center">
-                <p className='text-xs text-center hidden sm:flex'>{isPro ? 'GPT-4' : 'GPT-3.5-turbo'}</p>
-              </div>
-            </div>
             <div>
               <Select workspaces={workspaces} />
             </div>
