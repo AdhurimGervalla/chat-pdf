@@ -4,6 +4,8 @@ import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from '@clerk/nextjs/server';
 
+export const runtime = 'edge';
+
 export async function POST(req: NextRequest) {
     const {userId} = await auth();
     if (!userId) {
