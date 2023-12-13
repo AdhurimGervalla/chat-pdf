@@ -25,6 +25,15 @@ export async function getMatchesFromEmbeddings(
   }
 }
 
+
+export type Metadata = {
+  text: string;
+  pageNumber?: number;
+  chatId?: string;
+  fileId?: number;
+};
+
+
 export async function getContext(query: string, identifier: string) {
   const queryEmbeddings = await getEmbeddings(query);
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, identifier);
@@ -33,13 +42,7 @@ export async function getContext(query: string, identifier: string) {
     (match) => match.score && match.score > 0.7
   );
 
-  console.log("qualifyingDocs", qualifyingDocs);
-
-  type Metadata = {
-    text: string;
-    pageNumber?: number;
-    chatId?: string;
-  };
+  //console.log("qualifyingDocs", qualifyingDocs);
 
   let docs: Metadata[] = qualifyingDocs.map((match) => {
     const metadata = (match.metadata as Metadata)

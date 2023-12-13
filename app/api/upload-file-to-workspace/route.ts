@@ -24,11 +24,7 @@ export async function POST(req: Request, res: Response) {
         console.log('workspaceNamespace', workspaceNamespace);
         
         if (file_key && file_name) {
-    
-            await loadS3IntoPinecone(file_key, workspaceNamespace);
-            console.log('loaded s3 into pinecone');
-
-            await db
+            const insertedId = await db
             .insert(files)
             .values({
                 key: file_key,
@@ -36,7 +32,14 @@ export async function POST(req: Request, res: Response) {
                 workspaceId: workspaceId,
                 url: getS3Url(file_key),
                 userId,
+            }).returning({
+                insertedId: files.id
             });
+
+            console.log('insertedId', insertedId[0].insertedId);
+                
+            await loadS3IntoPinecone(file_key, workspaceNamespace, insertedId[0].insertedId);
+            console.log('loaded s3 into pinecone');
         }
 
         return NextResponse.json({status: 200});

@@ -67,6 +67,34 @@ export const files = pgTable('files', {
 
 export type DrizzleFile = typeof files.$inferSelect;
 
+
+export const messagesRelations = relations(messages, ({many}) => ({
+    files: many(messagesToFiles)
+}));
+
+export const filesRelations = relations(files, ({many}) => ({
+    messages: many(messagesToFiles)
+}));
+
+export const messagesToFiles = pgTable('messages_files', {
+    id: serial('id').primaryKey(),
+    fileId: integer('file_id').references(() => files.id), // foreign key
+    messageId: varchar('message_id', {length: 256}).references(() => messages.id), // foreign key
+    pageNumbers: text('pagenumbers'), // json string of page numbers
+});
+
+export const messagesToFilesRelations = relations(messagesToFiles, ({ one }) => ({
+    message: one(messages, {
+      fields: [messagesToFiles.messageId],
+      references: [messages.id],
+    }),
+    file: one(files, {
+      fields: [messagesToFiles.fileId],
+      references: [files.id],
+    }),
+  }));
+
+
 /*
 export const workspacesOnUsers = pgTable('workspaces_users', {
     id: serial('id').primaryKey(),

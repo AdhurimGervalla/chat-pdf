@@ -74,6 +74,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
 
   React.useEffect(() => {
     setMessages(data);
+    console.log('data', data);
   }, [data]);
 
   React.useEffect(() => {
@@ -98,7 +99,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
               ? <Workspaces workspaces={workspaces} chatId={chatId} />
           :
           <div className='max-w-4xl  w-full mx-auto relative'>
-            <h1 className='text-2xl mt-20 sm:mt-10 sm:text-3xl font-bold'>{chatTitle !== '' ? chatTitle : <Loader2 className='w-4 h-4 animate-spin inline' />}</h1>
+            <h1 className='text-2xl mt-16 sm:mt-20 sm:text-3xl font-bold'>{chatTitle !== '' ? chatTitle : <Loader2 className='w-4 h-4 animate-spin inline' />}</h1>
             <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
           </div>) }
 

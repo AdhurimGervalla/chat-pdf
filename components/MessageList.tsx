@@ -86,7 +86,7 @@ const MessageList = ({messages, refetch, isLoading = false, allChats}: Props) =>
                           )
                         }
                       })}</p>}
-                      {/*message.pageNumbers && message.pageNumbers.length > 0 && <p className='my-4'>References: {message.pageNumbers.map(n => <span onClick={() => scrollToPage(n)} className="p-1 mx-1 bg-gray-400 text-xs cursor-pointer hover:bg-yellow-400">{n}</span>)}</p>*/}
+                      {(message as DrizzleMessage).pageNumbers && message.pageNumbers.length > 0 && <p className='my-4'>Pages: {message.pageNumbers.map(n => <span className="p-1 mx-1 bg-gray-400 text-xs cursor-pointer hover:bg-yellow-400">{n}</span>)}</p>}
                     </div>
                     {((!isLoading || (messages.length -1 && messages.length -2) !== index)) && message.role === 'user' && <DeleteIcon className='delete-icon w-6 h-6 mr-2 mt-0 cursor-pointer' onClick={() => deleteMessage(message)} />}
                 </div>
