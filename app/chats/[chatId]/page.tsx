@@ -1,7 +1,7 @@
 import ChatePageComponent from '@/components/ChatePageComponent'
-import { checkSubscription } from '@/lib/subscription'
-import { auth } from '@clerk/nextjs'
 import React from 'react'
+
+export const runtime = "edge";
 
 const ChatPage = async ({ params }: { params: { chatId: string } }) => {
 
