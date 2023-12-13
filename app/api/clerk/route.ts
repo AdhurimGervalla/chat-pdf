@@ -3,6 +3,8 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 
+export const runtime = 'edge';
+
 export async function POST(req: Request) {
     
     try {
