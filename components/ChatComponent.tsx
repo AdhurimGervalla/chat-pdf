@@ -1,8 +1,7 @@
 'use client'
 import React, { use } from 'react'
 import { useChat } from 'ai/react' 
-import {Button} from './ui/button'
-import { ArrowLeft, Loader, Loader2, PlusCircle } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import MessageList from './MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -11,18 +10,17 @@ import { useRouter } from 'next/navigation'
 import ChatInputComponent from './ChatInputComponent'
 import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
 import { WorkspaceContext } from '@/context/WorkspaceContext'
-import { revalidatePath } from 'next/cache'
 import Workspaces from './Workspaces'
 
 type Props = {
   chatId: string;
-  isPro: boolean;
   workspaces: DrizzleWorkspace[];
+  refetchChats: any;
   chat?: DrizzleChat;
   allChats?: DrizzleChat[];
 }
 
-const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => {
+const ChatComponent = ({ chatId, chat, workspaces, allChats, refetchChats }: Props) => {
   const [chatLanguage, setChatLanguage] = React.useState<string>(languages[0]);
   const [loadingMessages, setLoadingMessages] = React.useState<boolean>(true);
   const [scrollDown, setScrollDown] = React.useState<boolean>(true);
@@ -49,7 +47,8 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
     },
     onFinish: async (message) => {
       await refetch();
-      router.refresh();
+      refetchChats();
+      //router.refresh();
     },
     onError: (e) => {
       console.log(e);
@@ -83,7 +82,8 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
         if (data[0]) {
           const res = await axios.post('/api/create-chat-title', { chatId: data[0].chatId, firstQuestion: data[0].content });
           setChatTitle(res.data.title);
-          router.refresh();
+          refetchChats();
+          //router.refresh();
         }
       })();
     }
@@ -105,7 +105,7 @@ const ChatComponent = ({ isPro, chatId, chat, workspaces, allChats }: Props) => 
           {/* chat input */}
           <form onSubmit={handleSubmit} className={cn(`sticky bottom-0 inset-x-0 pt-10 pb-5 w-full max-w-4xl mx-auto mt-auto`)}>
             <div className="flex">
-              <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} isPro={isPro} value={input} 
+              <ChatInputComponent handleSubmit={handleSubmit} workspaces={workspaces} stopCb={stop} value={input} 
                 isLoading={isLoading} onChange={handleInputChange} placeholder={'How can i help you?'} />
             </div>
           </form>
