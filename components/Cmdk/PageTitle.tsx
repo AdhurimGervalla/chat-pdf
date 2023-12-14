@@ -57,6 +57,6 @@ type WorkspaceTitleProps = {
 
 export const WorkspaceTitle = ({children}: WorkspaceTitleProps) => {
   return (
-    <h3 className='text-lg mb-5'>{children}</h3>
+    <h3 className='text-lg mb-5 font-bold'>{children}</h3>
   )
 }
