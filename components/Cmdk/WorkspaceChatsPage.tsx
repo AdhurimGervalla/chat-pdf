@@ -7,7 +7,7 @@ import { Loader2, Trash } from 'lucide-react';
 import ListItem from './ListItem';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import PageTitle from './PageTitle';
+import {WorkspaceTitle} from './PageTitle';
 import FileUpload from '../FileUpload';
 
 type Props = {
@@ -85,7 +85,7 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
   return (
     <>
     <Command.Group>
-        <PageTitle>{workspace.name}<span className='text-gray-500 px-3'>ID: {workspace.id}</span></PageTitle>
+        <WorkspaceTitle text={workspace.name}>{workspace.name}<span className='text-gray-500 px-3'>ID: {workspace.id}</span></WorkspaceTitle>
         <ListItem onSelect={confirmDelete} cnObjects={[{'hover:bg-red-500': true}]}>
             <Trash className='w-4 h-4' /> Delete Workspace
         </ListItem>

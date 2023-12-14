@@ -13,7 +13,7 @@ import { Button } from '../ui/button';
 import WorkspaceChatsPage from './WorkspaceChatsPage';
 import ListItem from './ListItem';
 import { type } from 'os';
-import PageTitle from './PageTitle';
+import { ChatTitle, WorkspaceTitle } from './PageTitle';
 
 type Props = {
     chats?: DrizzleChat[];
@@ -271,7 +271,7 @@ const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
             
                                 {page && page[0] === 'chatsDetailPage' && selectedChat && (
                                     <>
-                                        <PageTitle>{selectedChat.title && trimChatTitle(selectedChat.title)}</PageTitle>
+                                        {chatId && <ChatTitle text={selectedChat.title || ''} chatId={chatId as string} refetchChats={refetchChats} />}
                                         {!saveToWorkspaceMode && <>
                                             <ListItem cnObjects={[{'opacity-50 cursor-default hover:bg-green-700 dark:hover:bg-slate-700': isCurrentChat(selectedChat?.id)}]} onSelect={() => {
                                                 if (!isCurrentChat(selectedChat.id)) {
