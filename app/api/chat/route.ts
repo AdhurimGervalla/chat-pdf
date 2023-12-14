@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         if (currentWorkspace) {
             if (userId) {
                 const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
-                const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 7000 : 3000);
+                const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 8000 : 8000);
                 relatedChatIds = contextMetadata.map(doc => {
                     if (doc.chatId) return doc.chatId;
                 });

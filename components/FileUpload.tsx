@@ -32,8 +32,8 @@ const FileUpload = ({workspace, refetchCb}: Props) => {
         onDrop: async (acceptedFiles) => {
             setUploading(true);
             const file = acceptedFiles[0];
-            if (file.size > 10 * 1024 * 1024) {
-                toast.error('File size must be less than 10MB');
+            if (file.size > 50 * 1024 * 1024) {
+                toast.error('File size must be less than 50MB');
                 setUploading(false);
                 return;
             }
