@@ -10,8 +10,8 @@ import WorkspaceContextProvider from '@/context/WorkspaceContextProvider';
 
 export const metadata: Metadata = {
   title: 'workspAIces',
-  description: 'Optimize your interaction with AI by leveraging the context of your own documents.',
-  abstract: 'PDF2Chat is a service that enables you to pose AI questions within the context of a PDF.',
+  description: 'Optimize your interaction with AI by leveraging the context of your own data.',
+  abstract: 'workspAIces is a service that enables you to pose AI questions within the context of your own data.',
 }
 
 export default function RootLayout({

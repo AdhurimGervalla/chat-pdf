@@ -13,8 +13,8 @@ const LoginPage = (props: Props) => {
         <div className='grid grid-cols-2 max-sm:grid-cols-1'>
             <div className='min-h-screen w-100 relative max-sm:min-h-1/2'>
               <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-sm:top-auto max-sm:bottom-1/4'>
-                <h1 className='text-black dark:text-white text-7xl max-lg:text-6xl max-md:text-5xl'><span>PDF</span>2<span>chat</span><span className='absolute text-sm'>BETA</span></h1>
-                <TypingAnimation typingInterval={10} className={'absolute left-1/2 -translate-x-1/2 mt-5 text-lg w-[400px] sm:max-lg:w-[300px] max-[420px]:w-[300px]'} text="Optimize your interaction with AI by leveraging the context of your own documents." />
+                <h1 className='text-black dark:text-white text-7xl max-lg:text-6xl max-md:text-5xl'><span>workspAIces</span><span className='absolute text-sm'>BETA</span></h1>
+                <TypingAnimation typingInterval={10} className={'absolute left-1/2 -translate-x-1/2 mt-5 text-lg w-[400px] sm:max-lg:w-[300px] max-[420px]:w-[300px]'} text="Optimize your interaction with AI by leveraging the context of your own data." />
               </div>
             </div>
             <div className='min-h-screen w-100 bg-black relative max-sm:min-h-1/2'>
