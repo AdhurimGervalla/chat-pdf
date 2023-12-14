@@ -1,20 +1,17 @@
 import React, { useEffect, useRef } from 'react'
-import { UserButton } from '@clerk/nextjs'
 import { Loader2, SendIcon } from 'lucide-react'
 import { Button } from './ui/button'
-import Select from './Select';
-import { DrizzleWorkspace } from '@/lib/db/schema';
+
 type Props = {
   stopCb: any;
   onChange: any;
   placeholder: string;
   isLoading: boolean;
   value: string;
-  workspaces: DrizzleWorkspace[];
   handleSubmit: any;
 }
 
-export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, workspaces, handleSubmit}: Props) {
+export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, handleSubmit}: Props) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const resizeTextArea = () => {
@@ -58,10 +55,7 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
             </div>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
-            <div>
-              <Select workspaces={workspaces} />
-            </div>
+          <div className="absolute inset-x-0 bottom-0 flex justify-end py-2 pl-3 pr-2">
             <div className="flex-shrink-0">
               <Button type='submit' onClick={() => {
                   if (isLoading) {

@@ -41,10 +41,10 @@ export default function RootLayout({
                 content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover'
               />
               <link rel="manifest" href="/manifest.json"/>
-              <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png"/>
-              <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png"/>
-              <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png"/>
-              <link rel="manifest" href="/icon/site.webmanifest"/>
+              <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"/>
+              <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png"/>
+              <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png"/>
+              <link rel="manifest" href="/icons/site.webmanifest"/>
             </head>
 
             <body className='dark:bg-black dark:text-white'>
