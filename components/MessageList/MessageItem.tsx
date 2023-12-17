@@ -70,7 +70,7 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
                         >{message.content}</Markdown>
                         </p>
                         {relatedChatIds && relatedChatIds.length > 0 && allChats && <RelatedChats relatedChatIds={relatedChatIds} allChats={allChats} />}
-                        {message.role === 'system' && <RelatedContext messageId={message.id} />}
+                        {message.role === ('assistant' || 'system') && <RelatedContext messageId={message.id} />}
                         {/*message.pageNumbers && message.pageNumbers.length > 0 && <p className='my-4'>References: {message.pageNumbers.map(n => <span onClick={() => scrollToPage(n)} className="p-1 mx-1 bg-gray-400 text-xs cursor-pointer hover:bg-yellow-400">{n}</span>)}</p>*/}
                     </div>
                     {!isLoading && message.role === 'user' && <DeleteIcon className='delete-icon w-6 h-6 mr-2 mt-0 cursor-pointer' onClick={() => deleteMessage(message)} />}
