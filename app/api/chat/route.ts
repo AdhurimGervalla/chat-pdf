@@ -2,7 +2,7 @@ import {OpenAIApi, Configuration} from 'openai-edge';
 import {OpenAIStream, StreamingTextResponse} from 'ai';
 import { getContext } from '@/lib/context';
 import { db } from "@/lib/db";
-import { chats, messages as _messages } from '@/lib/db/schema';
+import { chats, messages as _messages, messagesToFiles } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { Message } from 'ai/react';
@@ -11,6 +11,7 @@ import { getNamespaceForWorkspace, languages } from '@/lib/utils';
 import { auth } from '@clerk/nextjs/server';
 import { v4 } from "uuid";
 import { getOpenAiApi } from '@/lib/openai';
+import { Metadata, RelatedData } from '@/lib/types/types';
 
 export const runtime = 'edge';
 
@@ -20,20 +21,15 @@ const openai = getOpenAiApi();
 export async function POST(req: NextRequest) {
     try {
         let {messages, chatId, chatLanguage, currentWorkspace} = await req.json();
+        const {userId} = await auth();
 
-        if (!chatId) {
+        if (!chatId || !userId) {
             return NextResponse.json({'error': 'messages or chatId not provided'}, {status: 400})
         }
+
         const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
-        const {userId} = await auth();
+        
         if (_chats.length === 0) {
-            // chat doesn't exist
-            
-            if (userId === null) {
-                // Fügen Sie hier Ihren Code ein, um mit dem Fall umzugehen, dass userId null ist
-                return NextResponse.json({error: "unauthorized"}, {status: 401});
-            }
-            
             await db
             .insert(chats)
             .values({
@@ -53,24 +49,22 @@ export async function POST(req: NextRequest) {
             content: getContextBlock("", chatLanguage as LanguageCodes)
         };
 
-        let relatedChatIds: (string | undefined)[] = [];
-
+        // object with relatedChatIds, pageNumbers and fileId
+        let relatedObject: RelatedData =
+        {
+            relatedChatIds: [],
+            pageNumbers: [],
+            fileIds: [],
+            context: ""
+        };
         // if file is uploaded
         if (currentWorkspace) {
             if (userId) {
                 const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
-                const context = contextMetadata.map(doc => doc.text).join("\n").substring(0, isPro ? 8000 : 8000);
-                relatedChatIds = contextMetadata.map(doc => {
-                    if (doc.chatId) return doc.chatId;
-                });
-                // remove duplicates from originChatIds
-                relatedChatIds = relatedChatIds.filter((item, index) => relatedChatIds.indexOf(item) === index);
-                console.log("relatedChatIds", relatedChatIds);
-                // pageNumbers = contextMetadata.map(item => item.pageNumber);
-                // check if chatLanguage is type of LanguageCodes
+                relatedObject = extractRelatedObject(contextMetadata);
                 prompt = {
                     role: "system",
-                    content: getContextBlock(context, chatLanguage as LanguageCodes)
+                    content: getContextBlock(relatedObject.context, chatLanguage as LanguageCodes)
                 };
             }
         }
@@ -107,10 +101,20 @@ export async function POST(req: NextRequest) {
                     chatId,
                     content: completion,
                     role: 'system', // todo: check if this is correct. should be system or assistant?
-                    pageNumbers: JSON.stringify(pageNumbers),
+                    pageNumbers: JSON.stringify(relatedObject.pageNumbers) || '',
                     originId: userQuestionMessageId,
-                    relatedChatIds: JSON.stringify(relatedChatIds)
+                    relatedChatIds: JSON.stringify(relatedObject.relatedChatIds)
                 });
+
+                console.log('relatedObject.fileIds', relatedObject.fileIds);
+
+                for (let i = 0; i < relatedObject.fileIds.length; i++) {
+                    await db.insert(messagesToFiles).values({
+                        messageId: id,
+                        fileId: relatedObject.fileIds[i],
+                        pageNumbers: JSON.stringify(relatedObject.pageNumbers),
+                    });
+                }
             }
         });
 
@@ -198,4 +202,27 @@ const getContextBlock = (context: string, lang: LanguageCodes = 'en') => {
       ${t.nonApology}
       ${t.invention}
       `;
+}
+
+function extractRelatedObject(metadata: Metadata[]): RelatedData {
+    const context = metadata.map(doc => doc.text).join("\n").substring(0, 8000);
+    let relatedChatIds = metadata.map(doc => doc.chatId).filter((chatId): chatId is string => chatId !== undefined);
+    relatedChatIds = removeDuplicates(relatedChatIds);
+
+    let pageNumbers = metadata.map(doc => doc.pageNumber).filter((pageNumber): pageNumber is number => pageNumber !== undefined);
+    pageNumbers = removeDuplicates(pageNumbers);
+
+    let fileIds = metadata.map(doc => doc.fileId).filter((fileId): fileId is number => fileId !== undefined);
+    fileIds = removeDuplicates(fileIds);
+
+    return {
+        relatedChatIds,
+        pageNumbers,
+        fileIds,
+        context
+    }
+}
+
+function removeDuplicates<T>(arr: T[]) {
+    return [...new Set(arr)];
 }

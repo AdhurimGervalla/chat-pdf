@@ -28,7 +28,7 @@ type PDFPage = {
  * @param fileKey file key of the pdf in s3
  * @returns documents of the first page
  */
-export async function loadS3IntoPinecone(fileKey: string, namespace: string) {
+export async function loadS3IntoPinecone(fileKey: string, namespace: string, fileId: number) {
     // 1. optain the pdf from s3 -> download and read from pdf
     const  file_name = await downloadFromS3(fileKey);
     if (!file_name) {
@@ -44,7 +44,7 @@ export async function loadS3IntoPinecone(fileKey: string, namespace: string) {
     
     // 3. verctorize and embed individual documents
     const vectors = await Promise.all(
-        docs.flat().map((doc) => embedDocuments(doc, fileKey))
+        docs.flat().map((doc) => embedDocuments(doc, fileKey, fileId))
     );
 
     // 4. upload the vectors to pinecone
@@ -77,7 +77,7 @@ export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace
     }
 }
 
-async function embedDocuments(doc: Document, fileKey: string): Promise<PineconeRecord> {
+async function embedDocuments(doc: Document, fileKey: string, fileId: number): Promise<PineconeRecord> {
     try {
         const embeddings = await getEmbeddings(doc.pageContent);
         const hash = md5(doc.pageContent);
@@ -88,7 +88,8 @@ async function embedDocuments(doc: Document, fileKey: string): Promise<PineconeR
             metadata: {
                 text: doc.metadata.text,
                 pageNumber: doc.metadata.pageNumber,
-                fileKey
+                fileKey,
+                fileId
             }
         } as PineconeRecord;
     } catch (error) {
@@ -137,7 +138,7 @@ async function prepareDocuments(page: PDFPage) {
             pageContent,
             metadata: {
                 pageNumber: metadata.loc.pageNumber,
-                text: truncateStringByBytes(pageContent, 36000) // 36k bytes are 12k characters
+                text: truncateStringByBytes(pageContent, 36000), // 36k bytes are 12k characters
             }
         })
     ]);

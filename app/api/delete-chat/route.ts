@@ -19,11 +19,6 @@ export async function POST(req: Request, res: Response) {
         const {chatId, workspaceId} = body;
         if (!chatId) return NextResponse.json({error: "chatId is required"}, {status: 400});
 
-        // Delete messages first to avoid foreign key constraint error
-        await db
-        .delete(messages)
-        .where(eq(messages.chatId, chatId));
-
         await db
             .delete(chats)
             .where(eq(chats.id, chatId));

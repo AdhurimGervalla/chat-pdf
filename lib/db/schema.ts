@@ -20,7 +20,7 @@ export type DrizzleChat = typeof chats.$inferSelect;
 
 export const messages = pgTable('messages', {
     id: varchar('id', {length: 256}).primaryKey(),
-    chatId: varchar('chat_id', {length: 256}).references(() => chats.id), // foreign key
+    chatId: varchar('chat_id', {length: 256}).references(() => chats.id, {onDelete: 'cascade'} ), // foreign key
     content: text('content').notNull(),
     createdAt: timestamp('createdAt').notNull().defaultNow(),
     role: userSystemEnum('role').notNull(),
@@ -66,6 +66,33 @@ export const files = pgTable('files', {
 });
 
 export type DrizzleFile = typeof files.$inferSelect;
+
+
+export const messagesRelations = relations(messages, ({many}) => ({
+    files: many(messagesToFiles)
+}));
+
+export const filesRelations = relations(files, ({many}) => ({
+    messages: many(messagesToFiles)
+}));
+
+export const messagesToFiles = pgTable('messages_files', {
+    id: serial('id').primaryKey(),
+    fileId: integer('file_id').references(() => files.id, { onDelete: 'cascade' }), // foreign key
+    messageId: varchar('message_id', {length: 256}).references(() => messages.id, { onDelete: 'cascade' }), // foreign key
+    pageNumbers: text('pagenumbers'), // json string of page numbers
+});
+
+export const messagesToFilesRelations = relations(messagesToFiles, ({ one }) => ({
+    message: one(messages, {
+      fields: [messagesToFiles.messageId],
+      references: [messages.id],
+    }),
+    file: one(files, {
+      fields: [messagesToFiles.fileId],
+      references: [files.id],
+    }),
+}));
 
 /*
 export const workspacesOnUsers = pgTable('workspaces_users', {

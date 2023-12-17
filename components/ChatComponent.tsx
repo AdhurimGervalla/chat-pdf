@@ -2,7 +2,7 @@
 import React from 'react'
 import { useChat } from 'ai/react' 
 import { Loader2 } from 'lucide-react'
-import MessageList from './MessageList'
+import MessageList from './MessageList/MessageList'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import ChatInputComponent from './ChatInputComponent'

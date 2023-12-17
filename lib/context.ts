@@ -1,6 +1,6 @@
 import { Pinecone } from "@pinecone-database/pinecone";
-import { convertStringToASCII } from "./utils";
 import { getEmbeddings } from "./embeddings";
+import { Metadata } from "./types/types";
 
 export async function getMatchesFromEmbeddings(
   embeddings: number[],
@@ -35,15 +35,9 @@ export async function getContext(query: string, identifier: string) {
 
   console.log("qualifyingDocs", qualifyingDocs);
 
-  type Metadata = {
-    text: string;
-    pageNumber?: number;
-    chatId?: string;
-  };
-
   let docs: Metadata[] = qualifyingDocs.map((match) => {
     const metadata = (match.metadata as Metadata)
-    return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId};
+    return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId, fileId: metadata.fileId};
   });
   // 5 vectors
   return docs;
