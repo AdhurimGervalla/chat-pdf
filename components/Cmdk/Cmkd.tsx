@@ -12,16 +12,17 @@ import WorkspaceList from './Workspaces/WorkspaceList';
 import ChatsList from './Chats/ChatsList';
 import Overview from './Overview';
 import ChatsDetailPage from './Chats/ChatsDetailPage';
-import SharedWokspaceList from './Workspaces/SharedWokspaceList';
+import { WorkspaceWithRole } from '@/lib/types/types';
 
 type Props = {
     chats?: DrizzleChat[];
-    workspaces?: DrizzleWorkspace[];
+    workspaces?: WorkspaceWithRole[];
     refetchChats: any;
     refetchWorkspaces: any;
 }
 
 export type Page = [string, number|string];
+
 
 const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
     const router = useRouter();
@@ -159,9 +160,6 @@ const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
             
                                 {page && page[0] === 'workspaces' && (
                                     <WorkspaceList workspaces={workspaces} handeOnSelect={handeOnSelect} />
-                                )}
-                                {page && page[0] === 'sharedWorkspaces' && (
-                                    <SharedWokspaceList handeOnSelect={handeOnSelect} />
                                 )}
                                 {page && page[0] === 'workspaceDetail' && (
                                     <>

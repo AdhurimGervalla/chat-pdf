@@ -32,9 +32,7 @@ export async function getContext(query: string, identifier: string) {
   const qualifyingDocs = matches.filter(
     (match) => match.score && match.score > 0.7
   );
-
-  console.log("qualifyingDocs", qualifyingDocs);
-
+  
   let docs: Metadata[] = qualifyingDocs.map((match) => {
     const metadata = (match.metadata as Metadata)
     return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId, fileId: metadata.fileId};

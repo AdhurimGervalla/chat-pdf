@@ -2,7 +2,12 @@ import { relations } from 'drizzle-orm';
 import {boolean, decimal, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar} from 'drizzle-orm/pg-core';
 
 export const userSystemEnum = pgEnum('user_system_enum', ['system', 'user', 'assistant', 'function']);
-export const workspaceRoleEnum = pgEnum('workspace_role_enum', ['owner', 'admin', 'member']);
+export enum workspaceRole {
+    OWNER = 'owner',
+    ADMIN = 'admin',
+    MEMBER = 'member'
+}
+export const workspaceRoleEnum = pgEnum('workspace_role_enum', [workspaceRole.OWNER, workspaceRole.ADMIN, workspaceRole.MEMBER]);
 
 export const chats = pgTable('chats', {
     id: varchar('chat_id', {length: 256}).primaryKey(),

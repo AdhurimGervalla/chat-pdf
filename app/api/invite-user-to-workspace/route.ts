@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { users, workspaces, workspacesToUsers } from "@/lib/db/schema";
+import { users, workspaceRole, workspaces, workspacesToUsers } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from '@clerk/nextjs/server';
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     await db.insert(workspacesToUsers).values({
         workspaceId: workspaceId,
         userId: user[0].userId,
-        role: 'member',
+        role: workspaceRole.MEMBER,
     });
 
     return NextResponse.json({ success: true });

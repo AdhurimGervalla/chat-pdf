@@ -7,17 +7,18 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import HeaderArea from './HeaderArea';
+import { WorkspaceWithRole } from '@/lib/types/types';
 
 type Props = {
     chatId: string;
 }
 
 const ChatePageComponent = ({chatId}: Props) => {
-    const {data: workspaces, refetch: refetchWorkspaces, isLoading: isLoadingWorkspaces} = useQuery<DrizzleWorkspace[]>({
+    const {data: workspaces, refetch: refetchWorkspaces, isLoading: isLoadingWorkspaces} = useQuery<WorkspaceWithRole[]>({
         queryKey: ['workspaces', chatId],
         queryFn: async () => {
           const res = await axios.get('/api/get-workspaces');
-          return res.data;
+          return res.data.workspaces;
         }
       });
 

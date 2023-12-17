@@ -1,3 +1,5 @@
+import { DrizzleWorkspace } from "../db/schema";
+
 export type Metadata = {
     text: string;
     pageNumber?: number;
@@ -15,4 +17,8 @@ export type RelatedData = {
 export type RelatedFile = {
   url: string;
   pageNumbers: number[];
+}
+
+export type WorkspaceWithRole = DrizzleWorkspace & {
+  role: string;
 }

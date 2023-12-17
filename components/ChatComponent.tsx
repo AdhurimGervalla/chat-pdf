@@ -9,10 +9,11 @@ import ChatInputComponent from './ChatInputComponent'
 import { DrizzleChat, DrizzleWorkspace } from '@/lib/db/schema'
 import { WorkspaceContext } from '@/context/WorkspaceContext'
 import Workspaces from './Workspaces'
+import { WorkspaceWithRole } from '@/lib/types/types'
 
 type Props = {
   chatId: string;
-  workspaces?: DrizzleWorkspace[];
+  workspaces?: WorkspaceWithRole[];
   refetchChats: any;
   allChats?: DrizzleChat[];
 }

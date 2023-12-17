@@ -38,7 +38,6 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
     const getRelatedContext = async (messageId: string) => {
         try {
             const relatedContext = await axios.post(`/api/get-related-data/`, { messageId: messageId });
-            console.log(relatedContext);
             return relatedContext;
         } catch (e) {
             console.log(e);

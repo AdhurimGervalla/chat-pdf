@@ -35,7 +35,6 @@ const Overview = ({handeOnSelect, handleCreateWorkspace, handleNewChat, page, ch
         <Command.Group>
                 <small>Workspaces</small>
                 <ListItem onSelect={() => handeOnSelect(['workspaces', 0])}><Search className='w-4 h-4' />My workspaces</ListItem>
-                <ListItem onSelect={() => handeOnSelect(['sharedWorkspaces', 0])}><Search className='w-4 h-4' />Shared workspaces</ListItem>
                 <ListItem onSelect={() => handleCreateWorkspace(['newWorkspace', 0])}><PlusCircle className='w-4 h-4' />New Workspace</ListItem>
         </Command.Group>
     </>

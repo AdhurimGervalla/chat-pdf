@@ -1,9 +1,11 @@
-import { db } from "@/lib/db";
-import { workspaces } from "@/lib/db/schema";
+import { db as dbClient } from "@/lib/db";
+import { workspaceRole, workspaces, workspacesToUsers } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from '@clerk/nextjs/server';
-
+import { Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+ 
 export const runtime = 'edge';
 
 export async function POST(req: NextRequest) {
@@ -22,22 +24,34 @@ export async function POST(req: NextRequest) {
     const identifier = workspaceName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
     // check if workspace already exists for this user
-    const _workspace = await db.select().from(workspaces).where(and(eq(workspaces.owner, userId), eq(workspaces.identifier, identifier)));
+    const _workspace = await dbClient.select().from(workspaces).where(and(eq(workspaces.owner, userId), eq(workspaces.identifier, identifier)));
     if (_workspace.length > 0) {
         return NextResponse.json({ error: "workspace already exists" }, { status: 400 });
     }
-
-    // merge identifier with userId
-    // this makes sure that the identifier is unique for each user
-    
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const db = drizzle(pool);
 
     // create workspace
-    await db.insert(workspaces).values({
-        name: workspaceName,
-        identifier,
-        createdAt: new Date(),
-        owner: userId,
-    });
+    try {
+        await db.transaction(async (tx) => {
+            console.log('creating workspace');
+            const insertedId = await tx.insert(workspaces).values({
+                name: workspaceName,
+                identifier,
+                owner: userId,
+            }).returning({ id: workspaces.id });
+            await tx.insert(workspacesToUsers).values({
+                userId,
+                workspaceId: insertedId[0].id,
+                role: workspaceRole.OWNER,
+            });
+            console.log('workspace created');
+        });
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ error: "Could not create workspace" }, { status: 500 });
+    }
+
 
     return NextResponse.json({ success: true });
 }
