@@ -27,13 +27,11 @@ export async function POST(req: Request, res: Response) {
             .where(eq(files.key, fileKey)).returning({
                 deletedFileKey: files.key
             });
-            console.log('deletedFile', deletedFile);
             const workspaceList: DrizzleWorkspace[] = await db.select().from(workspaces).where(eq(workspaces.id, workspaceId));
             if (workspaceList.length > 0) {
                 const workspace = workspaceList[0];
                 const namespace = getNamespaceForWorkspace(workspace.identifier, userId);
                 await deletePineconeIndexFromFile(namespace, fileKey);
-                console.log('deleted pinecone index');
             }
             await deleteFromS3(deletedFile.deletedFileKey);
             return NextResponse.json({status: 200});

@@ -41,7 +41,6 @@ const ChatsDetailPage = ({chatId, refetchChats, handleSaveToWorkspace, selectedC
                 workspaceId: chats.filter(chat => chat.id === idOfChat)[0].workspaceId
               });
             refetchChats();
-            console.log('chatId', idOfChat);
             if (isCurrentChat(idOfChat, chatId)) {
                 router.push(`/chats/${v4()}`);
             } else {

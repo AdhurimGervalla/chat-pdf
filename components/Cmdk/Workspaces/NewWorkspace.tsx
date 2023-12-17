@@ -30,7 +30,6 @@ const NewWorkspace = ({refetchWorkspaces, reset}: Props) => {
                 success: 'Saved workspace',
                 error: 'Couldn\'t save workspace'
             }).then(() => {
-                console.log('refreshing');
                 refetchWorkspaces();
                 reset();
             });

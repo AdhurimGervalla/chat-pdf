@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
     // create workspace
     try {
         await db.transaction(async (tx) => {
-            console.log('creating workspace');
             const insertedId = await tx.insert(workspaces).values({
                 name: workspaceName,
                 identifier,
@@ -45,7 +44,6 @@ export async function POST(req: NextRequest) {
                 workspaceId: insertedId[0].id,
                 role: workspaceRole.OWNER,
             });
-            console.log('workspace created');
         });
     } catch (error) {
         console.log(error);
