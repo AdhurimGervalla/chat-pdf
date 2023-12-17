@@ -52,7 +52,9 @@ export const workspaces = pgTable('workspaces', {
 export type DrizzleWorkspace = typeof workspaces.$inferSelect;
 
 export const users = pgTable('users', {
-    userId: varchar('user_id', {length: 255}).notNull().unique(),
+    userId: varchar('user_id', {length: 255}).notNull().unique().primaryKey(),
+    email: varchar('email', {length: 255}),
+    createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
 
 export const files = pgTable('files', {
@@ -94,34 +96,37 @@ export const messagesToFilesRelations = relations(messagesToFiles, ({ one }) => 
     }),
 }));
 
-/*
-export const workspacesOnUsers = pgTable('workspaces_users', {
-    id: serial('id').primaryKey(),
-    workspaceId: serial('workspace_id').references(() => workspaces.id), // foreign key
-    userId: varchar('user_id', {length: 255}).references(() => users.userId), // foreign key
-    role: workspaceRoleEnum('role').notNull(),
-    createdAt: timestamp('createdAt').notNull().defaultNow()
-});
-
 export const workspacesRelations = relations(workspaces, ({many}) => ({
-    workspaceUsers: many(workspacesOnUsers)
+    users: many(workspacesToUsers)
 }));
 
 export const usersRelations = relations(users, ({many}) => ({
-    workspaces: many(workspacesOnUsers)
+    workspaces: many(workspacesToUsers)
 }));
 
-export const workspacesOnUsersRelations = relations(workspacesOnUsers, ({one}) => ({
+export const workspacesToUsers = pgTable('workspaces_users', {
+    workspaceId: serial('workspace_id').references(() => workspaces.id, { onDelete: 'cascade' }), // foreign key
+    userId: varchar('user_id', {length: 255}).references(() => users.userId, { onDelete: 'cascade' }), // foreign key
+    role: workspaceRoleEnum('role').notNull(),
+    createdAt: timestamp('createdAt').notNull().defaultNow()
+}, (t) => ({
+    pk: primaryKey(t.workspaceId, t.userId),
+  }),
+);
+
+export type DrizzleWorkspaceToUser = typeof workspacesToUsers.$inferSelect;
+
+export const workspacesToUsersRelations = relations(workspacesToUsers, ({one}) => ({
     workspace: one(workspaces, {
         fields: [
-            workspacesOnUsers.workspaceId
+            workspacesToUsers.workspaceId
         ],
         references: [workspaces.id]
     }),
     user: one(users, {
         fields: [
-            workspacesOnUsers.userId
+            workspacesToUsers.userId
         ],
         references: [users.userId]
     })
-}));*/
+}));

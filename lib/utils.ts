@@ -21,3 +21,34 @@ export function getNamespaceForWorkspace(workspaceId: string, userId: string) {
 export function setNameSpaceForWorkspace(workspaceId: string, userId: string) {
   return workspaceId + "-" + userId;
 }
+
+/**
+ * Resets the backspace key
+ * @param e the event
+ */
+export function resetBackspace (e: React.KeyboardEvent) {
+  if (e.key === 'Backspace') {
+    e.stopPropagation();
+  }
+}
+
+/**
+ * Checks if the chat is the current chat
+ * @param id the id of the chat
+ * @param currentChatId the id of the current chat
+ */
+export function isCurrentChat (id: string, currentChatId: string) {
+  return id === currentChatId;
+}
+
+/**
+ * Trims the chat title to a certain length
+ * @param title the title to trim
+ * @param length the length to trim to
+ */
+export function trimChatTitle(title: string, length: number = 50) {
+  if (title.length > length) {
+      return title.slice(0, length) + '...';
+  }
+  return title;
+}

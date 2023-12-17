@@ -1,7 +1,7 @@
 import { Loader2, Save } from 'lucide-react';
 import React from 'react'
 import { Input } from '../ui/input';
-import { cn } from '@/lib/utils';
+import { cn, resetBackspace } from '@/lib/utils';
 import axios from 'axios';
 
 type ChatTitleProps = {
@@ -33,17 +33,10 @@ export const ChatTitle = ({chatId, text, refetchChats}: ChatTitleProps) => {
     refetchChats();
   }
 
-  const handleKeyEvent = (e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace') {
-      e.stopPropagation();
-    }
-  }
-
-
   return (
     <>
       <div className='flex gap-5 items-center mb-3'>
-        <Input type="text" onChange={handleChange} value={textState} className='px-0 font-bold' onKeyDown={handleKeyEvent}  />
+        <Input type="text" onChange={handleChange} value={textState} className='px-0 font-bold' onKeyDown={resetBackspace}  />
         <button onClick={handleUpdate}>{loading ? <Loader2 className='animate-spin w-6 h-6' />:<Save className={cn(`w-6 h-6 hover:text-green-500 transition-colors`, {'opacity-40 cursor-default hover:text-inherit': !dirty})} />}</button>
       </div>
     </>

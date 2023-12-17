@@ -34,7 +34,6 @@ export async function POST(req: Request, res: Response) {
             }).returning({
                 insertedId: files.id
             });
-            console.log('insertedId', insertedId);
 
             if (!insertedId[0].insertedId) {
                 throw new Error('Could not insert file into db');

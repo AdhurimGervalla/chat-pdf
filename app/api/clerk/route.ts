@@ -15,6 +15,7 @@ export async function POST(req: Request) {
             .insert(users)
             .values({
                 userId: payload.data.id,
+                email: payload.data.email_addresses[0].email_address,
             }).returning({
                 insertedId: users.userId
             });
