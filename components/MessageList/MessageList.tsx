@@ -20,7 +20,7 @@ type Props = {
 const MessageList = ({messages, refetch, isLoading = false, allChats}: Props) => {
 
     if (!messages) return <></>;
-
+    
     const deleteMessage = async (message: Message) => {
       try {
         await axios.post('/api/delete-message', { message: message });

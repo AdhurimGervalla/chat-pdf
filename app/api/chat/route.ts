@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
         }
 
         const isPro = await checkSubscription();
-        const fileKey = _chats[0]?.fileKey;
         const lastMessage = messages[messages.length - 1];
 
         let pageNumbers: number[] = [];
@@ -60,7 +59,7 @@ export async function POST(req: NextRequest) {
         // if file is uploaded
         if (currentWorkspace) {
             if (userId) {
-                const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, userId));
+                const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, currentWorkspace.owner));
                 relatedObject = extractRelatedObject(contextMetadata);
                 prompt = {
                     role: "system",
@@ -100,8 +99,7 @@ export async function POST(req: NextRequest) {
                     id,
                     chatId,
                     content: completion,
-                    role: 'system', // todo: check if this is correct. should be system or assistant?
-                    pageNumbers: JSON.stringify(relatedObject.pageNumbers) || '',
+                    role: 'assistant', // todo: check if this is correct. should be system or assistant?
                     originId: userQuestionMessageId,
                     relatedChatIds: JSON.stringify(relatedObject.relatedChatIds)
                 });

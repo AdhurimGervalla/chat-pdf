@@ -73,7 +73,7 @@ const FileUpload = ({workspace, refetchCb}: Props) => {
                 {(uploading || isPending) ? 
                     <>
                         <Loader2 className='h-10 w-10 text-blue-500 animate-spin' />
-                        <p className='mt-2 text-sm text-slate-400 dark:text-white'>Spilling Tea to GPT</p>
+                        <p className='mt-2 text-sm text-slate-400 dark:text-white'>Preparing context information</p>
                     </>
                     :
                     <>
