@@ -10,7 +10,6 @@ type Props = {
 }
 
 const WorkspaceList = ({workspaces, handeOnSelect}: Props) => {
-  console.log(workspaces);
   return (
     workspaces.map((workspace) => (
         <ListItem onSelect={() => handeOnSelect(['workspaceDetail', workspace.id])} key={workspace.id}>

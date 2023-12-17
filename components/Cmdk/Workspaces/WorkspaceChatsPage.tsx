@@ -59,8 +59,8 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
             });
             router.push(`/`);
         } 
-        catch (error) {
-            console.log(error);
+        catch (error: any) {
+          throw new Error('Couldn\'t delete workspace');
         }
     }
 
@@ -114,7 +114,7 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
     <>
       <Command.Group>
           <WorkspaceTitle text={workspace.name}>{workspace.name}<span className='text-gray-500 px-3'>ID: {workspace.id}</span></WorkspaceTitle>
-          <ListItem onSelect={confirmDelete} cnObjects={[{'hover:bg-red-500': true}]}>
+          {workspace.owner === userId && <><ListItem onSelect={confirmDelete} cnObjects={[{'hover:bg-red-500': true}]}>
               <Trash className='w-4 h-4' /> Delete Workspace
           </ListItem>
           <Command.Group className='mt-5'>
@@ -122,8 +122,7 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
             <ListItem cnObjects={[{'p-0' :true}]}>
                 <FileUpload workspace={workspace} refetchCb={refetch} />
             </ListItem>
-          </Command.Group>
-
+          </Command.Group></>}
       </Command.Group>
       <Command.Group className='mt-5'>
           {!isLoading ? <Command.List>

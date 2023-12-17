@@ -203,7 +203,7 @@ const getContextBlock = (context: string, lang: LanguageCodes = 'en') => {
 }
 
 function extractRelatedObject(metadata: Metadata[]): RelatedData {
-    const context = metadata.map(doc => doc.text).join("\n").substring(0, 8000);
+    const context = metadata.map(doc => doc.text).join("\n").substring(0, 16000);
     let relatedChatIds = metadata.map(doc => doc.chatId).filter((chatId): chatId is string => chatId !== undefined);
     relatedChatIds = removeDuplicates(relatedChatIds);
 
