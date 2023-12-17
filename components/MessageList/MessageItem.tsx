@@ -35,15 +35,6 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
         }
     }
 
-    const getRelatedContext = async (messageId: string) => {
-        try {
-            const relatedContext = await axios.post(`/api/get-related-data/`, { messageId: messageId });
-            return relatedContext;
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
     return (
             <div key={message.id} className={cn('message-item flex sm:text-lg leading-7 content-center', {'sm:text-xl font-bold dark:text-green-500 mt-10': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
                     <div className={cn('flex flex-col w-full')}>
@@ -71,7 +62,6 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
                         </p>
                         {relatedChatIds && relatedChatIds.length > 0 && allChats && <RelatedChats relatedChatIds={relatedChatIds} allChats={allChats} />}
                         {message.role === ('assistant' || 'system') && <RelatedContext messageId={message.id} />}
-                        {/*message.pageNumbers && message.pageNumbers.length > 0 && <p className='my-4'>References: {message.pageNumbers.map(n => <span onClick={() => scrollToPage(n)} className="p-1 mx-1 bg-gray-400 text-xs cursor-pointer hover:bg-yellow-400">{n}</span>)}</p>*/}
                     </div>
                     {!isLoading && message.role === 'user' && <DeleteIcon className='delete-icon w-6 h-6 mr-2 mt-0 cursor-pointer' onClick={() => deleteMessage(message)} />}
             </div>

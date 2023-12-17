@@ -74,7 +74,7 @@ const ChatsDetailPage = ({chatId, refetchChats, handleSaveToWorkspace, selectedC
 
   return (
         <>
-            {chatId && <ChatTitle text={selectedChat.title || ''} chatId={chatId as string} refetchChats={refetchChats} />}
+            {selectedChat && <ChatTitle text={selectedChat.title || ''} chatId={selectedChat.id as string} refetchChats={refetchChats} />}
             {!saveToWorkspaceMode && <>
                 <ListItem cnObjects={[{'opacity-50 cursor-default hover:bg-green-700 dark:hover:bg-slate-700': isCurrentChat(selectedChat?.id, chatId)}]} onSelect={() => {
                     if (!isCurrentChat(selectedChat.id, chatId)) {
