@@ -106,8 +106,6 @@ export async function POST(req: NextRequest) {
                     relatedChatIds: JSON.stringify(relatedObject.relatedChatIds)
                 });
 
-                console.log('relatedObject.fileIds', relatedObject.fileIds);
-
                 for (let i = 0; i < relatedObject.fileIds.length; i++) {
                     await db.insert(messagesToFiles).values({
                         messageId: id,
