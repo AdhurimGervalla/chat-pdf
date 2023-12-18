@@ -36,6 +36,7 @@ export async function POST(req: Request) {
                 });
                 return NextResponse.json({user_id: user_id[0].deletedId}, {status: 200});
         }
+        return NextResponse.json({ message: "not a correct event to handle" }, { status: 400 });
         
         } catch (error) {
             return NextResponse.json({
