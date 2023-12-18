@@ -5,7 +5,6 @@ import { DrizzleChat, DrizzleWorkspace, messages as _messages } from '@/lib/db/s
 import Cmkd from './Cmdk/Cmkd';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import HeaderArea from './HeaderArea';
 import { WorkspaceWithRole } from '@/lib/types/types';
 
@@ -32,9 +31,8 @@ const ChatePageComponent = ({chatId}: Props) => {
 
     return (
     <>
-    <HeaderArea />
-    {isLoadingWorkspaces || isLoadingChats && <div className='flex items-center justify-center w-full h-screen'><Loader2 className='w-10 h-10' /></div>}
-    <>
+        <HeaderArea />
+        <>
             <Cmkd chats={chats} workspaces={workspaces} refetchChats={refetchChats} refetchWorkspaces={refetchWorkspaces} />
             <div className='flex w-full max-h-screen overflow-hidden border-x-[15px] border-x-transparent'>
                 <div className='w-full flex flex-col relative h-[100vh] overflow-scroll'>
