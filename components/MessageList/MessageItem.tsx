@@ -36,7 +36,7 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
     }
 
     return (
-            <div key={message.id} className={cn('message-item flex text-base leading-snug content-center', {'font-bold mt-5 first:mt-10': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
+            <div key={message.id} className={cn('message-item flex text-base leading-snug content-center', {'font-bold mt-5 first:mt-0': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
                     <div className={cn('flex flex-col w-full')}>
                         <p>
                         <Markdown

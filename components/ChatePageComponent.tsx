@@ -35,7 +35,7 @@ const ChatePageComponent = ({chatId}: Props) => {
         <>
             <Cmkd chats={chats} workspaces={workspaces} refetchChats={refetchChats} refetchWorkspaces={refetchWorkspaces} />
             <div className='flex w-full max-h-screen overflow-hidden border-x-[15px] border-x-transparent'>
-                <div className='w-full flex flex-col relative h-[100vh] overflow-scroll'>
+                <div className='w-full flex flex-col relative h-[100vh] overflow-scroll pt-[65px]'>
                     <ChatComponent chatId={chatId} allChats={chats} workspaces={workspaces} refetchChats={refetchChats} />
                 </div>
             </div>
