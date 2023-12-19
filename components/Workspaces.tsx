@@ -59,7 +59,7 @@ const EmptyWrokspaceArea = () => {
   
   return (
     <div className='text-slate-500 dark:text-white text-md sm:text-lg tracking-wider'>
-      <p>You haven't created any workspaces yet.</p>
+      <p>You haven&apos;t created any workspaces yet.</p>
       <p className='flex items-center gap-3 mt-2'><CmdkButton /><span>to create a new one.</span></p>
     </div>
   )
