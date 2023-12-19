@@ -83,8 +83,8 @@ const ChatsDetailPage = ({chatId, refetchChats, handleSaveToWorkspace, selectedC
                 }}>
                     <ChatBubbleLeftIcon className='w-4 h-4' /> Open chat
                 </ListItem>
-                <ListItem cnObjects={[{'bg-green-500 dark:bg-slate-800': selectedChat.bookmarked}]} onSelect={() => toggleBookmark(selectedChat)}>
-                    <Bookmark className='w-4 h-4' color={selectedChat.bookmarked ? 'green' : 'white'} /> {selectedChat.bookmarked ? 'Remove Bookmark' : 'Bookmark chat'}
+                <ListItem onSelect={() => toggleBookmark(selectedChat)}>
+                    <Bookmark className='w-4 h-4' color={selectedChat.bookmarked ? 'green' : 'black'} /> {selectedChat.bookmarked ? 'Remove Bookmark' : 'Bookmark chat'}
                 </ListItem>
                 <ListItem onSelect={() => startDelete(selectedChat.id, chats)}>
                     <Trash className='w-4 h-4' /> Delete Chat

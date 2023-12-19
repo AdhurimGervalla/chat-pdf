@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Loader2, SendIcon } from 'lucide-react'
 import { Button } from './ui/button'
+import { WorkspaceContext } from '@/context/WorkspaceContext';
 
 type Props = {
   stopCb: any;
@@ -13,7 +14,7 @@ type Props = {
 
 export default function ChatInputComponent({stopCb, onChange, placeholder, isLoading, value, handleSubmit}: Props) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
+  const {workspace} = React.useContext(WorkspaceContext);
   const resizeTextArea = () => {
     if (!textAreaRef.current) return;
     textAreaRef.current.style.height = "auto";
@@ -55,7 +56,12 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
             </div>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 flex justify-end py-2 pl-3 pr-2">
+          <div className="absolute inset-x-0 bottom-0 flex justify-between items-center py-2 pl-3 pr-2">
+            <div>
+              <p className="text-sm leading-5 text-gray-500 dark:text-gray-400">
+                {workspace?.name}
+              </p>
+            </div>
             <div className="flex-shrink-0">
               <Button type='submit' onClick={() => {
                   if (isLoading) {

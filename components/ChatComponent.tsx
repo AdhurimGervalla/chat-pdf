@@ -64,14 +64,19 @@ const ChatComponent = ({ chatId, workspaces, allChats, refetchChats }: Props) =>
 
   return (
     <div className='flex flex-col w-full h-full overflow-y-scroll' id='message-container'>
-      {loadingMessages ? <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-        <Loader2 className='w-[50px] h-[50px] animate-spin' /></div> 
-        : (messages.length === 0 && workspaces && workspaces.length > 0
-          ? <Workspaces workspaces={workspaces} chatId={chatId} />
-      :
-      <div className='max-w-4xl  w-full mx-auto relative'>
-        <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
-      </div>) }
+      {loadingMessages ? 
+        <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+          <Loader2 className='w-[50px] h-[50px] animate-spin' />
+        </div> 
+      : (messages.length === 0 && workspaces && workspaces.length > 0
+          ? 
+          <Workspaces workspaces={workspaces} chatId={chatId} />
+          :
+          <div className='max-w-4xl  w-full mx-auto relative'>
+            <MessageList messages={messages} refetch={refetch} isLoading={isLoading} allChats={allChats} />
+          </div>
+        )
+      }
 
       {/* chat input */}
       <ChatInput handleSubmit={handleSubmit} handleInputChange={handleInputChange} isLoading={isLoading} input={input} stop={stop} />

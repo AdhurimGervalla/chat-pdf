@@ -3,7 +3,7 @@ import { Command, CommandGroup, CommandItem } from 'cmdk';
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios';
 import { DrizzleChat, DrizzleFile, DrizzleWorkspace, DrizzleWorkspaceToUser } from '@/lib/db/schema';
-import { Loader2, Trash } from 'lucide-react';
+import { Lightbulb, LightbulbOffIcon, Loader2, Trash } from 'lucide-react';
 import ListItem from '../ListItem';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -12,6 +12,7 @@ import FileUpload from '../../FileUpload';
 import { Input } from '../../ui/input';
 import { resetBackspace } from '@/lib/utils';
 import { useAuth } from '@clerk/nextjs';
+import { WorkspaceContext } from '@/context/WorkspaceContext';
 
 type Props = {
     workspace: DrizzleWorkspace;
@@ -20,6 +21,7 @@ type Props = {
 const WorkspaceChatsPage = ({workspace}: Props) => {
     const router = useRouter();
     const {userId} = useAuth();
+    const {workspace: contextWs, setWorkspace} = React.useContext(WorkspaceContext);
     const [memberEmail, setMemberEmail] = React.useState<string>('');
     const {data, isLoading, refetch} = useQuery<{chats: DrizzleChat[], files: DrizzleFile[]}>({
         queryKey: ['WorkspaceChatsPage', workspace.id],
@@ -109,14 +111,31 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
           // Set other toast options if needed
         });
       };
-        
+  
+      const getWsText = () => {
+        if (contextWs?.id === workspace.id) {
+          return 'Disable Workspace Context';
+        } else {
+          return 'Enable Workspace Context';
+        }
+      }
+
+      const handleWsContext = () => {
+        if (contextWs?.id === workspace.id) {
+          setWorkspace(null);
+        } else {
+          setWorkspace(workspace);
+        }
+      }
+
   return (
     <>
       <Command.Group>
           <WorkspaceTitle text={workspace.name}>{workspace.name}<span className='text-gray-500 px-3'>ID: {workspace.id}</span></WorkspaceTitle>
-          {workspace.owner === userId && <><ListItem onSelect={confirmDelete} cnObjects={[{'hover:bg-red-500': true}]}>
-              <Trash className='w-4 h-4' /> Delete Workspace
+          <ListItem onSelect={handleWsContext}>
+            {contextWs?.id === workspace.id ? <Lightbulb className={`w-4 h-4 mr-2 text-yellow-500`} /> : <LightbulbOffIcon className={`w-4 h-4 mr-2`} />} {getWsText()}
           </ListItem>
+          {workspace.owner === userId && <>
           <Command.Group className='mt-5'>
             <CommandItem>Upload File:</CommandItem>
             <ListItem cnObjects={[{'p-0' :true}]}>
@@ -157,7 +176,11 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
             <Input onKeyDown={resetBackspace} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMemberEmail(e.target.value)} type="text" className='mt-2' placeholder='Invite Member by email' value={memberEmail} />
             <button onClick={inviteMember} className='rounded bg-green-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>Invite</button>
           </div>
+          <ListItem onSelect={confirmDelete} cnObjects={[{'mt-10 hover:bg-red-500': true}]}>
+              <Trash className='w-4 h-4' /> Delete Workspace
+          </ListItem>
       </Command.Group>}
+      
     </>
   )
 }
