@@ -150,7 +150,7 @@ const translations: TranslationsType = {
         contextUsage: `AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.`,
         unknownAnswer: `If the context does not provide the answer to a question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".`,
         nonApology: `AI assistant will not apologize for previous responses, but instead will indicate new information was gained.`,
-        invention: `AI assistant will not invent anything that is not drawn directly from the context.`
+        invention: `AI assistant can make a suggestion if it does not find the right answer from the context. The AI will then say, "I have an idea of how I could answer that".`
     },
     de: {
         intro: `Der KI-Assistent ist eine brandneue, leistungsstarke, menschenähnliche künstliche Intelligenz.`,
@@ -163,7 +163,7 @@ const translations: TranslationsType = {
         contextUsage: `Der KI-Assistent wird jeden KONTEXTBLOCK berücksichtigen, der in einem Gespräch gegeben wird.`,
         unknownAnswer: `Wenn der Kontext nicht die Antwort auf eine Frage liefert, wird der KI-Assistent sagen: "Es tut mir leid, aber ich kenne die Antwort auf diese Frage nicht".`,
         nonApology: `Der KI-Assistent wird sich nicht für vorherige Antworten entschuldigen, sondern stattdessen angeben, dass neue Informationen gewonnen wurden.`,
-        invention: `Der KI-Assistent wird nichts erfinden, was nicht direkt aus dem Kontext gezogen wird.`
+        invention: `Der KI-Assistent kann einen Vorschlag machen, wenn er nicht die Richtige Antwort aus dem Kontext findet. Die KI wird dann sagen: "Ich habe eine Idee, wie ich das beantworten könnte".`
     },
 } 
 
