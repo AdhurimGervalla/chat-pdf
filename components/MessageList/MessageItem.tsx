@@ -36,7 +36,7 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
     }
 
     return (
-            <div key={message.id} className={cn('message-item flex text-[1rem] leading-snug content-center', {'font-bold mt-10': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
+            <div key={message.id} className={cn('message-item flex text-[1rem] leading-snug content-center', {'font-bold mt-5 first:mt-10': message.role === 'user'}, {'assistant': message.role !== 'user'})}>
                     <div className={cn('flex flex-col w-full')}>
                         <p>
                         <Markdown
@@ -63,7 +63,7 @@ const MessageItem = ({message, allChats, isLoading, refetch}: Props) => {
                         {relatedChatIds && relatedChatIds.length > 0 && allChats && <RelatedChats relatedChatIds={relatedChatIds} allChats={allChats} />}
                         {message.role === ('assistant' || 'system') && <RelatedContext messageId={message.id} />}
                     </div>
-                    {!isLoading && message.role === 'user' && <DeleteIcon className='delete-icon w-6 h-6 mr-2 mt-0 cursor-pointer' onClick={() => deleteMessage(message)} />}
+                    {!isLoading && message.role === 'user' && <DeleteIcon className='delete-icon w-5 h-5 mr-2 mt-0 cursor-pointer' onClick={() => deleteMessage(message)} />}
             </div>
     )
 }

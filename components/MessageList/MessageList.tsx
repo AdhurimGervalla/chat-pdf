@@ -2,6 +2,7 @@ import React from 'react'
 import { Message } from 'ai/react'
 import { DrizzleChat, DrizzleMessage } from '@/lib/db/schema'
 import MessageItem from './MessageItem'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
     messages: Message[] | DrizzleMessage[];
@@ -19,6 +20,7 @@ const MessageList = ({messages, refetch, isLoading = false, allChats}: Props) =>
         {messages.map((message) => {
           return <MessageItem key={message.id} message={message} allChats={allChats} isLoading={isLoading} refetch={refetch} />
         })}
+        {messages.length > 0 && messages[messages.length - 1].role === 'user' && <Loader2 className='w-4 h-4 animate-spin' />}
     </div>
     )
 }
