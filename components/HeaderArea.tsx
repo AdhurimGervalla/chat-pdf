@@ -7,7 +7,7 @@ type Props = {}
 
 const HeaderArea = (props: Props) => {
   return (
-    <div className='fixed top-0 z-10 flex gap-3 items-center justify-between w-full border-x-[15px] border-transparent py-[15px]'>
+    <div className='fixed top-0 z-10 flex gap-3 items-center justify-between w-full border-x-[15px] border-transparent py-[15px] bg-white dark:bg-slate-950'>
         <div className='flex justify-center'>
           <CmdkButton large={false} />
         </div>
