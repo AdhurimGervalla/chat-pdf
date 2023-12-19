@@ -13,6 +13,7 @@ import ChatsList from './Chats/ChatsList';
 import Overview from './Overview';
 import ChatsDetailPage from './Chats/ChatsDetailPage';
 import { WorkspaceWithRole } from '@/lib/types/types';
+import { CmdkOpenStateContext } from '@/context/CmdKOpenStateContext';
 
 type Props = {
     chats?: DrizzleChat[];
@@ -29,7 +30,7 @@ const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
     const { chatId } = useParams();
 
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [open, setOpen] = React.useState(false);
+    const {open, setOpen} = React.useContext(CmdkOpenStateContext);
     const [search, setSearch] = React.useState('')        
     const [pages, setPages] = React.useState<Page[]>([])
     const [selectedChat, setSelectedChat] = React.useState<DrizzleChat | null>(null)
@@ -38,11 +39,11 @@ const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
 
     // Toggle the menu when ⌘K is pressed
     React.useEffect(() => {
+        setOpen(false);
         const down = (e: any) => {
             if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-                console.log('pressed');
                 e.preventDefault();
-                setOpen((open) => !open);
+                setOpen((open: boolean) => !open);
                 reset();
             }
         }
@@ -126,8 +127,11 @@ const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
                             // Escape goes to previous page
                             // Backspace goes to previous page when search is empty
                             if (e.key === 'Escape' || (e.key === 'Backspace' && !search && !disableDialogInput)) {
-                            e.preventDefault();
-                            reset();
+                                e.preventDefault();
+                                if (pages.length === 0) {
+                                    setOpen(false);
+                                }
+                                reset();
                             }
                         }} className='shadow-3xl fixed z-20 top-1/2 -translate-y-1/2 left-5 right-5 max-h-[500px] h-full overflow-y-scroll bg-white dark:bg-slate-900 rounded-lg opacity-[0.98] sm:w-[500px] sm:left-1/2 sm:-translate-x-1/2' open={open} onOpenChange={setOpen} label="Global Command Menu">
                             <Command.Input disabled={disableDialogInput} placeholder={!disableDialogInput ? 'search for chats and workspaces' : ''} ref={inputRef} value={search} onValueChange={handleValueChange} className='px-5 py-3 sticky top-0 w-full text-slate-900 dark:bg-slate-900 opacity-100 border-0 focus:ring-0 focus:ring-offset-0 dark:text-white shadow-inner' />

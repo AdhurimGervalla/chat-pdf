@@ -182,7 +182,6 @@ const getContextBlock = (context: string, lang: LanguageCodes = 'en') => {
         ${t.demeanor}
         ${t.knowledge}
         ${t.nonApology}
-        ${t.invention}
         `;
     
     return `${t.intro}
