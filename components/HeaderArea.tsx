@@ -1,18 +1,25 @@
 import React from 'react'
 import DarkModeSwitch from './DarkModeSwitch'
 import { UserButton } from '@clerk/nextjs'
+import CmdkButton from './Cmdk/CmdkButton'
 
 type Props = {}
 
 const HeaderArea = (props: Props) => {
   return (
-    <div className='fixed right-7 top-5 z-10 flex gap-3 items-center justify-center'>
-        <div className=''>
-            <DarkModeSwitch />
+    <div className='fixed top-0 z-10 flex gap-3 items-center justify-between w-full border-x-[15px] border-transparent py-[15px]'>
+        <div className='flex justify-center'>
+          <CmdkButton large={false} />
         </div>
-        <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all">
-          <UserButton afterSignOutUrl='/' />
+        <div className='flex gap-3'>
+          <div className=''>
+              <DarkModeSwitch />
+          </div>
+          <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all">
+            <UserButton afterSignOutUrl='/' />
+          </div>
         </div>
+
     </div>
   )
 }

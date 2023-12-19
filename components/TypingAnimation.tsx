@@ -24,7 +24,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({
     }
   }, [text, displayedText, typingInterval]);
 
-  return <div className={className}>{displayedText}</div>;
+  return <div className={className}><div className='absolute'>{displayedText}</div><p className='opacity-0 md:hidden'>{text}</p></div>;
 };
 
 export default TypingAnimation;

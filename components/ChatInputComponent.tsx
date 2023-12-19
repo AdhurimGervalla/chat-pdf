@@ -66,7 +66,7 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
               </p>
             </div>
             <div className='sm:w-1/3'>
-              <CmdkButton label='to navigate' />
+              
             </div>
             <div className="flex-shrink-0">
               <Button type='submit' onClick={() => {

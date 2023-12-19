@@ -46,9 +46,6 @@ const WorkspaceList = ({workspaces, chatWorkspace}: {workspaces: WorkspaceWithRo
           )
         }
       </div>
-      <div className='flex justify-center md:hidden'>
-        <CmdkButton large={true} />
-      </div>
     </>
 
   )
