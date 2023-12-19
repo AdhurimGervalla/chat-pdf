@@ -68,7 +68,7 @@ const ChatComponent = ({ chatId, workspaces, allChats, refetchChats }: Props) =>
         <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
           <Loader2 className='w-[50px] h-[50px] animate-spin' />
         </div> 
-      : (messages.length === 0 && workspaces && workspaces.length > 0
+      : (messages.length === 0 && workspaces
           ? 
           <Workspaces workspaces={workspaces} chatId={chatId} />
           :

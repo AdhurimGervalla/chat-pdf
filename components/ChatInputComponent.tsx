@@ -3,6 +3,7 @@ import { CommandIcon, Loader2, SendIcon } from 'lucide-react'
 import { Button } from './ui/button'
 import { WorkspaceContext } from '@/context/WorkspaceContext';
 import { CmdkOpenStateContext } from '@/context/CmdKOpenStateContext';
+import CmdkButton from './Cmdk/CmdkButton';
 
 type Props = {
   stopCb: any;
@@ -65,9 +66,7 @@ export default function ChatInputComponent({stopCb, onChange, placeholder, isLoa
               </p>
             </div>
             <div className='sm:w-1/3'>
-              <span onClick={() => setOpen(true)} className=' w-[fit-content] text-sm tracking-wider leading-5 text-gray-500 dark:text-gray-400 flex items-center bg-slate-100 p-1 rounded-sm cursor-pointer hover:bg-slate-200 transition-colors'>
-                <CommandIcon className='w-4 h-4' />+K <span className='max-sm:hidden'>&nbsp;to navigate</span>
-              </span>
+              <CmdkButton label='to navigate' />
             </div>
             <div className="flex-shrink-0">
               <Button type='submit' onClick={() => {

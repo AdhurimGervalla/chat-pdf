@@ -4,42 +4,64 @@ import { DrizzleChat, DrizzleWorkspace, workspaceRole } from '@/lib/db/schema'
 import { WorkspaceWithRole } from '@/lib/types/types'
 import { cn, getRoleName } from '@/lib/utils'
 import axios from 'axios'
-import { ArrowLeft, Loader2, PlusCircleIcon, PlusIcon, SaveIcon } from 'lucide-react'
+import { ArrowLeft, CommandIcon, Loader2, PlusCircleIcon, PlusIcon, SaveIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import toast from 'react-hot-toast'
 import Select from './Select'
+import { CmdkOpenStateContext } from '@/context/CmdKOpenStateContext'
+import CmdkButton from './Cmdk/CmdkButton'
 
 type Props = {
     workspaces: WorkspaceWithRole[];
-    saveInWorkspaceMode?: boolean;
     chatId: string;
     chat?: DrizzleChat;
-    setToggleWorkspaceMode?: any;
 }
 
 
 
-const Workspaces = ({workspaces, saveInWorkspaceMode = false, chatId, setToggleWorkspaceMode, chat}: Props) => {
-  const {workspace, setWorkspace} = React.useContext(WorkspaceContext);
+const Workspaces = ({workspaces, chat}: Props) => {
   const chatWorkspace = workspaces.find((ws) => ws.id === chat?.workspaceId);
 
   return (
     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full sm:w-[fit-content] lg:w-auto'>
-      <h3 className='dark:text-slate-700 text-xl mb-5 uppercase tracking-wider font-semibold'>{saveInWorkspaceMode ? 'Save in ...' : 'Specify context ...'}</h3>
+      {workspaces.length === 0 ? <EmptyWrokspaceArea /> : <WorkspaceList workspaces={workspaces} chatWorkspace={chatWorkspace} />}
+    </div>
+   
+  )
+}
+
+const WorkspaceList = ({workspaces, chatWorkspace}: {workspaces: WorkspaceWithRole[], chatWorkspace: WorkspaceWithRole | undefined}) => {
+  const {workspace, setWorkspace} = React.useContext(WorkspaceContext);
+
+  return (
+    <>
       <div className='grid-cols-2 lg:grid-cols-3 gap-5 hidden md:grid'>
-        {workspaces.map((ws) => {
+        {
+          workspaces.map((ws) => {
             return (
                   <WorkspaceItem key={ws.id} chatWorkspace={chatWorkspace} workspace={ws} onClick={() => setWorkspace(workspace ? null : ws)} selectedWorkspace={workspace} />
                 )
             }
-        )}
+          )
+        }
       </div>
       <div className='block md:hidden'>
         <Select workspaces={workspaces} />
       </div>
+    </>
+
+  )
+}
+
+const EmptyWrokspaceArea = () => {
+  const {setOpen} = React.useContext(CmdkOpenStateContext);
+  
+  return (
+    <div className='text-slate-500 dark:text-white text-md sm:text-lg tracking-wider'>
+      <p>You haven't created any workspaces yet.</p>
+      <p className='flex items-center gap-3 mt-2'><CmdkButton /><span>to create a new one.</span></p>
     </div>
-   
   )
 }
 
