@@ -1,5 +1,5 @@
-import {OpenAIApi, Configuration} from 'openai-edge';
-import {OpenAIStream, StreamingTextResponse} from 'ai';
+import { OpenAIApi, Configuration } from 'openai-edge';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { getContext } from '@/lib/context';
 import { db } from "@/lib/db";
 import { chats, messages as _messages, messagesToFiles } from '@/lib/db/schema';
@@ -11,7 +11,7 @@ import { getNamespaceForWorkspace, languages } from '@/lib/utils';
 import { auth } from '@clerk/nextjs/server';
 import { v4 } from "uuid";
 import { getOpenAiApi } from '@/lib/openai';
-import { Metadata, RelatedData } from '@/lib/types/types';
+import { Metadata, PageNumberObject, RelatedData } from '@/lib/types/types';
 
 export const runtime = 'edge';
 
@@ -20,23 +20,23 @@ const openai = getOpenAiApi();
 
 export async function POST(req: NextRequest) {
     try {
-        let {messages, chatId, chatLanguage, currentWorkspace} = await req.json();
-        const {userId} = await auth();
+        let { messages, chatId, chatLanguage, currentWorkspace } = await req.json();
+        const { userId } = await auth();
 
         if (!chatId || !userId) {
-            return NextResponse.json({'error': 'messages or chatId not provided'}, {status: 400})
+            return NextResponse.json({ 'error': 'messages or chatId not provided' }, { status: 400 })
         }
 
         const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
-        
+
         if (_chats.length === 0) {
             await db
-            .insert(chats)
-            .values({
-                id: chatId,
-                userId,
-                title: messages[0].content.substring(0, 40).replace(/'/g, "''"),
-            });
+                .insert(chats)
+                .values({
+                    id: chatId,
+                    userId,
+                    title: messages[0].content.substring(0, 40).replace(/'/g, "''"),
+                });
         }
 
         const isPro = await checkSubscription();
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
                 };
             }
         }
-    
+
         // const model = isPro || userId === 'user_2Y05V0SAZMX7yxWRHFCiwMxCGog' ? 'gpt-4-1106-preview' : 'gpt-3.5-turbo';
         const model = 'gpt-4';
         const response = await openai.createChatCompletion({
@@ -104,11 +104,14 @@ export async function POST(req: NextRequest) {
                     relatedChatIds: JSON.stringify(relatedObject.relatedChatIds)
                 });
 
-                for (let i = 0; i < relatedObject.fileIds.length; i++) {
+                for (let i = 0; i < relatedObject.pageNumbers.length; i++) {
+                    const fileId: string = Object.keys(relatedObject.pageNumbers[i])[0];
+                    const fileIdNumber = parseInt(fileId);
+                    const pageNumbers = relatedObject.pageNumbers[i][fileIdNumber];
                     await db.insert(messagesToFiles).values({
                         messageId: id,
-                        fileId: relatedObject.fileIds[i],
-                        pageNumbers: JSON.stringify(relatedObject.pageNumbers),
+                        fileId: fileIdNumber,
+                        pageNumbers: JSON.stringify(pageNumbers),
                     });
                 }
             }
@@ -116,7 +119,7 @@ export async function POST(req: NextRequest) {
 
         return new StreamingTextResponse(stream);
     } catch (error) {
-        return NextResponse.json({'error': 'something went wrong'}, {status: 500})
+        return NextResponse.json({ 'error': 'something went wrong' }, { status: 500 })
     }
 }
 
@@ -165,7 +168,7 @@ const translations: TranslationsType = {
         nonApology: `Der KI-Assistent wird sich nicht für vorherige Antworten entschuldigen, sondern stattdessen angeben, dass neue Informationen gewonnen wurden.`,
         invention: `Der KI-Assistent wird nichts erfinden, was nicht direkt aus dem Kontext gezogen wird.`
     },
-} 
+}
 
 /**
  * Returns the context block for the given language
@@ -175,7 +178,7 @@ const translations: TranslationsType = {
  */
 const getContextBlock = (context: string, lang: LanguageCodes = 'en') => {
     const t = translations[lang] || translations.en; // Fallback to English if the language is not found
-    
+
     if (context === "") return `${t.intro}
         ${t.traits}
         ${t.behavior}
@@ -183,7 +186,7 @@ const getContextBlock = (context: string, lang: LanguageCodes = 'en') => {
         ${t.knowledge}
         ${t.nonApology}
         `;
-    
+
     return `${t.intro}
       ${t.traits}
       ${t.behavior}
@@ -204,15 +207,27 @@ function extractRelatedObject(metadata: Metadata[]): RelatedData {
     let relatedChatIds = metadata.map(doc => doc.chatId).filter((chatId): chatId is string => chatId !== undefined);
     relatedChatIds = removeDuplicates(relatedChatIds);
 
-    let pageNumbers = metadata.map(doc => doc.pageNumber).filter((pageNumber): pageNumber is number => pageNumber !== undefined);
-    pageNumbers = removeDuplicates(pageNumbers);
+    let pageNumbersObjects: PageNumberObject[] = [];
+
+    for (const doc of metadata) {
+        if (doc.pageNumber && doc.fileId) {
+            const pageNumberObject = pageNumbersObjects.find(pageNumberObject => pageNumberObject[doc.fileId as number]);
+            if (pageNumberObject) {
+                pageNumberObject[doc.fileId as number].push(doc.pageNumber);
+            } else {
+                const newPageNumberObject: PageNumberObject = {};
+                newPageNumberObject[doc.fileId as number] = [doc.pageNumber];
+                pageNumbersObjects.push(newPageNumberObject);
+            }
+        }
+    }
 
     let fileIds = metadata.map(doc => doc.fileId).filter((fileId): fileId is number => fileId !== undefined);
     fileIds = removeDuplicates(fileIds);
 
     return {
         relatedChatIds,
-        pageNumbers,
+        pageNumbers: pageNumbersObjects,
         fileIds,
         context
     }

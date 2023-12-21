@@ -85,7 +85,7 @@
   @apply pl-7;
 }
 
-.message-item.assistant * + * {
+.message-item.assistant .markdown-wrapper * + * {
   @apply mt-2;
 }
 

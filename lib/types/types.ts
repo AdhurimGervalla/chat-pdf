@@ -9,13 +9,16 @@ export type Metadata = {
 
 export type RelatedData = {
   relatedChatIds: string[];
-  pageNumbers: number[];
+  pageNumbers: PageNumberObject[];
   fileIds: number[];
   context: string;
 };
 
+export type PageNumberObject = Record<number, number[]>;
+
 export type RelatedFile = {
   url: string;
+  fileName: string;
   pageNumbers: number[];
 }
 

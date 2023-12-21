@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
         const relatedData: RelatedFile[] = [];
         const messageFileData = await db.select().from(messagesToFiles).where(eq(messagesToFiles.messageId, messageId));
         if (messageFileData.length === 0) return NextResponse.json({status: 200, data: relatedData});
-    
+        
         for (const messageFile of messageFileData) {
             const file = messageFile.fileId 
             ? await db.select().from(files).where(eq(files.id, messageFile.fileId))
@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
             if (file) {
                 relatedData.push({
                     url: file[0].url,
+                    fileName: file[0].name,
                     pageNumbers: JSON.parse(messageFile.pageNumbers || "[]")
                 });
             }

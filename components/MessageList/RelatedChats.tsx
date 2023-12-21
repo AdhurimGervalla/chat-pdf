@@ -1,30 +1,44 @@
-import { DrizzleChat } from '@/lib/db/schema';
-import Link from 'next/link';
-import React from 'react'
-
+import { DrizzleChat } from "@/lib/db/schema";
+import React from "react";
+import { Info, Link as LinkIcon, Loader2, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { LinkItem } from "./RelatedContext";
 type Props = {
-    relatedChatIds: string[];
-    allChats: DrizzleChat[];
-}
+  relatedChatIds: string[];
+  allChats: DrizzleChat[];
+};
 
-const RelatedChats = ({relatedChatIds, allChats}: Props) => {
+const RelatedChats = ({ relatedChatIds, allChats }: Props) => {
   return (
-    <p className='my-4 bg-green-100 dark:bg-slate-800 px-3 py-1'>Related Chats: {relatedChatIds.map((id, index) => {
-            if (id) {
-              let chatTitle = 'Chat ' + (index+1);
-              if (allChats) {
-                const chat = allChats.find(c => c.id === id);
+    <p className="flex gap-2">
+      <span className="font-bold">Related Chats:</span>{" "}
+      <span className="flex flex-wrap">
+        {relatedChatIds.map((id, index) => {
+          if (id) {
+            let chatTitle = "Chat " + (index + 1);
+            let fullChatTitle = chatTitle;
+            if (allChats) {
+              const chat = allChats.find((c) => c.id === id);
               if (chat && chat.title) {
-                chatTitle = chat.title;
+                fullChatTitle = chat.title;
+                if (chat.title.length > 20) {
+                  chatTitle = chat.title.substring(0, 20) + "...";
+                } else {
+                  chatTitle = chat.title;
+                }
               }
             }
             return (
-            <Link key={id} className='mr-5 hover:text-green-500 transition-colors' href={`/chats/${id}`}>{chatTitle}</Link>
-            )
-        }
+              <LinkItem title={fullChatTitle} key={id} url={`/chat/${id}`}>
+                {chatTitle}
+              </LinkItem>
+            );
+          }
         })}
+        {relatedChatIds.length === 0 && <span>No related chats</span>}
+      </span>
     </p>
-  )
-}
+  );
+};
 
-export default RelatedChats
+export default RelatedChats;
