@@ -1,11 +1,17 @@
-import { Pinecone } from "@pinecone-database/pinecone";
+import { Pinecone, RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
 import { getEmbeddings } from "./embeddings";
 import { Metadata } from "./types/types";
 
+/**
+ * Gets the matches from a list of embeddings
+ * @param embeddings Embeddings to search for
+ * @param identifier Pinecone namespace identifier to search in
+ * @returns Metadata of the documents that match the embeddings
+ */
 export async function getMatchesFromEmbeddings(
   embeddings: number[],
   identifier: string
-) {
+): Promise<ScoredPineconeRecord<RecordMetadata>[]> {
   try {
     const client = new Pinecone({
       environment: process.env.PINECONE_ENVIRONMENT!,
@@ -25,7 +31,13 @@ export async function getMatchesFromEmbeddings(
   }
 }
 
-export async function getContext(query: string, identifier: string) {
+/**
+ * Gets the context of a query from a Pinecone namespace
+ * @param query Query to search for
+ * @param identifier Pinecone namespace identifier to search in
+ * @returns Metadata of the documents that match the query
+ */
+export async function getContext(query: string, identifier: string): Promise<Metadata[]> {
   const queryEmbeddings = await getEmbeddings(query);
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, identifier);
 
@@ -37,6 +49,6 @@ export async function getContext(query: string, identifier: string) {
     const metadata = (match.metadata as Metadata)
     return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId, fileId: metadata.fileId};
   });
-  // 5 vectors
+
   return docs;
 }
