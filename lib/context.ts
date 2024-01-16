@@ -47,7 +47,7 @@ export async function getContext(query: string, identifier: string): Promise<Met
   
   let docs: Metadata[] = qualifyingDocs.map((match) => {
     const metadata = (match.metadata as Metadata)
-    return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId, fileId: metadata.fileId};
+    return {text: metadata.text, pageNumber: metadata.pageNumber, chatId: metadata.chatId, fileId: metadata.fileId, fileKey: metadata.fileKey, score: match.score};
   });
 
   return docs;

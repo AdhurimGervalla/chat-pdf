@@ -14,7 +14,6 @@ const SharedWokspaceList = ({handeOnSelect}: Props) => {
         queryKey: ['sharedWorkspaces'],
         queryFn: async () => {
             const res = await axios.get('/api/get-shared-workspaces');
-            console.log(res.data);
             return res.data;
         }
     });

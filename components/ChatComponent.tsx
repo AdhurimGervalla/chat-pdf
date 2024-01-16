@@ -42,13 +42,13 @@ const ChatComponent = ({
   });
 
   const fetchApiWithDebounce = React.useCallback(
-    debounce(async (value: string) => {
+    debounce(async (value: string, currentWorkspace: WorkspaceWithRole) => {
       setSearching(true);
       const res = await axios.post<Metadata[]>(
         "/api/search-through-pinecone-namespace",
         {
           message: value,
-          currentWorkspace: workspace,
+          currentWorkspace: currentWorkspace,
         }
       );
       setSearchResults(res.data);
@@ -80,11 +80,17 @@ const ChatComponent = ({
     },
   });
 
+  const handleSubmitModified = (event: React.FormEvent<HTMLFormElement>) => {
+    handleSubmit(event);
+    setSearchResults([]);
+  }
+
   const handleInputChangeModified = (event: any) => {
     handleInputChange(event);
+    console.log("workspace", workspace);
     if (workspace === null || event.target.value == "") return;
     console.log("event.target.value", event.target.value);
-    fetchApiWithDebounce(event.target.value);
+    fetchApiWithDebounce(event.target.value, workspace);
   };
 
   React.useEffect(() => {
@@ -123,10 +129,9 @@ const ChatComponent = ({
         </div>
       )}
 
-      {/* chat input */}
-      <ContextSearchResults searchResults={searchResults} isSearching={searching} />
+      {(searchResults.length > 0 || searching) && <ContextSearchResults searchResults={searchResults} isSearching={searching} setSearchResults={setSearchResults} />}
       <ChatInput
-        handleSubmit={handleSubmit}
+        handleSubmit={handleSubmitModified}
         handleInputChange={handleInputChangeModified}
         isLoading={isLoading}
         input={input}
