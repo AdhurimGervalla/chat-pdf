@@ -3,8 +3,10 @@ import { DrizzleWorkspace } from "../db/schema";
 export type Metadata = {
     text: string;
     pageNumber?: number;
+    fileKey?: string;
     chatId?: string;
     fileId?: number;
+    score?: number;
   };
 
 export type RelatedData = {

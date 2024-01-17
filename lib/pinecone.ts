@@ -98,6 +98,12 @@ async function embedDocuments(doc: Document, fileKey: string, fileId: number): P
     }
 }
 
+/**
+ * Embeds a list of messages
+ * @param messages Messages to embed
+ * @param chatId Chat id of the messages
+ * @returns Pinecone records
+ */
 async function embedMessages(messages: DrizzleMessage[], chatId: string): Promise<PineconeRecord[]> {
     try {
         const embeddings = await Promise.all(
