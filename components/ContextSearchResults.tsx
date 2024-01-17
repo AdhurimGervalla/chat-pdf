@@ -29,9 +29,8 @@ const ContextSearchResults = ({
         <h3 className="text-xl mb-2">Top context results</h3>
       )}
       {searchResults.map((result, index) => (
-        <div className="flex gap-3 justify-between">
+        <div key={index} className="flex gap-3 justify-between">
           <p
-            key={index}
             className="text-ellipsis overflow-hidden whitespace-nowrap [&:not(:last-child)]:mb-2 hover:underline"
           >
             {/* if result object has chatId key */}

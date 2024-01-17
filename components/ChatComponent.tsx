@@ -42,7 +42,7 @@ const ChatComponent = ({
   });
 
   const fetchApiWithDebounce = React.useCallback(
-    debounce(async (value: string, currentWorkspace: WorkspaceWithRole) => {
+    debounce(async (value: string, currentWorkspace: DrizzleWorkspace) => {
       setSearching(true);
       const res = await axios.post<Metadata[]>(
         "/api/search-through-pinecone-namespace",
@@ -87,9 +87,7 @@ const ChatComponent = ({
 
   const handleInputChangeModified = (event: any) => {
     handleInputChange(event);
-    console.log("workspace", workspace);
     if (workspace === null || event.target.value == "") return;
-    console.log("event.target.value", event.target.value);
     fetchApiWithDebounce(event.target.value, workspace);
   };
 
