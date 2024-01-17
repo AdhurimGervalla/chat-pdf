@@ -105,6 +105,8 @@ const ChatComponent = ({
     setMessages(data);
   }, [data]);
 
+  console.log("input", input.length);
+
   return (
     <div
       className="flex flex-col w-full h-full overflow-y-scroll"
@@ -127,7 +129,7 @@ const ChatComponent = ({
         </div>
       )}
 
-      {(searchResults.length > 0 || searching) && <ContextSearchResults searchResults={searchResults} isSearching={searching} setSearchResults={setSearchResults} />}
+      {(input.length > 0 && (searchResults.length > 0 || searching)) && <ContextSearchResults searchResults={searchResults} isSearching={searching} setSearchResults={setSearchResults} />}
       <ChatInput
         handleSubmit={handleSubmitModified}
         handleInputChange={handleInputChangeModified}
