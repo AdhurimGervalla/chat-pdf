@@ -112,7 +112,7 @@ const ChatComponent = ({
       className="flex flex-col w-full h-full overflow-y-scroll"
       id="message-container"
     >
-      {loadingMessages ? (
+      {loadingMessages || workspaces === undefined ? (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <Loader2 className="w-[50px] h-[50px] animate-spin" />
         </div>

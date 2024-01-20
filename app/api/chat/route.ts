@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
                 .values({
                     id: chatId,
                     userId,
-                    title: messages[0].content.substring(0, 40).replace(/'/g, "''"),
+                    title: messages[0].content.substring(0, 254).replace(/'/g, "''"),
                 });
         }
 
