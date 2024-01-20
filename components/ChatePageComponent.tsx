@@ -17,7 +17,11 @@ const ChatePageComponent = ({chatId}: Props) => {
         queryKey: ['workspaces', chatId],
         queryFn: async () => {
           const res = await axios.get('/api/get-workspaces');
-          return res.data.workspaces;
+          let data = [];
+          if (res.data.workspaces) {
+            data = res.data.workspaces
+          }
+          return data;
         }
       });
 
