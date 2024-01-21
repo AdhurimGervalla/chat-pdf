@@ -20,7 +20,7 @@ const ContextSearchResults = ({
   };
 
   return (
-    <div className="absolute mx-auto max-w-4xl w-full -translate-x-1/2 left-1/2 bg-yellow-100 dark:text-black  p-3 rounded-br-md rounded-bl-md shadow-2xl">
+    <div className="fixed mx-auto max-w-4xl w-full -translate-x-1/2 left-1/2 bg-yellow-100 dark:text-black  p-3 rounded-br-md rounded-bl-md shadow-2xl">
       <XIcon
         className="w-5 h-5 absolute right-3 top-3 cursor-pointer"
         onClick={closeSearchResults}
