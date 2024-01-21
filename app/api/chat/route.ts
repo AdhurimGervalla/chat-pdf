@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
                     id,
                     chatId,
                     content: completion,
-                    role: 'assistant', // todo: check if this is correct. should be system or assistant?
+                    role: 'assistant',
                     originId: userQuestionMessageId,
                     relatedChatIds: JSON.stringify(relatedObject.relatedChatIds)
                 });

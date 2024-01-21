@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
     // update chat with workspaceId
     await db.update(chats).set({ workspaceId }).where(eq(chats.id, chatId));
 
-    const _messages = (await db.select().from(messages).orderBy((asc(messages.createdAt))).where(eq(messages.chatId, chatId)));
+    const _messages = (await db.select().from(messages).orderBy((asc(messages.createdAt))).where(and(eq(messages.chatId, chatId), eq(messages.role, "assistant"))));
 
     const workspaceNamespace = setNameSpaceForWorkspace(workspace.identifier, userId);
     // load chat into pinecone
-    await loadChatIntoPinecone(_messages,workspaceNamespace, chatId);
+    await loadChatIntoPinecone(_messages, workspaceNamespace,chatId);
 
     return NextResponse.json({ success: true });
 }
