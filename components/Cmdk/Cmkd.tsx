@@ -67,6 +67,7 @@ const Cmkd = ({chats, refetchChats, workspaces, refetchWorkspaces}: Props) => {
         setPages([...pages, page]);
         if (inputRef.current) {
             inputRef.current.focus();
+            setSearch('');
           }
     }
 
