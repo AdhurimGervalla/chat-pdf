@@ -12,6 +12,7 @@ import Workspaces from "./Workspaces";
 import { Metadata, WorkspaceWithRole } from "@/lib/types/types";
 import { debounce } from "lodash";
 import ContextSearchResults from "./ContextSearchResults";
+import toast from "react-hot-toast";
 
 type Props = {
   chatId: string;
@@ -76,7 +77,8 @@ const ChatComponent = ({
       refetchChats();
     },
     onError: (e) => {
-      console.log(e);
+      console.error(e);
+      toast.error("Your message could not be sent.");
     },
   });
 

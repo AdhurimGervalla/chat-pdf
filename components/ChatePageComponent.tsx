@@ -25,7 +25,6 @@ const ChatePageComponent = ({ chatId }: Props) => {
     queryKey: ["workspaces"],
     queryFn: async () => {
       const res = await axios.get("/api/get-workspaces");
-      console.log("fetching workspaces");
       let data = [];
       if (res.data.workspaces) {
         data = res.data.workspaces;
@@ -42,7 +41,6 @@ const ChatePageComponent = ({ chatId }: Props) => {
     queryKey: ["chats"],
     queryFn: async () => {
       const res = await axios.post("/api/get-chats");
-      console.log("fetched chats", res);
       return res.data;
     },
   });
