@@ -14,11 +14,8 @@ import CmdkButton from './Cmdk/CmdkButton'
 
 type Props = {
     workspaces: WorkspaceWithRole[];
-    chatId: string;
     chat?: DrizzleChat;
 }
-
-
 
 const Workspaces = ({workspaces, chat}: Props) => {
   const chatWorkspace = workspaces.find((ws) => ws.id === chat?.workspaceId);
@@ -33,7 +30,6 @@ const Workspaces = ({workspaces, chat}: Props) => {
 
 const WorkspaceList = ({workspaces, chatWorkspace}: {workspaces: WorkspaceWithRole[], chatWorkspace: WorkspaceWithRole | undefined}) => {
   const {workspace, setWorkspace} = React.useContext(WorkspaceContext);
-
   return (
     <>
       <div className='grid-cols-2 lg:grid-cols-3 gap-5 hidden md:grid'>

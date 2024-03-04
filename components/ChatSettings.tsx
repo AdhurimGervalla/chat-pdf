@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import BookmarkComponent from './BookmarkComponent';
 import { v4 } from "uuid";
+import { newChatId } from '@/lib/types/types';
 
 type Props = {
     chat: DrizzleChat;
@@ -27,9 +28,9 @@ const ChatSettings = ({chat, currentChatId, isPro}: Props) => {
               chatId,
               file_key: chat?.fileKey
               });
-            const newChatId = v4();
             router.refresh();
-            router.push(`/chats/${newChatId}`);
+            console.log('start redirect');
+            router.push(`/chats/${v4()}`);
           } catch (error) {
             console.log(error);
           }

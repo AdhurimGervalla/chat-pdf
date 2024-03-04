@@ -1,32 +1,24 @@
 "use client";
 import React from "react";
 import { useChat } from "ai/react";
-import { Loader2 } from "lucide-react";
 import MessageList from "./MessageList/MessageList";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ChatInputComponent from "./ChatInputComponent";
-import { DrizzleChat, DrizzleWorkspace } from "@/lib/db/schema";
+import { DrizzleWorkspace } from "@/lib/db/schema";
 import { WorkspaceContext } from "@/context/WorkspaceContext";
-import Workspaces from "./Workspaces";
-import { Metadata, WorkspaceWithRole } from "@/lib/types/types";
+import { Metadata } from "@/lib/types/types";
 import { debounce } from "lodash";
 import ContextSearchResults from "./ContextSearchResults";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { v4 } from "uuid";
+import FavoriteWorkspacesList from "./FavoriteWorkspacesList";
+import LoaderSpinner from "./LoaderSpinner";
 
-type Props = {
-  chatId: string;
-  workspaces?: WorkspaceWithRole[];
-  refetchChats: any;
-  allChats?: DrizzleChat[];
-};
 
-const ChatComponent = ({
-  chatId,
-  workspaces,
-  allChats,
-  refetchChats,
-}: Props) => {
+const ChatComponent = ({chatId}: {chatId: string}) => {
+  const router = useRouter();
   const [loadingMessages, setLoadingMessages] = React.useState<boolean>(true);
   const [scrollDown, setScrollDown] = React.useState<boolean>(true);
   const [searchResults, setSearchResults] = React.useState<Metadata[]>([]);
@@ -69,16 +61,16 @@ const ChatComponent = ({
   } = useChat({
     id: chatId,
     api: "/api/chat",
-    body: { chatId, currentWorkspace: workspace },
+    body: { chatId: chatId, currentWorkspace: workspace },
     initialMessages: data,
     onResponse: async (message) => {},
     onFinish: async (message) => {
       await refetch();
-      refetchChats();
     },
     onError: (e) => {
       console.error(e);
       toast.error("Your message could not be sent.");
+      router.push(`/chats/${v4()}`);
     },
   });
 
@@ -107,26 +99,21 @@ const ChatComponent = ({
     setMessages(data);
   }, [data]);
 
-  console.log("input", input.length);
-
   return (
     <div
       className="flex flex-col w-full h-full overflow-y-scroll"
       id="message-container"
     >
-      {loadingMessages || workspaces === undefined ? (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <Loader2 className="w-[50px] h-[50px] animate-spin" />
-        </div>
-      ) : messages.length === 0 && workspaces ? (
-        <Workspaces workspaces={workspaces} chatId={chatId} />
+      {loadingMessages ? (
+        <LoaderSpinner />
+      ) : messages.length === 0 ? (
+        <FavoriteWorkspacesList />
       ) : (
         <div className="max-w-4xl  w-full mx-auto relative">
           <MessageList
             messages={messages}
             refetch={refetch}
             isLoading={isLoading}
-            allChats={allChats}
           />
         </div>
       )}

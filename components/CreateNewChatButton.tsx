@@ -7,9 +7,8 @@ import { v4 } from "uuid";
 type Props = {}
 
 const CreateNewChatButton = (props: Props) => {
-    const chatId = v4();
     return (
-        <Link href={`/chats/${chatId}`}>
+        <Link href={`/`}>
             <Button title='create new chat' className='w-full'>
                     <PlusCircleIcon className='mr-2 w-4 h-4' />
                     New chat

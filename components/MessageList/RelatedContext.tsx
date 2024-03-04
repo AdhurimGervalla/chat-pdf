@@ -8,7 +8,6 @@ import RelatedChats from "./RelatedChats";
 type Props = {
   messageId: string;
   relatedChatIds: string[] | null;
-  allChats: DrizzleChat[] | undefined;
 };
 
 type DataD = {
@@ -34,7 +33,7 @@ const getRelatedContext = async (messageId: string): Promise<RelatedFile[]> => {
   return [];
 };
 
-const RelatedContext = ({ messageId, relatedChatIds, allChats }: Props) => {
+const RelatedContext = ({ messageId, relatedChatIds }: Props) => {
   const [relatedContext, setRelatedContext] = React.useState<RelatedFile[]>();
   const [showRelatedContext, setShowRelatedContext] =
     React.useState<boolean>(false);
@@ -61,10 +60,9 @@ const RelatedContext = ({ messageId, relatedChatIds, allChats }: Props) => {
       <div className="flex gap-x-2 items-start flex-wrap flex-col">
         {showRelatedContext && relatedContext && (
           <div>
-            {relatedChatIds && allChats && (
+            {relatedChatIds && (
               <RelatedChats
                 relatedChatIds={relatedChatIds}
-                allChats={allChats}
               />
             )}
             {relatedContext.map((context: RelatedFile, index: number) => (

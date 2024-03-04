@@ -13,6 +13,7 @@ import { Input } from '../../ui/input';
 import { resetBackspace } from '@/lib/utils';
 import { useAuth } from '@clerk/nextjs';
 import { WorkspaceContext } from '@/context/WorkspaceContext';
+import { v4 } from "uuid";
 
 type Props = {
     workspace: DrizzleWorkspace;
@@ -59,7 +60,7 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
             await axios.post(`/api/delete-workspace`, {
                 workspaceId: workspace.id
             });
-            router.push(`/`);
+            router.push(`/chats/${v4()}`);
         } 
         catch (error: any) {
           throw new Error('Couldn\'t delete workspace');

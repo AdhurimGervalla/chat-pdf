@@ -18,7 +18,7 @@ const MessageList = ({messages, refetch, isLoading = false, allChats}: Props) =>
     return (
     <div className='flex flex-col gap-3'>
         {messages.map((message) => {
-          return <MessageItem key={message.id} message={message} allChats={allChats} isLoading={isLoading} refetch={refetch} />
+          return <MessageItem key={message.id} message={message} isLoading={isLoading} refetch={refetch} />
         })}
         {messages.length > 0 && messages[messages.length - 1].role === 'user' && <Loader2 className='w-4 h-4 animate-spin' />}
     </div>

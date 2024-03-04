@@ -11,12 +11,11 @@ import RelatedChats from "./RelatedChats";
 import RelatedContext from "./RelatedContext";
 type Props = {
   message: DrizzleMessage | any;
-  allChats?: DrizzleChat[];
   isLoading: boolean;
   refetch: any;
 };
 
-const MessageItem = ({ message, allChats, isLoading, refetch }: Props) => {
+const MessageItem = ({ message, isLoading, refetch }: Props) => {
   let relatedChatIds: string[] | null = null;
 
   if ((message as DrizzleMessage).relatedChatIds) {
@@ -77,7 +76,6 @@ const MessageItem = ({ message, allChats, isLoading, refetch }: Props) => {
             <RelatedContext
               messageId={message.id}
               relatedChatIds={relatedChatIds}
-              allChats={allChats}
             />
           </div>
         )}

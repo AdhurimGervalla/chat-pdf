@@ -27,3 +27,5 @@ export type RelatedFile = {
 export type WorkspaceWithRole = DrizzleWorkspace & {
   role: string;
 }
+
+export const newChatId = "new";

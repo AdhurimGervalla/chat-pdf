@@ -2,7 +2,6 @@
 import React from "react";
 import { Command } from "cmdk";
 import { DrizzleChat, DrizzleWorkspace } from "@/lib/db/schema";
-import { v4 } from "uuid";
 import { useRouter, useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -14,25 +13,18 @@ import Overview from "./Overview";
 import ChatsDetailPage from "./Chats/ChatsDetailPage";
 import { WorkspaceWithRole } from "@/lib/types/types";
 import { CmdkOpenStateContext } from "@/context/CmdKOpenStateContext";
+import { useQuery } from "@tanstack/react-query";
+import { v4 } from "uuid";
 
 type Props = {
-  chats?: DrizzleChat[];
-  workspaces?: WorkspaceWithRole[];
-  refetchChats: any;
-  refetchWorkspaces: any;
+  chatId: string;
 };
 
 export type Page = [string, number | string];
 
-const Cmkd = ({
-  chats,
-  refetchChats,
-  workspaces,
-  refetchWorkspaces,
-}: Props) => {
+const Cmkd = ({chatId}: Props) => {
   const router = useRouter();
-  const { chatId } = useParams();
-
+  const newChatId = v4();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { open, setOpen } = React.useContext(CmdkOpenStateContext);
   const [search, setSearch] = React.useState("");
@@ -43,6 +35,38 @@ const Cmkd = ({
   const [disableDialogInput, setDisableDialogInput] =
     React.useState<boolean>(false);
   const page = pages[pages.length - 1];
+
+  const {
+    data: workspaces,
+    refetch: refetchWorkspaces,
+    isLoading: isLoadingWorkspaces,
+  } = useQuery<WorkspaceWithRole[]>({
+    queryKey: ["workspacesCmdk"],
+    queryFn: async () => {
+      let data: WorkspaceWithRole[] = [];
+      if (!open) return data;
+      const res = await axios.get("/api/get-workspaces");
+      if (res.data.workspaces) {
+        data = res.data.workspaces;
+      }
+      return data;
+    },
+  });
+
+  const {
+    data: chats,
+    refetch: refetchChats,
+    isLoading: isLoadingChats,
+  } = useQuery<DrizzleChat[]>({
+    queryKey: ["chatsCmdk"],
+    queryFn: async () => {
+      let data: DrizzleChat[] = [];
+      if (!open) return data;
+      const res = await axios.post("/api/get-chats");
+      data = res.data;
+      return data;
+    },
+  });
 
   // Toggle the menu when ⌘K is pressed
   React.useEffect(() => {
@@ -58,6 +82,13 @@ const Cmkd = ({
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
+  React.useEffect(() => {
+    if (open) {
+      refetchChats();
+      refetchWorkspaces();
+    }
+  }, [open]);
 
   const reset = () => {
     setPages((pages) => pages.slice(0, -1));
@@ -93,8 +124,7 @@ const Cmkd = ({
   };
 
   const handleNewChat = () => {
-    const chatId = v4();
-    router.push(`/chats/${chatId}`);
+    router.push(`/chats/${newChatId}`);
   };
 
   const handleSaveToWorkspace = async (workspace: DrizzleWorkspace) => {
