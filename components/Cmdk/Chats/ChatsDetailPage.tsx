@@ -10,22 +10,23 @@ import { Command, CommandItem } from 'cmdk';
 import toast from 'react-hot-toast';
 import { v4 } from "uuid";
 import axios from 'axios';
+import { useWorkspacesContext } from '@/context/WorkspacesContext';
 
 type Props = {
     chatId: string;
     refetchChats: any;
     selectedChat: DrizzleChat;
     handleSaveToWorkspace: any;
-    workspaces: DrizzleWorkspace[];
     setPages: any;
     chats: DrizzleChat[];
     handeOnSelect: any;
     inputRef: any;
 }
 
-const ChatsDetailPage = ({chatId, refetchChats, handleSaveToWorkspace, selectedChat, workspaces, setPages, chats, handeOnSelect, inputRef}: Props) => {
+const ChatsDetailPage = ({chatId, refetchChats, handleSaveToWorkspace, selectedChat, setPages, chats, handeOnSelect, inputRef}: Props) => {
     const router = useRouter();
     const [saveToWorkspaceMode, setSaveToWorkspaceMode] = React.useState(false)
+    const { workspaces } = useWorkspacesContext();
 
     const handleWorkspaceSelect = () => {
         setSaveToWorkspaceMode(!saveToWorkspaceMode);

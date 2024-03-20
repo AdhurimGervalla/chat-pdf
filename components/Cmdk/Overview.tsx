@@ -10,7 +10,6 @@ type Props = {
   handleNewChat: any;
   page: string;
   chats: DrizzleChat[];
-  workspaces: any;
   chatId: string;
   handleDetailView: any;
 };

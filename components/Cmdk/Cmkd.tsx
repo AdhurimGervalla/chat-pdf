@@ -11,10 +11,10 @@ import WorkspaceList from "./Workspaces/WorkspaceList";
 import ChatsList from "./Chats/ChatsList";
 import Overview from "./Overview";
 import ChatsDetailPage from "./Chats/ChatsDetailPage";
-import { WorkspaceWithRole } from "@/lib/types/types";
 import { CmdkOpenStateContext } from "@/context/CmdKOpenStateContext";
 import { useQuery } from "@tanstack/react-query";
 import { v4 } from "uuid";
+import { useWorkspacesContext } from "@/context/WorkspacesContext";
 
 type Props = {
   chatId: string;
@@ -27,6 +27,7 @@ const Cmkd = ({chatId}: Props) => {
   const newChatId = v4();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { open, setOpen } = React.useContext(CmdkOpenStateContext);
+  const { workspaces, refetch } = useWorkspacesContext();
   const [search, setSearch] = React.useState("");
   const [pages, setPages] = React.useState<Page[]>([]);
   const [selectedChat, setSelectedChat] = React.useState<DrizzleChat | null>(
@@ -35,23 +36,6 @@ const Cmkd = ({chatId}: Props) => {
   const [disableDialogInput, setDisableDialogInput] =
     React.useState<boolean>(false);
   const page = pages[pages.length - 1];
-
-  const {
-    data: workspaces,
-    refetch: refetchWorkspaces,
-    isLoading: isLoadingWorkspaces,
-  } = useQuery<WorkspaceWithRole[]>({
-    queryKey: ["workspacesCmdk"],
-    queryFn: async () => {
-      let data: WorkspaceWithRole[] = [];
-      if (!open) return data;
-      const res = await axios.get("/api/get-workspaces");
-      if (res.data.workspaces) {
-        data = res.data.workspaces;
-      }
-      return data;
-    },
-  });
 
   const {
     data: chats,
@@ -86,7 +70,6 @@ const Cmkd = ({chatId}: Props) => {
   React.useEffect(() => {
     if (open) {
       refetchChats();
-      refetchWorkspaces();
     }
   }, [open]);
 
@@ -144,7 +127,7 @@ const Cmkd = ({chatId}: Props) => {
           )
           .then(() => {
             refetchChats();
-            refetchWorkspaces();
+            refetch();
             reset();
           });
       } catch (error: any) {
@@ -209,7 +192,6 @@ const Cmkd = ({chatId}: Props) => {
                 handleNewChat={handleNewChat}
                 page={page}
                 chats={chats}
-                workspaces={workspaces}
                 handleDetailView={handleDetailView}
                 chatId={chatId as string}
               />
@@ -229,7 +211,6 @@ const Cmkd = ({chatId}: Props) => {
                 refetchChats={refetchChats}
                 handleSaveToWorkspace={handleSaveToWorkspace}
                 selectedChat={selectedChat}
-                workspaces={workspaces}
                 setPages={setPages}
                 chats={chats}
                 inputRef={inputRef}
@@ -239,7 +220,6 @@ const Cmkd = ({chatId}: Props) => {
 
             {page && page[0] === "workspaces" && (
               <WorkspaceList
-                workspaces={workspaces}
                 handeOnSelect={handeOnSelect}
               />
             )}
@@ -252,7 +232,7 @@ const Cmkd = ({chatId}: Props) => {
             )}
             {page && page[0] === "newWorkspace" && (
               <NewWorkspace
-                refetchWorkspaces={refetchWorkspaces}
+                refetchWorkspaces={refetch}
                 reset={reset}
               />
             )}

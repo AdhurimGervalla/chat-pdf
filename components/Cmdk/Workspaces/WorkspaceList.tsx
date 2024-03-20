@@ -3,13 +3,15 @@ import ListItem from '../ListItem';
 import { List } from 'lucide-react';
 import { WorkspaceWithRole } from '@/lib/types/types';
 import { getRoleName } from '@/lib/utils';
+import { useWorkspacesContext } from '@/context/WorkspacesContext';
 
 type Props = {
-    workspaces: WorkspaceWithRole[];
     handeOnSelect: any;
 }
 
-const WorkspaceList = ({workspaces, handeOnSelect}: Props) => {
+const WorkspaceList = ({handeOnSelect}: Props) => {
+  const { workspaces } = useWorkspacesContext();
+  
   return (
     workspaces.map((workspace) => (
         <ListItem onSelect={() => handeOnSelect(['workspaceDetail', workspace.id])} key={workspace.id}>
