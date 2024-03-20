@@ -3,13 +3,13 @@ import { ArrowRight, PlusCircle, Search } from "lucide-react";
 import React from "react";
 import ListItem from "./ListItem";
 import { DrizzleChat } from "@/lib/db/schema";
+import { useChatsContext } from "@/context/ChatsContext";
 
 type Props = {
   handeOnSelect: any;
   handleCreateWorkspace: any;
   handleNewChat: any;
   page: string;
-  chats: DrizzleChat[];
   chatId: string;
   handleDetailView: any;
 };
@@ -19,10 +19,11 @@ const Overview = ({
   handleCreateWorkspace,
   handleNewChat,
   page,
-  chats,
   chatId,
   handleDetailView,
 }: Props) => {
+  const { chats } = useChatsContext();
+
   const chatExists = (chats: DrizzleChat[], chatId: string): boolean => {
     return chats.filter((chat) => chat.id === chatId).length > 0;
   };

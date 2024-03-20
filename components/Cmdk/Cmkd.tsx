@@ -15,6 +15,7 @@ import { CmdkOpenStateContext } from "@/context/CmdKOpenStateContext";
 import { useQuery } from "@tanstack/react-query";
 import { v4 } from "uuid";
 import { useWorkspacesContext } from "@/context/WorkspacesContext";
+import { useChatsContext } from "@/context/ChatsContext";
 
 type Props = {
   chatId: string;
@@ -28,6 +29,7 @@ const Cmkd = ({chatId}: Props) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { open, setOpen } = React.useContext(CmdkOpenStateContext);
   const { workspaces, refetch } = useWorkspacesContext();
+  const { chats, refetch: refetchChats } = useChatsContext();
   const [search, setSearch] = React.useState("");
   const [pages, setPages] = React.useState<Page[]>([]);
   const [selectedChat, setSelectedChat] = React.useState<DrizzleChat | null>(
@@ -36,21 +38,6 @@ const Cmkd = ({chatId}: Props) => {
   const [disableDialogInput, setDisableDialogInput] =
     React.useState<boolean>(false);
   const page = pages[pages.length - 1];
-
-  const {
-    data: chats,
-    refetch: refetchChats,
-    isLoading: isLoadingChats,
-  } = useQuery<DrizzleChat[]>({
-    queryKey: ["chatsCmdk"],
-    queryFn: async () => {
-      let data: DrizzleChat[] = [];
-      if (!open) return data;
-      const res = await axios.post("/api/get-chats");
-      data = res.data;
-      return data;
-    },
-  });
 
   // Toggle the menu when ⌘K is pressed
   React.useEffect(() => {
@@ -66,12 +53,6 @@ const Cmkd = ({chatId}: Props) => {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
-
-  React.useEffect(() => {
-    if (open) {
-      refetchChats();
-    }
-  }, [open]);
 
   const reset = () => {
     setPages((pages) => pages.slice(0, -1));
@@ -191,7 +172,6 @@ const Cmkd = ({chatId}: Props) => {
                 handleCreateWorkspace={handleCreateWorkspace}
                 handleNewChat={handleNewChat}
                 page={page}
-                chats={chats}
                 handleDetailView={handleDetailView}
                 chatId={chatId as string}
               />

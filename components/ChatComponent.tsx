@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { v4 } from "uuid";
 import FavoriteWorkspacesList from "./FavoriteWorkspacesList";
 import LoaderSpinner from "./LoaderSpinner";
+import { ChatsContext } from "@/context/ChatsContext";
 
 
 const ChatComponent = ({chatId}: {chatId: string}) => {
@@ -24,6 +25,7 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
   const [searchResults, setSearchResults] = React.useState<Metadata[]>([]);
   const [searching, setSearching] = React.useState<boolean>(false);
   const { workspace } = React.useContext(WorkspaceContext);
+  const { refetch: refetchChats } = React.useContext(ChatsContext);
 
   const { data, refetch } = useQuery({
     queryKey: ["chat", chatId],
@@ -66,6 +68,7 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
     onResponse: async (message) => {},
     onFinish: async (message) => {
       await refetch();
+      refetchChats();
     },
     onError: (e) => {
       console.error(e);
