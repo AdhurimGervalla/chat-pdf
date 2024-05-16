@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         }
 
         // const model = isPro || userId === 'user_2Y05V0SAZMX7yxWRHFCiwMxCGog' ? 'gpt-4-1106-preview' : 'gpt-3.5-turbo';
-        const model = 'gpt-4';
+        const model = 'gpt-4o';
         const response = await openai.createChatCompletion({
             model,
             messages: [
