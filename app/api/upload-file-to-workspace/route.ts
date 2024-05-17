@@ -13,10 +13,10 @@ export async function POST(req: Request, res: Response) {
         return NextResponse.json({error: "unauthorized"}, {status: 401});
     }
 
-    const {file_key, file_name, workspaceIdentifier, workspaceId} = await req.json();
+    const {file_key, file_name, workspaceIdentifier, workspaceId, apiKey} = await req.json();
 
-    if (!workspaceIdentifier || !workspaceId) {
-        return NextResponse.json({error: "workspace not provided"}, {status: 400});
+    if (!workspaceIdentifier || !workspaceId || !apiKey) {
+        return NextResponse.json({error: "workspace or apiKey not provided"}, {status: 400});
     }
 
     try {
@@ -38,7 +38,7 @@ export async function POST(req: Request, res: Response) {
             if (!insertedId[0].insertedId) {
                 throw new Error('Could not insert file into db');
             }
-            await loadS3IntoPinecone(file_key, workspaceNamespace, insertedId[0].insertedId);
+            await loadS3IntoPinecone(file_key, workspaceNamespace, insertedId[0].insertedId, apiKey);
             console.log('loaded s3 into pinecone');
         }
 

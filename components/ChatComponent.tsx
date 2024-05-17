@@ -40,13 +40,14 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
   });
 
   const fetchApiWithDebounce = React.useCallback(
-    debounce(async (value: string, currentWorkspace: DrizzleWorkspace) => {
+    debounce(async (value: string, currentWorkspace: DrizzleWorkspace, apiKey) => {
       setSearching(true);
       const res = await axios.post<Metadata[]>(
         "/api/search-through-pinecone-namespace",
         {
           message: value,
           currentWorkspace: currentWorkspace,
+          apiKey,
         }
       );
       setSearchResults(res.data);
@@ -87,8 +88,8 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
 
   const handleInputChangeModified = (event: any) => {
     handleInputChange(event);
-    if (workspace === null || event.target.value == "") return;
-    fetchApiWithDebounce(event.target.value, workspace);
+    if (workspace === null || event.target.value == "" || !user?.apiKey) return;
+    fetchApiWithDebounce(event.target.value, workspace, user.apiKey);
   };
 
   const decideWhatToRender = () => {

@@ -3,6 +3,7 @@ import { Metadata } from "@/lib/types/types";
 import { CrossIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { WorkspaceContext } from "@/context/WorkspaceContext";
 
 type Props = {
   isSearching: boolean;
@@ -15,12 +16,14 @@ const ContextSearchResults = ({
   searchResults,
   setSearchResults,
 }: Props) => {
+  const { workspace } = React.useContext(WorkspaceContext);
+
   const closeSearchResults = () => {
     setSearchResults([]);
   };
 
   return (
-    <div className="fixed mx-auto max-w-4xl w-full -translate-x-1/2 left-1/2 bg-yellow-100 dark:text-black  p-3 rounded-br-md rounded-bl-md shadow-2xl">
+    workspace && <div className="fixed mx-auto max-w-4xl w-full -translate-x-1/2 left-1/2 bg-yellow-100 dark:text-black  p-3 rounded-br-md rounded-bl-md shadow-2xl">
       <XIcon
         className="w-5 h-5 absolute right-3 top-3 cursor-pointer"
         onClick={closeSearchResults}

@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     
-    let { message, currentWorkspace } = await req.json();
+    let { message, currentWorkspace, apiKey } = await req.json();
 
-    if (!message || !currentWorkspace) {
+    if (!message || !currentWorkspace || !apiKey) {
         return NextResponse.json({ 'error': 'message or currentWorkspace not provided' }, { status: 400 })
     }
 
@@ -16,8 +16,7 @@ export async function POST(req: NextRequest) {
     if (!userId) {
         return NextResponse.json({ 'error': 'user not authenticated' }, { status: 400 })
     }
-
-    const contextMetadata = await getContext(message, getNamespaceForWorkspace(currentWorkspace.identifier, currentWorkspace.owner));
+    const contextMetadata = await getContext(message, getNamespaceForWorkspace(currentWorkspace.identifier, currentWorkspace.owner), apiKey);
 
     return NextResponse.json(contextMetadata, { status: 200 })
 }

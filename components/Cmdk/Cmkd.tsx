@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { v4 } from "uuid";
 import { useWorkspacesContext } from "@/context/WorkspacesContext";
 import { useChatsContext } from "@/context/ChatsContext";
+import { UserContext } from "@/context/UserContext";
 
 type Props = {
   chatId: string;
@@ -30,6 +31,7 @@ const Cmkd = ({chatId}: Props) => {
   const { open, setOpen } = React.useContext(CmdkOpenStateContext);
   const { workspaces, refetch } = useWorkspacesContext();
   const { chats, refetch: refetchChats } = useChatsContext();
+  const {user} = React.useContext(UserContext);
   const [search, setSearch] = React.useState("");
   const [pages, setPages] = React.useState<Page[]>([]);
   const [selectedChat, setSelectedChat] = React.useState<DrizzleChat | null>(
@@ -92,13 +94,14 @@ const Cmkd = ({chatId}: Props) => {
   };
 
   const handleSaveToWorkspace = async (workspace: DrizzleWorkspace) => {
-    if (workspace && selectedChat) {
+    if (workspace && selectedChat && user?.apiKey) {
       try {
         toast
           .promise(
             axios.post(`/api/save-chat-to-workspace`, {
               workspace,
               chat: selectedChat,
+              apiKey: user.apiKey,
             }),
             {
               loading: "Saving chat to workspace...",

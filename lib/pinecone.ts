@@ -28,7 +28,7 @@ type PDFPage = {
  * @param fileKey file key of the pdf in s3
  * @returns documents of the first page
  */
-export async function loadS3IntoPinecone(fileKey: string, namespace: string, fileId: number) {
+export async function loadS3IntoPinecone(fileKey: string, namespace: string, fileId: number, apiKey: string) {
     // 1. optain the pdf from s3 -> download and read from pdf
     const  file_name = await downloadFromS3(fileKey);
     if (!file_name) {
@@ -44,7 +44,7 @@ export async function loadS3IntoPinecone(fileKey: string, namespace: string, fil
     
     // 3. verctorize and embed individual documents
     const vectors = await Promise.all(
-        docs.flat().map((doc) => embedDocuments(doc, fileKey, fileId))
+        docs.flat().map((doc) => embedDocuments(doc, fileKey, fileId, apiKey))
     );
 
     // 4. upload the vectors to pinecone
@@ -65,8 +65,8 @@ export async function loadS3IntoPinecone(fileKey: string, namespace: string, fil
     return docs[0];
 }
 
-export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string, chatId: string) {
-    const vectors = await embedMessages(messages, chatId);
+export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace: string, chatId: string, apiKey: string) {
+    const vectors = await embedMessages(messages, chatId, apiKey);
     const client = await getPineconeClient();
     const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);
     const ns = pineconeIndex.namespace(namespace)
@@ -77,9 +77,9 @@ export async function loadChatIntoPinecone(messages: DrizzleMessage[], namespace
     }
 }
 
-async function embedDocuments(doc: Document, fileKey: string, fileId: number): Promise<PineconeRecord> {
+async function embedDocuments(doc: Document, fileKey: string, fileId: number, apiKey: string): Promise<PineconeRecord> {
     try {
-        const embeddings = await getEmbeddings(doc.pageContent);
+        const embeddings = await getEmbeddings(doc.pageContent, apiKey);
         const hash = md5(doc.pageContent);
 
         return {
@@ -104,10 +104,10 @@ async function embedDocuments(doc: Document, fileKey: string, fileId: number): P
  * @param chatId Chat id of the messages
  * @returns Pinecone records
  */
-async function embedMessages(messages: DrizzleMessage[], chatId: string): Promise<PineconeRecord[]> {
+async function embedMessages(messages: DrizzleMessage[], chatId: string, apiKey: string): Promise<PineconeRecord[]> {
     try {
         const embeddings = await Promise.all(
-            messages.map(message => getEmbeddings(message.content))
+            messages.map(message => getEmbeddings(message.content, apiKey))
         );
         const hashes = messages.map(message => md5(message.content));
 

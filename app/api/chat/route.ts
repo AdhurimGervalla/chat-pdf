@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         // if file is uploaded
         if (currentWorkspace) {
             if (userId) {
-                const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, currentWorkspace.owner));
+                const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, currentWorkspace.owner), apiKey);
                 relatedObject = extractRelatedObject(contextMetadata);
                 prompt = {
                     role: "system",

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     if (!userId) {
         return NextResponse.json({ error: "user not authenticated" }, { status: 400 });
     }
-    const { workspace, chat } = await req.json();
+    const { workspace, chat, apiKey } = await req.json();
     // check if workspaceId and chatId are not empty
     if (!workspace || !chat) {
         return NextResponse.json({ error: "workspaceName not provided" }, { status: 400 });
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const workspaceNamespace = setNameSpaceForWorkspace(workspace.identifier, userId);
     // load chat into pinecone
-    await loadChatIntoPinecone(_messages, workspaceNamespace,chatId);
+    await loadChatIntoPinecone(_messages, workspaceNamespace, chatId, apiKey);
 
     return NextResponse.json({ success: true });
 }

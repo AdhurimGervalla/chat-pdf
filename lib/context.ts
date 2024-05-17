@@ -37,8 +37,8 @@ export async function getMatchesFromEmbeddings(
  * @param identifier Pinecone namespace identifier to search in
  * @returns Metadata of the documents that match the query
  */
-export async function getContext(query: string, identifier: string, score = 0.7): Promise<Metadata[]> {
-  const queryEmbeddings = await getEmbeddings(query);
+export async function getContext(query: string, identifier: string, apiKey: string, score = 0.7): Promise<Metadata[]> {
+  const queryEmbeddings = await getEmbeddings(query, apiKey);
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, identifier);
 
   const qualifyingDocs = matches.filter(

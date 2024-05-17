@@ -8,6 +8,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { DrizzleWorkspace } from '@/lib/db/schema';
+import { UserContext } from '@/context/UserContext';
 
 type Props = {
     refetchCb?: any;
@@ -16,10 +17,15 @@ type Props = {
 
 const FileUpload = ({workspace, refetchCb}: Props) => {
     const [uploading, setUploading] = React.useState(false);
+    const {user} = React.useContext(UserContext);
     const {mutate, isPending} = useMutation({
         mutationFn: async ({file_key, file_name}: {file_key: string, file_name: string}) => {
+            if (!user || !user.apiKey) {
+                toast.error('API Key not found');
+                return;
+            }
             const response = await axios.post('/api/upload-file-to-workspace', {
-                file_key, file_name, workspaceIdentifier: workspace.identifier, workspaceId: workspace.id
+                file_key, file_name, workspaceIdentifier: workspace.identifier, workspaceId: workspace.id, apiKey: user.apiKey
             });
             refetchCb();
             return response.data;
