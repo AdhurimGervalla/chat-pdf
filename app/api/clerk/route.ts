@@ -4,8 +4,6 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
-export const runtime = 'edge';
-
 export async function POST(req: Request) {
     
     try {
