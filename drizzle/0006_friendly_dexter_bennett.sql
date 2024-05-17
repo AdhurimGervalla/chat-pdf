@@ -1,2 +1,0 @@
-ALTER TABLE "workspaces_users" DROP COLUMN IF EXISTS "id";--> statement-breakpoint
-ALTER TABLE "workspaces_users" ADD CONSTRAINT "workspaces_users_workspace_id_user_id" PRIMARY KEY("workspace_id","user_id");
