@@ -16,6 +16,8 @@ import { v4 } from "uuid";
 import FavoriteWorkspacesList from "./FavoriteWorkspacesList";
 import LoaderSpinner from "./LoaderSpinner";
 import { ChatsContext } from "@/context/ChatsContext";
+import { UserContext } from "@/context/UserContext";
+import ApiKeyField from "./ApiKeyField";
 
 
 const ChatComponent = ({chatId}: {chatId: string}) => {
@@ -25,6 +27,7 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
   const [searchResults, setSearchResults] = React.useState<Metadata[]>([]);
   const [searching, setSearching] = React.useState<boolean>(false);
   const { workspace } = React.useContext(WorkspaceContext);
+  const {user} = React.useContext(UserContext);
   const { refetch: refetchChats } = React.useContext(ChatsContext);
 
   const { data, refetch } = useQuery({
@@ -63,7 +66,7 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
   } = useChat({
     id: chatId,
     api: "/api/chat",
-    body: { chatId: chatId, currentWorkspace: workspace },
+    body: { chatId: chatId, currentWorkspace: workspace, apiKey: user?.apiKey},
     initialMessages: data,
     onResponse: async (message) => {},
     onFinish: async (message) => {
@@ -88,6 +91,28 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
     fetchApiWithDebounce(event.target.value, workspace);
   };
 
+  const decideWhatToRender = () => {
+    if (user?.apiKey === null) {
+      return <ApiKeyField />;
+    }
+    if (loadingMessages) {
+      return <LoaderSpinner />;
+    } else if (messages.length === 0) {
+      return <FavoriteWorkspacesList />;
+    } else {
+      return (
+        <div className="max-w-4xl  w-full mx-auto relative">
+          <MessageList
+            messages={messages}
+            refetch={refetch}
+            isLoading={isLoading}
+          />
+        </div>
+      );
+    }
+  }
+
+
   React.useEffect(() => {
     const messageContainer = document.getElementById("message-container");
     if (messageContainer) {
@@ -107,28 +132,15 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
       className="flex flex-col w-full h-full overflow-y-scroll"
       id="message-container"
     >
-      {loadingMessages ? (
-        <LoaderSpinner />
-      ) : messages.length === 0 ? (
-        <FavoriteWorkspacesList />
-      ) : (
-        <div className="max-w-4xl  w-full mx-auto relative">
-          <MessageList
-            messages={messages}
-            refetch={refetch}
-            isLoading={isLoading}
-          />
-        </div>
-      )}
-
+      {decideWhatToRender()}
       {(input.length > 0 && (searchResults.length > 0 || searching)) && <ContextSearchResults searchResults={searchResults} isSearching={searching} setSearchResults={setSearchResults} />}
-      <ChatInput
+      {user?.apiKey != null && <ChatInput
         handleSubmit={handleSubmitModified}
         handleInputChange={handleInputChangeModified}
         isLoading={isLoading}
         input={input}
         stop={stop}
-      />
+      />}
     </div>
   );
 };

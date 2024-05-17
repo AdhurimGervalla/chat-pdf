@@ -63,6 +63,8 @@ export const users = pgTable('users', {
     apiKey: varchar('api_key', { length: 255 }),
 });
 
+export type DrizzleUsers = typeof users.$inferSelect;
+
 export const files = pgTable('files', {
     id: serial('id').primaryKey(),
     workspaceId: integer('workspace_id').default(0), // foreign key

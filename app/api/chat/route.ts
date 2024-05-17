@@ -16,16 +16,16 @@ import { Metadata, PageNumberObject, RelatedData } from '@/lib/types/types';
 export const runtime = 'edge';
 
 
-const openai = getOpenAiApi();
-
 export async function POST(req: NextRequest) {
     try {
-        let { messages, chatId, chatLanguage, currentWorkspace } = await req.json();
+        let { messages, chatId, chatLanguage, currentWorkspace, apiKey } = await req.json();
         const { userId } = await auth();
 
-        if (!chatId || !userId) {
-            return NextResponse.json({ 'error': 'messages or chatId not provided' }, { status: 400 })
+        if (!chatId || !userId || !apiKey) {
+            return NextResponse.json({ 'error': 'missin parameters' }, { status: 400 })
         }
+
+        const openai = getOpenAiApi(apiKey);
 
         const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
 
