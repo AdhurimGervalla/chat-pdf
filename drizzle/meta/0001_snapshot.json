@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "3938729b-b40b-4d75-b0e5-1094d27f5859",
-  "prevId": "a582b902-1af0-401b-a5f6-e4c538e558ea",
+  "id": "ded69e92-bd94-4e6d-bdfa-02b84b77ff89",
+  "prevId": "9cc77436-991a-4e74-a9d1-7e27f0008104",
   "tables": {
     "chats": {
       "name": "chats",
@@ -425,12 +425,6 @@
       "name": "workspaces_users",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "workspace_id": {
           "name": "workspace_id",
           "type": "serial",
@@ -486,7 +480,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "workspaces_users_workspace_id_user_id": {
+          "name": "workspaces_users_workspace_id_user_id",
+          "columns": [
+            "workspace_id",
+            "user_id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     }
   },

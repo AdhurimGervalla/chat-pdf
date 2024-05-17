@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "13c6b48a-848c-43a7-926a-74ba4b3c24d3",
-  "prevId": "3938729b-b40b-4d75-b0e5-1094d27f5859",
+  "id": "0ffdd331-75d9-41ea-a2c5-ab1ab79649d9",
+  "prevId": "ded69e92-bd94-4e6d-bdfa-02b84b77ff89",
   "tables": {
     "chats": {
       "name": "chats",
@@ -274,7 +274,7 @@
           "name": "email",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -282,6 +282,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "api_key": {
+          "name": "api_key",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -293,13 +299,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ]
-        },
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
           ]
         }
       }
@@ -432,12 +431,6 @@
       "name": "workspaces_users",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "workspace_id": {
           "name": "workspace_id",
           "type": "serial",
@@ -493,7 +486,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "workspaces_users_workspace_id_user_id": {
+          "name": "workspaces_users_workspace_id_user_id",
+          "columns": [
+            "workspace_id",
+            "user_id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     }
   },
