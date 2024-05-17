@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { DrizzleChat, DrizzleFile, chats, files } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-
+export const runtime = 'edge';
 export async function POST(req: NextRequest) {
     const { workspaceId } = await req.json();
     if (!workspaceId || workspaceId === 0) return NextResponse.json({ message: 'Workspace ID required' }, { status: 400 });

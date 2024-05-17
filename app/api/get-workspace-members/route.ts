@@ -3,7 +3,7 @@ import { files, messagesToFiles, workspacesToUsers } from "@/lib/db/schema";
 import { RelatedFile } from "@/lib/types/types";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-
+export const runtime = 'edge';
 export async function POST(req: NextRequest) {
 
     const { workspaceId } = await req.json();
