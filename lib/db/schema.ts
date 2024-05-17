@@ -57,9 +57,10 @@ export const workspaces = pgTable('workspaces', {
 export type DrizzleWorkspace = typeof workspaces.$inferSelect;
 
 export const users = pgTable('users', {
-    userId: varchar('user_id', {length: 255}).notNull().unique().primaryKey(),
-    email: varchar('email', {length: 255}),
+    userId: varchar('user_id', { length: 255 }).notNull().unique().primaryKey(),
+    email: varchar('email', { length: 255 }),
     createdAt: timestamp('createdAt').notNull().defaultNow(),
+    apiKey: varchar('api_key', { length: 255 }),
 });
 
 export const files = pgTable('files', {
