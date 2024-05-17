@@ -14,7 +14,7 @@ const ChatePageComponent = ({chatId}: {chatId: string}) => {
       <>
         <Cmkd chatId={chatId} />
         <div className="flex w-full max-h-screen overflow-hidden border-x-[15px] border-x-transparent">
-          <div className="w-full flex flex-col relative h-[100dvh] overflow-scroll pt-[65px]">
+          <div className="w-full flex flex-col relative h-[100dvh] overflow-y-scroll pt-[65px] no-scrollbar">
             <ChatComponent chatId={chatId} />
           </div>
         </div>
