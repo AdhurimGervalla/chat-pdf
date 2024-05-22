@@ -2,7 +2,6 @@ import { db } from "@/lib/db";
 import { files } from "@/lib/db/schema";
 import { loadS3IntoPinecone } from "@/lib/pinecone";
 import { getS3Url } from "@/lib/s3";
-import { getNamespaceForWorkspace } from "@/lib/utils";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -20,7 +19,7 @@ export async function POST(req: Request, res: Response) {
     }
 
     try {
-        const workspaceNamespace = getNamespaceForWorkspace(workspaceIdentifier, userId);
+        const workspaceNamespace = workspaceIdentifier;
         
         if (file_key && file_name) {
             const insertedId = await db

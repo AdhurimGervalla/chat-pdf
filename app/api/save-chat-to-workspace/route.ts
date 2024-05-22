@@ -4,7 +4,6 @@ import { and, asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from '@clerk/nextjs/server';
 import { loadChatIntoPinecone } from "@/lib/pinecone";
-import { setNameSpaceForWorkspace } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
     const {userId} = await auth();
@@ -29,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     const _messages = (await db.select().from(messages).orderBy((asc(messages.createdAt))).where(and(eq(messages.chatId, chatId), eq(messages.role, "assistant"))));
 
-    const workspaceNamespace = setNameSpaceForWorkspace(workspace.identifier, userId);
+    const workspaceNamespace = workspace.identifier;
     // load chat into pinecone
     await loadChatIntoPinecone(_messages, workspaceNamespace, chatId, apiKey);
 

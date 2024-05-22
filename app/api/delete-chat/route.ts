@@ -3,8 +3,6 @@
 import { db } from "@/lib/db";
 import { DrizzleWorkspace, chats, messages, workspaces } from "@/lib/db/schema";
 import { deletePineconeIndex } from "@/lib/pinecone";
-import { deleteFromS3 } from "@/lib/s3";
-import { getNamespaceForWorkspace } from "@/lib/utils";
 import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -27,7 +25,7 @@ export async function POST(req: Request, res: Response) {
             const workspaceList: DrizzleWorkspace[] = await db.select().from(workspaces).where(eq(workspaces.id, workspaceId));
             if (workspaceList.length > 0) {
                 const workspace = workspaceList[0];
-                const namespace = getNamespaceForWorkspace(workspace.identifier, userId);
+                const namespace = workspace.identifier;
                 await deletePineconeIndex(namespace, chatId);
             }
         }

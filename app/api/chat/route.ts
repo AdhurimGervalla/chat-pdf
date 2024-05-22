@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { Message } from 'ai/react';
 import { checkSubscription } from '@/lib/subscription';
-import { getNamespaceForWorkspace, languages } from '@/lib/utils';
+import { languages } from '@/lib/utils';
 import { auth } from '@clerk/nextjs/server';
 import { v4 } from "uuid";
 import { getOpenAiApi } from '@/lib/openai';
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         // if file is uploaded
         if (currentWorkspace) {
             if (userId) {
-                const contextMetadata = await getContext(lastMessage.content, getNamespaceForWorkspace(currentWorkspace.identifier, currentWorkspace.owner), apiKey);
+                const contextMetadata = await getContext(lastMessage.content, currentWorkspace.identifier, apiKey);
                 relatedObject = extractRelatedObject(contextMetadata);
                 prompt = {
                     role: "system",

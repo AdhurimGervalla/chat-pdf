@@ -3,7 +3,6 @@
 import { db as dbClient} from "@/lib/db";
 import { DrizzleWorkspace, chats, messages, workspaces } from "@/lib/db/schema";
 import { deletePineconeNamespace } from "@/lib/pinecone";
-import { getNamespaceForWorkspace } from "@/lib/utils";
 import { auth } from "@clerk/nextjs";
 import { eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -49,7 +48,7 @@ export async function POST(req: Request, res: Response) {
                 await tx.delete(workspaces).where(eq(workspaces.id, workspaceId));
     
                 // delete pinecone namespace
-                await deletePineconeNamespace(getNamespaceForWorkspace(theWorkspace.identifier, userId));
+                await deletePineconeNamespace(theWorkspace.identifier);
             });
         } catch (error) {
             console.log(error);
