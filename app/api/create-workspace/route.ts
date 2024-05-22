@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from '@clerk/nextjs/server';
 import { Pool } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
+import { setNameSpaceForWorkspace } from "@/lib/utils";
  
 export const runtime = 'edge';
 
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     // remove all special characters and spaces from workspaceName
-    const identifier = workspaceName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    const identifier = setNameSpaceForWorkspace(workspaceName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase(), userId);
 
     // check if workspace already exists for this user
     const _workspace = await dbClient.select().from(workspaces).where(and(eq(workspaces.owner, userId), eq(workspaces.identifier, identifier)));
