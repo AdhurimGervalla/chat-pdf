@@ -14,7 +14,6 @@ export async function getMatchesFromEmbeddings(
 ): Promise<ScoredPineconeRecord<RecordMetadata>[]> {
   try {
     const client = new Pinecone({
-      environment: process.env.PINECONE_ENVIRONMENT!,
       apiKey: process.env.PINECONE_API_KEY!,
     });
     const pineconeIndex = await client.index(process.env.PINECONE_INDEX_NAME!);

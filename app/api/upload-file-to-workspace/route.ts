@@ -39,7 +39,6 @@ export async function POST(req: Request, res: Response) {
                 throw new Error('Could not insert file into db');
             }
             await loadS3IntoPinecone(file_key, workspaceNamespace, insertedId[0].insertedId, apiKey);
-            console.log('loaded s3 into pinecone');
         }
 
         return NextResponse.json({status: 200});

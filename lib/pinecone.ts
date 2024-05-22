@@ -1,7 +1,7 @@
-import {Pinecone, PineconeRecord} from '@pinecone-database/pinecone';
+import { Pinecone, PineconeRecord } from '@pinecone-database/pinecone';
 import { downloadFromS3 } from './s3-server';
-import {PDFLoader} from 'langchain/document_loaders/fs/pdf'
-import {Document, RecursiveCharacterTextSplitter} from '@pinecone-database/doc-splitter'
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
+import { Document, RecursiveCharacterTextSplitter } from '@pinecone-database/doc-splitter'
 import { getEmbeddings } from './embeddings';
 import md5 from 'md5';
 import { convertStringToASCII } from './utils';
@@ -9,15 +9,14 @@ import { DrizzleMessage } from './db/schema';
 
 export const getPineconeClient = () => {
     return new Pinecone({
-      environment: process.env.PINECONE_ENVIRONMENT!,
-      apiKey: process.env.PINECONE_API_KEY!,
+        apiKey: process.env.PINECONE_API_KEY!,
     });
-  };
+};
 
 type PDFPage = {
     pageContent: string;
     metadata: {
-        loc: {pageNumber: number}
+        loc: { pageNumber: number }
     }
 }
 
@@ -28,9 +27,9 @@ type PDFPage = {
  * @param fileKey file key of the pdf in s3
  * @returns documents of the first page
  */
-export async function loadS3IntoPinecone(fileKey: string, namespace: string, fileId: number, apiKey: string) {
+export async function loadS3IntoPinecone(fileKey: string, namespace: string, fileId: number, apiKey: string) {
     // 1. optain the pdf from s3 -> download and read from pdf
-    const  file_name = await downloadFromS3(fileKey);
+    const file_name = await downloadFromS3(fileKey);
     if (!file_name) {
         throw new Error('Could not download file from s3');
     }
@@ -41,7 +40,7 @@ export async function loadS3IntoPinecone(fileKey: string, namespace: string, fil
     const docs = await Promise.all(
         pages.map(prepareDocuments)
     )
-    
+
     // 3. verctorize and embed individual documents
     const vectors = await Promise.all(
         docs.flat().map((doc) => embedDocuments(doc, fileKey, fileId, apiKey))
@@ -56,7 +55,6 @@ export async function loadS3IntoPinecone(fileKey: string, namespace: string, fil
     // await ns.upsert(vectors);
 
     // Upload vectors in batches of 100
-    console.log('vectors', vectors.length);
     for (let i = 0; i < vectors.length; i += 100) {
         const batch = vectors.slice(i, i + 100);
         await ns.upsert(batch);
@@ -83,7 +81,7 @@ async function embedDocuments(doc: Document, fileKey: string, fileId: number, ap
         const hash = md5(doc.pageContent);
 
         return {
-            id: hash,
+            id: `${fileId}#${hash}`,
             values: embeddings,
             metadata: {
                 text: doc.metadata.text,
@@ -113,7 +111,7 @@ async function embedMessages(messages: DrizzleMessage[], chatId: string, apiKey:
 
         return hashes.map((hash, index) => {
             return {
-                id: hash,
+                id: `${chatId}#${hash}`,
                 values: embeddings[index],
                 metadata: {
                     text: messages[index].content,
@@ -135,7 +133,7 @@ export const truncateStringByBytes = (str: string, numBytes: number) => {
 }
 
 async function prepareDocuments(page: PDFPage) {
-    let {pageContent, metadata} = page;
+    let { pageContent, metadata } = page;
     pageContent = pageContent.replace(/\n/g, ''); // remove newlines    
     // split the docs
     const splitter = new RecursiveCharacterTextSplitter();
@@ -154,8 +152,15 @@ async function prepareDocuments(page: PDFPage) {
 
 export async function deletePineconeIndex(namespace: string, chatId: string): Promise<void> {
     const client = await getPineconeClient();
-    await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteMany({ chatId: chatId });
-
+    const index = await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace);
+    const results = await index.listPaginated(
+        {
+            prefix: `${chatId}#`,
+        }
+    );
+    if (results.vectors && results.vectors.length > 0) {
+        await index.deleteMany(results.vectors.map((v) => v.id));
+    }
 }
 
 /**
@@ -165,10 +170,26 @@ export async function deletePineconeIndex(namespace: string, chatId: string): Pr
  */
 export async function deletePineconeIndexFromFile(namespace: string, fileKey: string): Promise<void> {
     const client = await getPineconeClient();
-    await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteMany({ fileKey });
+    const index = await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace);
+    const results = await index.listPaginated(
+        {
+            prefix: `${fileKey}#`,
+        }
+    );
+    if (results.vectors && results.vectors.length > 0) {
+        await index.deleteMany(results.vectors.map((v) => v.id));
+    }
 }
 
 export async function deletePineconeNamespace(namespace: string): Promise<void> {
     const client = await getPineconeClient();
-    await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteAll();
+    try {
+        await client.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace).deleteAll();
+    } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+            console.log('Namespace not found (404), continuing execution');
+        } else {
+            console.error('Error deleting namespace:', error);
+        }
+    }
 }
