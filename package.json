@@ -44,6 +44,7 @@
     "geist": "^1.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.288.0",
+    "md5": "^2.3.0",
     "next": "13.5.1",
     "next-pwa": "^5.6.0",
     "openai-edge": "^1.2.2",
@@ -63,11 +64,11 @@
     "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.1",
     "typescript": "5.2.2",
-    "zod": "^3.22.4",
-    "@types/md5": "^2.3.4"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",
+    "@types/md5": "^2.3.4",
     "@types/react-syntax-highlighter": "^15.5.9"
   }
 }
