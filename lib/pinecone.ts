@@ -4,7 +4,6 @@ import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { Document, RecursiveCharacterTextSplitter } from '@pinecone-database/doc-splitter'
 import { getEmbeddings } from './embeddings';
 import md5 from 'md5';
-import { convertStringToASCII } from './utils';
 import { DrizzleMessage } from './db/schema';
 
 export const getPineconeClient = () => {
