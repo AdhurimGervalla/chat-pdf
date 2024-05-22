@@ -12,7 +12,6 @@ function UserContextProvider({children}: Props) {
   const [user, setUser] = React.useState<DrizzleUsers>();
 
   const refetch = async (callback?: () => void) => {
-    console.log('refetching user');
     const res = await axios.post("/api/get-my-user");
     setUser(res.data);
     if (callback) {

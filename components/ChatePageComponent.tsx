@@ -4,7 +4,6 @@ import ChatComponent from "./ChatComponent";
 import { messages as _messages } from "@/lib/db/schema";
 import Cmkd from "./Cmdk/Cmkd";
 import HeaderArea from "./HeaderArea";
-import { v4 } from "uuid";
 
 
 const ChatePageComponent = ({chatId}: {chatId: string}) => {

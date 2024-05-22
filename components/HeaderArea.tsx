@@ -16,7 +16,7 @@ const HeaderArea = (props: Props) => {
               <DarkModeSwitch />
           </div>
           <div className="flex-shrink-0 opacity-40 hover:opacity-100 transition-all">
-            <UserButton afterSignOutUrl='/' />
+            <UserButton afterSignOutUrl='https://www.workspaices.ch' />
           </div>
         </div>
 
