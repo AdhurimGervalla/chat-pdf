@@ -14,7 +14,6 @@ import { resetBackspace } from '@/lib/utils';
 import { useAuth } from '@clerk/nextjs';
 import { WorkspaceContext } from '@/context/WorkspaceContext';
 import { v4 } from "uuid";
-import { useWorkspacesContext } from '@/context/WorkspacesContext';
 
 type Props = {
     workspace: DrizzleWorkspace;
@@ -24,7 +23,6 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
     const router = useRouter();
     const {userId} = useAuth();
     const {workspace: contextWs, setWorkspace} = React.useContext(WorkspaceContext);
-    const { workspaces, refetch: refetchWorkspaces } = useWorkspacesContext();
     const [memberEmail, setMemberEmail] = React.useState<string>('');
     const {data, isLoading, refetch} = useQuery<{chats: DrizzleChat[], files: DrizzleFile[]}>({
         queryKey: ['WorkspaceChatsPage', workspace.id],
@@ -62,7 +60,7 @@ const WorkspaceChatsPage = ({workspace}: Props) => {
             await axios.post(`/api/delete-workspace`, {
                 workspaceId: workspace.id
             });
-            refetchWorkspaces();
+            // refetchWorkspaces();
             router.push(`/chats/${v4()}`);
         } 
         catch (error: any) {

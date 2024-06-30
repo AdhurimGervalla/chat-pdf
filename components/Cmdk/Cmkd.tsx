@@ -12,11 +12,11 @@ import ChatsList from "./Chats/ChatsList";
 import Overview from "./Overview";
 import ChatsDetailPage from "./Chats/ChatsDetailPage";
 import { CmdkOpenStateContext } from "@/context/CmdKOpenStateContext";
-import { useQuery } from "@tanstack/react-query";
 import { v4 } from "uuid";
-import { useWorkspacesContext } from "@/context/WorkspacesContext";
 import { useChatsContext } from "@/context/ChatsContext";
 import { UserContext } from "@/context/UserContext";
+import {RootState} from "@/context/state/store";
+import {useAppSelector} from "@/lib/hooks";
 
 type Props = {
   chatId: string;
@@ -29,7 +29,7 @@ const Cmkd = ({chatId}: Props) => {
   const newChatId = v4();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { open, setOpen } = React.useContext(CmdkOpenStateContext);
-  const { workspaces, refetch } = useWorkspacesContext();
+  const workspaces = useAppSelector((state: RootState) =>  state.workspaces.value);
   const { chats, refetch: refetchChats } = useChatsContext();
   const {user} = React.useContext(UserContext);
   const [search, setSearch] = React.useState("");
@@ -111,7 +111,7 @@ const Cmkd = ({chatId}: Props) => {
           )
           .then(() => {
             refetchChats();
-            refetch();
+            // TODO: refetch();
             reset();
           });
       } catch (error: any) {
@@ -214,10 +214,11 @@ const Cmkd = ({chatId}: Props) => {
               </>
             )}
             {page && page[0] === "newWorkspace" && (
-              <NewWorkspace
+              /*<NewWorkspace
                 refetchWorkspaces={refetch}
                 reset={reset}
-              />
+              />*/
+                <>temp disabled</>
             )}
           </Command.List>
         </Command.Dialog>

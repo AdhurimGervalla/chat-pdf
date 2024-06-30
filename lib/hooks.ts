@@ -1,13 +1,8 @@
-import axios from "axios";
+import { useDispatch, useSelector, useStore } from 'react-redux'
+import type { AppDispatch, AppStore, RootState } from '@/context/state/store'
 
-/**
- * 
- * @param chatId string
- * @returns 
- */
-export const useGetChats = async (chatId: string): Promise<[]> => {
-    let data = [];
-    const res = await axios.post("/api/get-messages", { chatId });
-    data = res.data;
-    return data;
-}
+
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+export const useAppSelector = useSelector.withTypes<RootState>()
+export const useAppStore = useStore.withTypes<AppStore>()

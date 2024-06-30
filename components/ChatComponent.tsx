@@ -22,7 +22,7 @@ import ApiKeyField from "./ApiKeyField";
 
 const ChatComponent = ({chatId}: {chatId: string}) => {
   const router = useRouter();
-  const [loadingMessages, setLoadingMessages] = React.useState<boolean>(true);
+  const [loadingMessages, setLoadingMessages] = React.useState<boolean>(false);
   const [scrollDown, setScrollDown] = React.useState<boolean>(true);
   const [searchResults, setSearchResults] = React.useState<Metadata[]>([]);
   const [searching, setSearching] = React.useState<boolean>(false);
@@ -33,9 +33,17 @@ const ChatComponent = ({chatId}: {chatId: string}) => {
   const { data, refetch } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: async () => {
-      const res = await axios.post("/api/get-messages", { chatId });
+      setLoadingMessages(true);
+      const res = await fetch("/api/get-messages", {
+        method: "POST",
+        body: JSON.stringify({ chatId }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
       setLoadingMessages(false);
-      return res.data;
+      return data;
     },
   });
 

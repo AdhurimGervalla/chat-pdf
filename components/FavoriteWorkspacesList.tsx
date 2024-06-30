@@ -1,14 +1,12 @@
-import { WorkspaceWithRole } from "@/lib/types/types";
 import React from "react";
 import Workspaces from "./Workspaces";
-import { useParams } from "next/navigation";
-import LoaderSpinner from "./LoaderSpinner";
-import { useWorkspacesContext } from "@/context/WorkspacesContext";
+import { RootState } from "@/context/state/store";
+import {useAppSelector} from "@/lib/hooks";
+import {fetchAllWorkspaces} from "@/context/state/workspace/workspaceSlice";
 
 const FavoriteWorkspacesList = () => {
-  const { chatId } = useParams();
-  const { workspaces, setWorkspaces } = useWorkspacesContext();
-
+  const workspaces = useAppSelector((state: RootState) => state.workspaces.value);
+  fetchAllWorkspaces();
   return <Workspaces workspaces={workspaces} />
 };
 

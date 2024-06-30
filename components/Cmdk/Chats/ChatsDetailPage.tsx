@@ -10,7 +10,8 @@ import { Command, CommandItem } from 'cmdk';
 import toast from 'react-hot-toast';
 import { v4 } from "uuid";
 import axios from 'axios';
-import { useWorkspacesContext } from '@/context/WorkspacesContext';
+import {useSelector} from "react-redux";
+import {RootState} from "@/context/state/store";
 
 type Props = {
     chatId: string;
@@ -26,7 +27,7 @@ type Props = {
 const ChatsDetailPage = ({chatId, refetchChats, handleSaveToWorkspace, selectedChat, setPages, chats, handeOnSelect, inputRef}: Props) => {
     const router = useRouter();
     const [saveToWorkspaceMode, setSaveToWorkspaceMode] = React.useState(false)
-    const { workspaces } = useWorkspacesContext();
+    const workspaces = useSelector((state: RootState) => state.workspaces.value);
 
     const handleWorkspaceSelect = () => {
         setSaveToWorkspaceMode(!saveToWorkspaceMode);
